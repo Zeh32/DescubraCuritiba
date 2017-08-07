@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Descubra Curitiba</string>
+    <string name="app_title">Descubra Curitiba</string>
+    <string name="create_itinerary">Criar Itinerário</string>
+    <string name="manage_saved_itineraries">Gerenciar Itinerários Salvos</string>
+    <string name="places_to_visit">Locais para Visitar</string>
+    <string name="select_origin">Local de partida</string>
+    <string name="select_start_day">Dia de início</string>
+    <string name="select_end_day">Dia de término</string>
+</resources>
