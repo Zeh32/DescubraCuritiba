@@ -37,13 +37,12 @@
         android:id="@+id/btnCreateItinerary"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/btnManageSavedItineraries"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginBottom="13dp"
+        android:layout_marginBottom="11dp"
         android:text="@string/create_itinerary"
         android:onClick="btnCreateItinerary"
-        />
+        android:layout_above="@+id/btnManageSavedItineraries"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
     <Button
         android:id="@+id/btnManageSavedItineraries"

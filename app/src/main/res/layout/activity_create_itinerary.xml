@@ -7,46 +7,90 @@
     android:orientation="vertical"
     tools:context="com.example.jgaug.descubracuritiba.CreateItinerary">
 
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="12dp"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="22dp"
-        android:text="@string/select_origin"
-        android:textSize="18sp"/>
-
     <EditText
         android:id="@+id/editText2"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="17dp"
         android:ems="10"
-        android:inputType="textPersonName"/>
+        android:hint="@string/select_start_day"
+        android:inputType="date"
+        android:selectAllOnFocus="false"
+        android:singleLine="false"
+        tools:text="@string/select_start_day" />
 
-    <TextView
-        android:id="@+id/textView4"
-        android:layout_width="wrap_content"
+    <EditText
+        android:id="@+id/editText3"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
-        android:textSize="18sp"
-        tools:text="@string/select_start_day"/>
-
-    <TextView
-        android:id="@+id/textView5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:text="@string/select_end_day"
-        android:textSize="18sp"/>
+        android:ems="10"
+        android:hint="@string/select_end_day"
+        android:inputType="date"
+        tools:text="@string/select_end_day" />
 
     <EditText
         android:id="@+id/editText5"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
         android:ems="10"
-        android:inputType="textPersonName"/>
+        android:hint="@string/select_start_time"
+        android:inputType="time"
+        tools:text="@string/select_start_time" />
+
+    <EditText
+        android:id="@+id/editText6"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="@string/select_end_time"
+        android:inputType="time"
+        tools:text="@string/select_end_time" />
+
+    <CheckBox
+        android:id="@+id/checkBox_parques"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="onCheckboxClicked"
+        android:text="@string/select_list_parques"
+        tools:text="@string/select_list_parques" />
+
+    <CheckBox
+        android:id="@+id/checkBox_museus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="onCheckboxClicked"
+        android:text="@string/select_list_museus"
+        tools:text="@string/select_list_museus" />
+
+    <CheckBox
+        android:id="@+id/checkBox_locais_hist"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="onCheckboxClicked"
+        android:text="@string/select_list_hist"
+        tools:text="@string/select_list_hist" />
+
+    <CheckBox
+        android:id="@+id/checkBox_pracas"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="onCheckboxClicked"
+        android:text="@string/select_list_pracas"
+        tools:text="@string/select_list_pracas" />
+
+    <CheckBox
+        android:id="@+id/checkBox_restaurantes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="onCheckboxClicked"
+        android:text="@string/select_list_rest"
+        tools:text="@string/select_list_rest" />
+
+    <Button
+        android:id="@+id/button_finalizar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:elevation="0dp"
+        android:onClick="btnItinerary"
+        android:text="@string/finalizar" />
 
 </LinearLayout>
