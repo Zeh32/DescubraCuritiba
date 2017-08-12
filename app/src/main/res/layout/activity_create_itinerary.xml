@@ -87,10 +87,11 @@
 
     <Button
         android:id="@+id/button_finalizar"
+        style="@style/ButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:elevation="0dp"
         android:onClick="btnItinerary"
-        android:text="@string/finalizar" />
+        android:text="@string/finalizar"/>
 
 </LinearLayout>

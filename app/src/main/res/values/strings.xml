@@ -1,19 +1,26 @@
 <resources>
     <string name="app_name">Descubra Curitiba</string>
     <string name="app_title">Descubra Curitiba</string>
+
+    <!--First Screen-->
     <string name="create_itinerary">Criar Itinerário</string>
-    <string name="itinerary">Itinerário</string>
-    <string name="manage_saved_itineraries">Gerenciar Itinerários Salvos</string>
-    <string name="places_to_visit">Locais para Visitar</string>
+    <string name="use_last_saved_route">Utilizar última rota salva</string>
+    <string name="places_to_visit">Locais para se visitar</string>
+    <string name="background_image">Imagem de fundo</string>
+
+    <!--Create Itinerary-->
     <string name="select_origin">Local de partida</string>
     <string name="select_start_day">Dia de início</string>
     <string name="select_end_day">Dia de término</string>
     <string name="select_start_time">Horário de Início</string>
     <string name="select_end_time">Horário de Término</string>
+    <string name="finalizar">Finalizar</string>
+
+    <!--Itinerary-->
+    <string name="itinerary">Itinerário</string>
     <string name="select_list_parques">Parques e Bosques</string>
     <string name="select_list_museus">Museus</string>
     <string name="select_list_hist">Locais históricos</string>
     <string name="select_list_pracas">Praças</string>
     <string name="select_list_rest">Restaurantes</string>
-    <string name="finalizar">Finalizar</string>
 </resources>
