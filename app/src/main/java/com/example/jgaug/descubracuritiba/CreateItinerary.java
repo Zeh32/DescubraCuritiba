@@ -32,7 +32,7 @@ public class CreateItinerary extends AppCompatActivity {
         editor.apply();
     }
 
-    public void onCheckboxClicked(View view){
+    /*public void onCheckboxClicked(View view){
         boolean checked = ((CheckBox) view).isChecked();
 
         switch(view.getId()){
@@ -97,25 +97,25 @@ public class CreateItinerary extends AppCompatActivity {
                 }
                 break;
         }
-    }
+    }*/
 
-    public void btnItinerary( View view ) {
+    public void btnMakeItinerary( View view ) {
         Intent intent = new Intent( this, Itinerary.class );
 
-        EditText editText2 = (EditText) findViewById(R.id.editText2);
-        String data_inicio = editText2.getText().toString();
+        EditText editText1 = (EditText) findViewById(R.id.editText1);
+        String data_inicio = editText1.getText().toString();
         intent.putExtra(EXTRA_MESSAGE1, data_inicio);
 
-        EditText editText3 = (EditText) findViewById(R.id.editText3);
-        String data_fim = editText3.getText().toString();
+        EditText editText2 = (EditText) findViewById(R.id.editText2);
+        String data_fim = editText2.getText().toString();
         intent.putExtra(EXTRA_MESSAGE2, data_fim);
 
-        EditText editText5 = (EditText) findViewById(R.id.editText5);
-        String hora_inicio = editText5.getText().toString();
+        EditText editText3 = (EditText) findViewById(R.id.editText3);
+        String hora_inicio = editText3.getText().toString();
         intent.putExtra(EXTRA_MESSAGE3, hora_inicio);
 
-        EditText editText6 = (EditText) findViewById(R.id.editText6);
-        String hora_fim = editText6.getText().toString();
+        EditText editText4 = (EditText) findViewById(R.id.editText4);
+        String hora_fim = editText4.getText().toString();
         intent.putExtra(EXTRA_MESSAGE4, hora_fim);
 
         startActivity( intent );

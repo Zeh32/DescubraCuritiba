@@ -6,21 +6,35 @@
     <string name="create_itinerary">Criar Itinerário</string>
     <string name="use_last_saved_route">Utilizar última rota salva</string>
     <string name="places_to_visit">Locais para se visitar</string>
-    <string name="background_image">Imagem de fundo</string>
+    <string name="background_image_description">Imagem de fundo</string>
 
     <!--Create Itinerary-->
     <string name="select_origin">Local de partida</string>
-    <string name="select_start_day">Dia de início</string>
-    <string name="select_end_day">Dia de término</string>
-    <string name="select_start_time">Horário de Início</string>
-    <string name="select_end_time">Horário de Término</string>
+    <string name="map_description">Imagem mapa</string>
+
+    <string name="select_start_day">Primeiro dia de passeio</string>
+    <string name="select_end_day">Último dia de passeio</string>
+    <string name="calendar_description">Imagem calendário</string>
+
+    <string name="select_start_time">Horário de início</string>
+    <string name="select_end_time">Horário de término</string>
+    <string name="clock_description">Imagem relógio</string>
+
+    <string name="places_to_vist">Locais de interesse</string>
+    <string name="select_list_parks">Parques, bosques e praças</string>
+    <string name="select_list_landmarks">Pontos turísticos</string>
+    <string name="select_list_museums">Museus</string>
+    <string name="select_list_shopping">Locais de compras</string>
+    <string name="select_list_restaurants">Restaurantes</string>
+    <string name="parks_description">Imagem parques</string>
+    <string name="landmarks_description">Imagem pontos turísticos</string>
+    <string name="museums_description">Imagem museus</string>
+    <string name="shopping_description">Imagem locais de compras</string>
+    <string name="food_description">Imagem gastronomia</string>
+
     <string name="finalizar">Finalizar</string>
 
     <!--Itinerary-->
     <string name="itinerary">Itinerário</string>
-    <string name="select_list_parques">Parques e Bosques</string>
-    <string name="select_list_museus">Museus</string>
-    <string name="select_list_hist">Locais históricos</string>
-    <string name="select_list_pracas">Praças</string>
-    <string name="select_list_rest">Restaurantes</string>
+
 </resources>
