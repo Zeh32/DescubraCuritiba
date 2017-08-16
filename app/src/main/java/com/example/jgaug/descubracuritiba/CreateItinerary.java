@@ -32,7 +32,7 @@ public class CreateItinerary extends AppCompatActivity {
         editor.apply();
     }
 
-    /*public void onCheckboxClicked(View view){
+    public void onCheckboxClicked(View view){
         boolean checked = ((CheckBox) view).isChecked();
 
         switch(view.getId()){
@@ -76,12 +76,12 @@ public class CreateItinerary extends AppCompatActivity {
                 if(checked){
                     SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                     SharedPreferences.Editor editor = settings.edit();
-                    editor.putString("pracas", "Praças sim");
+                    editor.putString("pracas", "Locais de compra sim");
                     editor.apply();
-                    Toast.makeText( this, "Você selecionou praças", Toast.LENGTH_SHORT ).show( );
+                    Toast.makeText( this, "Você selecionou locais de compra", Toast.LENGTH_SHORT ).show( );
                 }
                 else{
-                    Toast.makeText( this, "Você tirou praças", Toast.LENGTH_SHORT ).show( );
+                    Toast.makeText( this, "Você tirou locais de compra", Toast.LENGTH_SHORT ).show( );
                 }
                 break;
             case R.id.checkBox_restaurantes:
@@ -97,7 +97,7 @@ public class CreateItinerary extends AppCompatActivity {
                 }
                 break;
         }
-    }*/
+    }
 
     public void btnMakeItinerary( View view ) {
         Intent intent = new Intent( this, Itinerary.class );

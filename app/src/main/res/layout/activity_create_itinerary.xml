@@ -217,7 +217,7 @@
                 android:layout_weight="1"
                 android:contentDescription="@string/parks_description"
                 android:scaleType="fitStart"
-                app:srcCompat="@drawable/parks"/>
+                app:srcCompat="@drawable/parks" />
 
             <ImageView
                 android:id="@+id/imageView5"
@@ -227,6 +227,35 @@
                 android:contentDescription="@string/landmarks_description"
                 android:scaleType="fitEnd"
                 app:srcCompat="@drawable/landmarks"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="15dp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginStart="15dp"
+            android:orientation="horizontal">
+
+            <CheckBox
+                android:id="@+id/checkBox_parques"
+                android:layout_width="221dp"
+                android:layout_height="wrap_content"
+                android:onClick="onCheckboxClicked"
+                android:text=" Selecionar"
+                android:textAlignment="viewStart"
+                android:textColor="@color/colorSecondaryDark" />
+
+            <CheckBox
+                android:id="@+id/checkBox_locais_hist"
+                android:layout_width="161dp"
+                android:layout_height="wrap_content"
+                android:onClick="onCheckboxClicked"
+                android:text=" Selecionar"
+                android:textAlignment="viewStart"
+                android:textColor="@color/colorSecondaryDark" />
         </LinearLayout>
 
         <LinearLayout
@@ -268,6 +297,35 @@
             android:layout_marginStart="15dp"
             android:orientation="horizontal">
 
+            <CheckBox
+                android:id="@+id/checkBox_museus"
+                android:layout_width="221dp"
+                android:layout_height="wrap_content"
+                android:onClick="onCheckboxClicked"
+                android:text=" Selecionar"
+                android:textAlignment="viewStart"
+                android:textColor="@color/colorSecondaryDark" />
+
+            <CheckBox
+                android:id="@+id/checkBox_pracas"
+                android:layout_width="161dp"
+                android:layout_height="wrap_content"
+                android:onClick="onCheckboxClicked"
+                android:text=" Selecionar"
+                android:textAlignment="viewStart"
+                android:textColor="@color/colorSecondaryDark" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="15dp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginStart="15dp"
+            android:orientation="horizontal">
+
             <ImageView
                 android:id="@+id/imageView8"
                 android:layout_width="match_parent"
@@ -281,6 +339,27 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="15dp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginStart="15dp"
+            android:orientation="horizontal">
+
+            <CheckBox
+                android:id="@+id/checkBox_restaurantes"
+                android:layout_width="221dp"
+                android:layout_height="wrap_content"
+                android:onClick="onCheckboxClicked"
+                android:text=" Selecionar"
+                android:textAlignment="viewStart"
+                android:textColor="@color/colorSecondaryDark" />
+
         </LinearLayout>
 
         <Button
