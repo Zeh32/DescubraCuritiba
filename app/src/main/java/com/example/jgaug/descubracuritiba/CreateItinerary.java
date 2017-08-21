@@ -102,7 +102,7 @@ public class CreateItinerary extends AppCompatActivity {
     public void btnMakeItinerary( View view ) {
         Intent intent = new Intent( this, Itinerary.class );
 
-        EditText editText1 = (EditText) findViewById(R.id.editText1);
+        /*EditText editText1 = (EditText) findViewById(R.id.editText1);
         String data_inicio = editText1.getText().toString();
         intent.putExtra(EXTRA_MESSAGE1, data_inicio);
 
@@ -116,7 +116,7 @@ public class CreateItinerary extends AppCompatActivity {
 
         EditText editText4 = (EditText) findViewById(R.id.editText4);
         String hora_fim = editText4.getText().toString();
-        intent.putExtra(EXTRA_MESSAGE4, hora_fim);
+        intent.putExtra(EXTRA_MESSAGE4, hora_fim);*/
 
         startActivity( intent );
     }

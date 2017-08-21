@@ -3,54 +3,144 @@ package com.example.jgaug.descubracuritiba;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.TextView;
 
-public class Itinerary extends AppCompatActivity {
+import java.util.Locale;
+
+public class Itinerary extends AppCompatActivity implements ActionBar.TabListener{
+
+    SectionsPagerAdapter mSectionsPagerAdapter;
+
+    ViewPager mViewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_itinerary);
 
-        Intent intent = getIntent();
+        // Set up the action bar.
+        final ActionBar actionBar = getSupportActionBar();
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
-        String data_inicio = intent.getStringExtra(CreateItinerary.EXTRA_MESSAGE1);
-        TextView textView3 = (TextView) findViewById(R.id.textView3);
-        textView3.setText(data_inicio);
+        // Create the adapter that will return a fragment for each of the three
+        // primary sections of the activity.
+        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
-        String data_fim = intent.getStringExtra(CreateItinerary.EXTRA_MESSAGE2);
-        TextView textView4 = (TextView) findViewById(R.id.textView4);
-        textView4.setText(data_fim);
+        // Set up the ViewPager with the sections adapter.
+        mViewPager = (ViewPager) findViewById(R.id.pager);
+        mViewPager.setAdapter(mSectionsPagerAdapter);
 
-        String horario_inicio = intent.getStringExtra(CreateItinerary.EXTRA_MESSAGE3);
-        TextView textView5 = (TextView) findViewById(R.id.textView5);
-        textView5.setText(horario_inicio);
+        // When swiping between different sections, select the corresponding
+        // tab. We can also use ActionBar.Tab#select() to do this if we have
+        // a reference to the Tab.
+        mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+            @Override
+            public void onPageSelected(int position) {
+                actionBar.setSelectedNavigationItem(position);
+            }
+        });
 
-        String horario_fim = intent.getStringExtra(CreateItinerary.EXTRA_MESSAGE4);
-        TextView textView6 = (TextView) findViewById(R.id.textView6);
-        textView6.setText(horario_fim);
+        // For each of the sections in the app, add a tab to the action bar.
+        for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
+            // Create a tab with text corresponding to the page title defined by
+            // the adapter. Also specify this Activity object, which implements
+            // the TabListener interface, as the callback (listener) for when
+            // this tab is selected.
+            actionBar.addTab(actionBar.newTab().setText(mSectionsPagerAdapter.getPageTitle(i)).setTabListener(this));
+        }
+    }
 
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        String parques = settings.getString("parques", null);
-        TextView textView7 = (TextView) findViewById(R.id.textView7);
-        textView7.setText(parques);
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_itinerary, menu);
+        return true;
+    }
 
-        String museus = settings.getString("museus", null);
-        TextView textView8 = (TextView) findViewById(R.id.textView8);
-        textView8.setText(museus);
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
 
-        String locais_historicos = settings.getString("locais historicos", null);
-        TextView textView9 = (TextView) findViewById(R.id.textView9);
-        textView9.setText(locais_historicos);
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
 
-        String pracas = settings.getString("pracas", null);
-        TextView textView10 = (TextView) findViewById(R.id.textView10);
-        textView10.setText(pracas);
+        return super.onOptionsItemSelected(item);
+    }
 
-        String restaurantes = settings.getString("restaurantes", null);
-        TextView textView11 = (TextView) findViewById(R.id.textView11);
-        textView11.setText(restaurantes);
+    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+        // When the given tab is selected, switch to the corresponding page in
+        // the ViewPager.
+        mViewPager.setCurrentItem(tab.getPosition());
+    }
+
+
+    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+    }
+
+    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+    }
+
+    /**
+     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
+     * one of the sections/tabs/pages.
+     */
+    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+
+        public SectionsPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            Fragment fragment = null;
+            switch(position){
+                case 0:
+                    fragment = new ItineraryFragment();
+                    break;
+                case 1:
+                    fragment = new ItineraryFragment();
+                    //fragment = new RaggaeMusicFragment();
+                    break;
+                case 2:
+                    fragment = new ItineraryFragment();
+                    //fragment = new RapMusicFragment();
+            }
+            return fragment;
+        }
+
+        @Override
+        public int getCount() {
+            // Show 3 total pages.
+            return 3;
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            Locale l = Locale.getDefault();
+            switch (position) {
+                case 0:
+                    return getString(R.string.title_section1).toUpperCase(l);
+                case 1:
+                    return getString(R.string.title_section2).toUpperCase(l);
+                case 2:
+                    return getString(R.string.title_section3).toUpperCase(l);
+            }
+            return null;
+        }
     }
 }

@@ -36,5 +36,11 @@
 
     <!--Itinerary-->
     <string name="itinerary">Itinerário</string>
+    <string name="title_section1">Dia 1</string>
+    <string name="title_section2">Dia 2</string>
+    <string name="title_section3">Dia 3</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>
