@@ -125,8 +125,19 @@ public class Itinerary extends AppCompatActivity implements ActionBar.TabListene
 
         @Override
         public int getCount() {
-            // Show 3 total pages.
-            return 3;
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            int year1 = settings.getInt("year1", 0);
+            int month1 = settings.getInt("month1", 0);
+            int day1 = settings.getInt("day1", 0);
+            int year2 = settings.getInt("year2", 0);
+            int month2 = settings.getInt("month2", 0);
+            int day2 = settings.getInt("day2", 0);
+
+            if(month1 == (month2-1) && year1 == year2){
+                return day2-day1+1;
+            }
+            else
+                return 3;
         }
 
         @Override
