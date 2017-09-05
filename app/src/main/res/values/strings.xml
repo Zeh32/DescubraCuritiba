@@ -5,7 +5,7 @@
     <!--First Screen-->
     <string name="create_itinerary">Criar Itinerário</string>
     <string name="use_last_saved_route">Utilizar última rota salva</string>
-    <string name="places_to_visit">Locais para se visitar</string>
+    <string name="places_to_visit">Selecione os locais para visita</string>
     <string name="background_image_description">Imagem de fundo</string>
 
     <!--Create Itinerary-->

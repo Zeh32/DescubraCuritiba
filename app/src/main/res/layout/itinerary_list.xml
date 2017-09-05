@@ -19,7 +19,7 @@
             android:contentDescription="@string/hello_world"
             android:layout_alignParentTop="true"
             android:scaleType="centerCrop"
-            android:src="@drawable/parks"
+            android:src="@drawable/parks_unchecked"
             android:layout_centerHorizontal="true"/>
 
         <TextView

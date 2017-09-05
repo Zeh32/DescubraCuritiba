@@ -12,10 +12,13 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <!-- focusableInTouchMode and focusable attributes prevents the textView to get focus when the activity starts  -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="15dp"
+            android:focusableInTouchMode="true"
+            android:focusable="true"
             android:orientation="horizontal">
 
             <ImageView
@@ -287,53 +290,25 @@
             android:orientation="horizontal">
 
             <ImageView
-                android:id="@+id/imageView4"
+                android:id="@+id/imageViewParks"
                 android:layout_width="wrap_content"
                 android:layout_height="68dp"
                 android:layout_weight="1"
                 android:contentDescription="@string/parks_description"
                 android:scaleType="fitStart"
-                app:srcCompat="@drawable/parks" />
+                android:onClick="onSelectPlacesToVisit"
+                app:srcCompat="@drawable/parks_unchecked" />
 
             <ImageView
-                android:id="@+id/imageView5"
+                android:id="@+id/imageViewLandmarks"
                 android:layout_width="wrap_content"
                 android:layout_height="68dp"
                 android:layout_weight="1"
                 android:contentDescription="@string/landmarks_description"
                 android:scaleType="fitEnd"
-                app:srcCompat="@drawable/landmarks"/>
+                android:onClick="onSelectPlacesToVisit"
+                app:srcCompat="@drawable/landmarks_unchecked"/>
         </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="15dp"
-            android:layout_marginEnd="15dp"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
-            android:layout_marginStart="15dp"
-            android:orientation="horizontal">
-
-            <CheckBox
-                android:id="@+id/checkBox_parques"
-                android:layout_width="221dp"
-                android:layout_height="wrap_content"
-                android:onClick="onCheckboxClicked"
-                android:text=" Selecionar"
-                android:textAlignment="viewStart"
-                android:textColor="@color/colorSecondaryDark" />
-
-            <CheckBox
-                android:id="@+id/checkBox_locais_hist"
-                android:layout_width="161dp"
-                android:layout_height="wrap_content"
-                android:onClick="onCheckboxClicked"
-                android:text=" Selecionar"
-                android:textAlignment="viewStart"
-                android:textColor="@color/colorSecondaryDark" />
-        </LinearLayout>
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -345,53 +320,25 @@
             android:orientation="horizontal">
 
             <ImageView
-                android:id="@+id/imageView6"
+                android:id="@+id/imageViewMuseums"
                 android:layout_width="wrap_content"
                 android:layout_height="68dp"
                 android:layout_weight="1"
                 android:contentDescription="@string/museums_description"
                 android:scaleType="fitStart"
-                app:srcCompat="@drawable/museums"/>
+                android:onClick="onSelectPlacesToVisit"
+                app:srcCompat="@drawable/museums_unchecked"/>
 
             <ImageView
-                android:id="@+id/imageView7"
+                android:id="@+id/imageViewShopping"
                 android:layout_width="wrap_content"
                 android:layout_height="68dp"
                 android:layout_weight="1"
                 android:contentDescription="@string/shopping_description"
                 android:scaleType="fitEnd"
-                app:srcCompat="@drawable/shopping"/>
+                android:onClick="onSelectPlacesToVisit"
+                app:srcCompat="@drawable/shopping_unchecked"/>
         </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="15dp"
-            android:layout_marginEnd="15dp"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
-            android:layout_marginStart="15dp"
-            android:orientation="horizontal">
-
-            <CheckBox
-                android:id="@+id/checkBox_museus"
-                android:layout_width="221dp"
-                android:layout_height="wrap_content"
-                android:onClick="onCheckboxClicked"
-                android:text=" Selecionar"
-                android:textAlignment="viewStart"
-                android:textColor="@color/colorSecondaryDark" />
-
-            <CheckBox
-                android:id="@+id/checkBox_pracas"
-                android:layout_width="161dp"
-                android:layout_height="wrap_content"
-                android:onClick="onCheckboxClicked"
-                android:text=" Selecionar"
-                android:textAlignment="viewStart"
-                android:textColor="@color/colorSecondaryDark" />
-        </LinearLayout>
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -403,41 +350,20 @@
             android:orientation="horizontal">
 
             <ImageView
-                android:id="@+id/imageView8"
+                android:id="@+id/imageViewFood"
                 android:layout_width="match_parent"
                 android:layout_height="68dp"
                 android:layout_weight="1"
                 android:contentDescription="@string/food_description"
                 android:scaleType="fitStart"
-                app:srcCompat="@drawable/food"/>
+                android:onClick="onSelectPlacesToVisit"
+                app:srcCompat="@drawable/food_unchecked"/>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"/>
         </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="15dp"
-            android:layout_marginEnd="15dp"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
-            android:layout_marginStart="15dp"
-            android:orientation="horizontal">
-
-            <CheckBox
-                android:id="@+id/checkBox_restaurantes"
-                android:layout_width="221dp"
-                android:layout_height="wrap_content"
-                android:onClick="onCheckboxClicked"
-                android:text=" Selecionar"
-                android:textAlignment="viewStart"
-                android:textColor="@color/colorSecondaryDark" />
-
-        </LinearLayout>
-
         <Button
             android:id="@+id/btnMakeItinerary"
             style="@style/ButtonStyle"
