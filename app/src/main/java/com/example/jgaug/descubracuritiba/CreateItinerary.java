@@ -1,7 +1,5 @@
 package com.example.jgaug.descubracuritiba;
 
-import android.app.DatePickerDialog;
-import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -9,25 +7,11 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.Calendar;
-
 public class CreateItinerary extends AppCompatActivity {
-
-    public static final String EXTRA_MESSAGE1 = "com.example.myfirstapp.data_inicio";
-    public static final String EXTRA_MESSAGE2 = "com.example.myfirstapp.data_fim";
-    public static final String EXTRA_MESSAGE3 = "com.example.myfirstapp.hora_inicio";
-    public static final String EXTRA_MESSAGE4 = "com.example.myfirstapp.hora_fim";
-    private DatePicker datePicker;
-    private Calendar calendar, calendar2;
-    private TextView dateView;
-    private int year, month, day;
-    private TextView dateView2;
-    private int year2, month2, day2;
     private boolean parksSelected = false;
     private boolean landmarksSelected = false;
     private boolean museumsSelected = false;
@@ -48,7 +32,7 @@ public class CreateItinerary extends AppCompatActivity {
         editor.putString( "restaurantes", "Restaurantes não" );
         editor.apply( );
 
-        dateView = ( TextView ) findViewById( R.id.textView13 );
+        /*dateView = ( TextView ) findViewById( R.id.textView13 );
         //day = 22;
         //month = 07;
         //year = 2017;
@@ -81,7 +65,37 @@ public class CreateItinerary extends AppCompatActivity {
         tv1.setText( "00 : 00" );
 
         TextView tv2 = ( TextView ) findViewById( R.id.textView16 );
-        tv2.setText( "00 : 00" );
+        tv2.setText( "00 : 00" );*/
+    }
+
+    public void btnSelectPlaceOnMap( View view ) {
+        Toast.makeText( this, "Não implementado", Toast.LENGTH_SHORT ).show( );
+    }
+
+    public void setTime( View view ) {
+        Bundle bundle = new Bundle( );
+        if( view.getId( ) == R.id.textViewStartTime ) {
+            bundle.putBoolean( "isStartTime", true );
+        } else {
+            bundle.putBoolean( "isStartTime", false );
+        }
+
+        DialogFragment timePickerFragment = new TimePickerFragment( );
+        timePickerFragment.setArguments( bundle );
+        timePickerFragment.show( getSupportFragmentManager( ), "timePicker" );
+    }
+
+    public void setDate( View view ) {
+        Bundle bundle = new Bundle( );
+        if( view.getId( ) == R.id.textViewStartDay ) {
+            bundle.putBoolean( "isStartDay", true );
+        } else {
+            bundle.putBoolean( "isStartDay", false );
+        }
+
+        DialogFragment datePickerFragment = new DatePickerFragment( );
+        datePickerFragment.setArguments( bundle );
+        datePickerFragment.show( getSupportFragmentManager( ), "datePicker" );
     }
 
     public void onSelectPlacesToVisit( View view ) {
@@ -118,99 +132,20 @@ public class CreateItinerary extends AppCompatActivity {
         }
     }
 
-    public void showTimePickerDialog( View v ) {
-        DialogFragment newFragment = new TimePickerFragment( );
-        newFragment.show( getSupportFragmentManager( ), "timePicker" );
-    }
-
-    public void showTimePickerDialog2( View v ) {
-        DialogFragment newFragment2 = new TimePickerFragment2( );
-        newFragment2.show( getSupportFragmentManager( ), "timePicker" );
-    }
-
-    @SuppressWarnings( "deprecation" )
-    public void setDate( View view ) {
-        showDialog( 999 );
-        Toast.makeText( getApplicationContext( ), "ca", Toast.LENGTH_SHORT ).show( );
-    }
-
-    @SuppressWarnings( "deprecation" )
-    public void setDate2( View view ) {
-        showDialog( 998 );
-        Toast.makeText( getApplicationContext( ), "ca", Toast.LENGTH_SHORT ).show( );
-    }
-
-    @Override
-    protected Dialog onCreateDialog( int id ) {
-        // TODO Auto-generated method stub
-        if( id == 999 ) {
-            return new DatePickerDialog( this, myDateListener, year, month, day );
-        } else if( id == 998 ) {
-            return new DatePickerDialog( this, myDateListener2, year2, month2, day2 );
-        }
-        return null;
-    }
-
-    private DatePickerDialog.OnDateSetListener myDateListener = new DatePickerDialog.OnDateSetListener( ) {
-        @Override
-        public void onDateSet( DatePicker arg0, int arg1, int arg2, int arg3 ) {
-            // TODO Auto-generated method stub
-            // arg1 = year
-            // arg2 = month
-            // arg3 = day
-            showDate1( arg1, arg2 + 1, arg3 );
-        }
-    };
-
-    private DatePickerDialog.OnDateSetListener myDateListener2 = new DatePickerDialog.OnDateSetListener( ) {
-        @Override
-        public void onDateSet( DatePicker arg0, int arg1, int arg2, int arg3 ) {
-            // TODO Auto-generated method stub
-            // arg1 = year
-            // arg2 = month
-            // arg3 = day
-            showDate2( arg1, arg2 + 1, arg3 );
-        }
-    };
-
-    private void showDate1( int year, int month, int day ) {
-        dateView.setText( new StringBuilder( ).append( day ).append( "/" ).append( month ).append( "/" ).append( year ) );
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences( getApplicationContext( ) );
-        SharedPreferences.Editor editor = settings.edit( );
-        editor.putInt( "year1", year );
-        editor.putInt( "month1", month );
-        editor.putInt( "day1", day );
-        editor.commit( );
-    }
-
-    private void showDate2( int year, int month, int day ) {
-        dateView2.setText( new StringBuilder( ).append( day ).append( "/" ).append( month ).append( "/" ).append( year ) );
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences( getApplicationContext( ) );
-        SharedPreferences.Editor editor = settings.edit( );
-        editor.putInt( "year2", year );
-        editor.putInt( "month2", month );
-        editor.putInt( "day2", day );
-        editor.commit( );
-    }
-
     public void btnMakeItinerary( View view ) {
         Intent intent = new Intent( this, Itinerary.class );
 
-        /*EditText editText1 = (EditText) findViewById(R.id.editText1);
-        String data_inicio = editText1.getText().toString();
-        intent.putExtra(EXTRA_MESSAGE1, data_inicio);
+        TextView textViewStartDay = ( TextView ) findViewById( R.id.textViewStartDay );
+        intent.putExtra( "startDay", textViewStartDay.getText( ).toString( ) );
 
-        EditText editText2 = (EditText) findViewById(R.id.editText2);
-        String data_fim = editText2.getText().toString();
-        intent.putExtra(EXTRA_MESSAGE2, data_fim);
+        TextView textViewEndDay = ( TextView ) findViewById( R.id.textViewEndDay );
+        intent.putExtra( "endDay", textViewEndDay.getText( ).toString( ) );
 
-        EditText editText3 = (EditText) findViewById(R.id.editText3);
-        String hora_inicio = editText3.getText().toString();
-        intent.putExtra(EXTRA_MESSAGE3, hora_inicio);
+        TextView textViewStartTime = ( TextView ) findViewById( R.id.textViewStartTime );
+        intent.putExtra( "startTime", textViewStartTime.getText( ).toString( ) );
 
-        EditText editText4 = (EditText) findViewById(R.id.editText4);
-        String hora_fim = editText4.getText().toString();
-        intent.putExtra(EXTRA_MESSAGE4, hora_fim);*/
+        TextView textViewEndTime = ( TextView ) findViewById( R.id.textViewEndTime );
+        intent.putExtra( "endTime", textViewEndTime.getText( ).toString( ) );
 
         startActivity( intent );
     }

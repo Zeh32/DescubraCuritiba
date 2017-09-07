@@ -1,5 +1,4 @@
 <resources>
-
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
@@ -10,6 +9,7 @@
         <item name="colorAccent">@color/colorSecondary</item>
     </style>
 
+    <!-- Default button style -->
     <style name="ButtonStyle">
         <item name="android:background">@color/colorSecondary</item>
         <item name="android:layout_marginRight">15dp</item>
