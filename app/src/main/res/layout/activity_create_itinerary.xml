@@ -236,10 +236,10 @@
                 android:id="@+id/textView12"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/places_to_visit"
                 android:layout_marginBottom="15dp"
+                android:text="@string/interesting_places"
                 android:textColor="@color/colorSecondaryDark"
-                android:textSize="22sp"/>
+                android:textSize="20sp"/>
 
             <LinearLayout
                 android:layout_width="match_parent"

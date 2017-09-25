@@ -5,7 +5,7 @@
     <!--First Screen-->
     <string name="create_itinerary">Criar Itinerário</string>
     <string name="use_last_saved_route">Utilizar última rota salva</string>
-    <string name="places_to_visit">Selecione os locais para visita</string>
+    <string name="places_to_visit">Locais para conhecer</string>
     <string name="background_image_description">Imagem de fundo</string>
 
     <!--Create Itinerary-->
@@ -21,7 +21,7 @@
     <string name="select_end_time">Horário de término</string>
     <string name="clock_description">Imagem relógio</string>
 
-    <string name="places_to_vist">Locais de interesse</string>
+    <string name="interesting_places">Locais de interesse</string>
     <string name="select_list_parks">Parques, bosques e praças</string>
     <string name="select_list_landmarks">Pontos turísticos</string>
     <string name="select_list_museums">Museus</string>
