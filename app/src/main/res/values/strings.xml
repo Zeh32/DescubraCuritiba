@@ -43,4 +43,10 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
+    <string name="magnifier_description">Imagem lupa</string>
+    <string name="weather_description">Imagem clima</string>
+    <string name="navigate_description">Imagem navegar</string>
+    <string name="vehicle_description">Imagem veículo deslocamento</string>
 </resources>
