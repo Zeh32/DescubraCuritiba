@@ -49,4 +49,7 @@
     <string name="weather_description">Imagem clima</string>
     <string name="navigate_description">Imagem navegar</string>
     <string name="vehicle_description">Imagem veículo deslocamento</string>
+    <string name="title_activity_tabbed_test">TabbedTest</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="title_activity_itinerary">Itinerário</string>
 </resources>

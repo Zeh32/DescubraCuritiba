@@ -10,63 +10,58 @@ import android.widget.TextView;
 
 import java.util.List;
 
-/**
- * Created by Administrador on 18/08/2017.
- */
-
 public class CustomAdapter extends BaseAdapter {
 
     private LayoutInflater layoutinflater;
-    private List<ItemObject> listStorage;
+    private List< Place > listStorage;
     private Context context;
 
-    public CustomAdapter(Context context, List<ItemObject> customizedListView) {
+    public CustomAdapter( Context context, List< Place > customizedListView ) {
         this.context = context;
-        layoutinflater =(LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        listStorage = customizedListView;
+        this.layoutinflater = ( LayoutInflater ) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+        this.listStorage = customizedListView;
     }
 
     @Override
-    public int getCount() {
-        return listStorage.size();
+    public int getCount( ) {
+        return listStorage.size( );
     }
 
     @Override
-    public Object getItem(int position) {
+    public Object getItem( int position ) {
         return position;
     }
 
     @Override
-    public long getItemId(int position) {
+    public long getItemId( int position ) {
         return position;
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-
+    public View getView( int position, View convertView, ViewGroup parent ) {
         ViewHolder listViewHolder;
-        if(convertView == null){
-            listViewHolder = new ViewHolder();
-            convertView = layoutinflater.inflate(R.layout.itinerary_list, parent, false);
-            listViewHolder.screenShot = (ImageView)convertView.findViewById(R.id.screen_shot);
-            listViewHolder.musicName = (TextView)convertView.findViewById(R.id.music_name);
-            listViewHolder.musicAuthor = (TextView)convertView.findViewById(R.id.music_author);
 
-            convertView.setTag(listViewHolder);
-        }else{
-            listViewHolder = (ViewHolder)convertView.getTag();
+        if( convertView == null ) {
+            listViewHolder = new ViewHolder( );
+            convertView = layoutinflater.inflate( R.layout.itinerary_list_item, parent, false );
+            listViewHolder.placeImage = ( ImageView ) convertView.findViewById( R.id.place_image );
+            listViewHolder.placeName = ( TextView ) convertView.findViewById( R.id.place_name );
+            listViewHolder.placeDescription = ( TextView ) convertView.findViewById( R.id.place_description );
+
+            convertView.setTag( listViewHolder );
+        } else {
+            listViewHolder = ( ViewHolder ) convertView.getTag( );
         }
-        listViewHolder.screenShot.setImageResource(listStorage.get(position).getScreenShot());
-        listViewHolder.musicName.setText(listStorage.get(position).getMusicName());
-        listViewHolder.musicAuthor.setText(listStorage.get(position).getMusicAuthor());
+        //listViewHolder.placeImage.setImageResource( listStorage.get( position ).getScreenShot( ) );
+        listViewHolder.placeName.setText( listStorage.get( position ).getName( ) );
+        listViewHolder.placeDescription.setText( listStorage.get( position ).getDescription( ) );
 
         return convertView;
     }
 
-    static class ViewHolder{
-        ImageView screenShot;
-        TextView musicName;
-        TextView musicAuthor;
+    private static class ViewHolder {
+        ImageView placeImage;
+        TextView placeName;
+        TextView placeDescription;
     }
-
 }
