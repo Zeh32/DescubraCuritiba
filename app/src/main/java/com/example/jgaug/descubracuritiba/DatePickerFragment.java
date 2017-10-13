@@ -1,9 +1,5 @@
 package com.example.jgaug.descubracuritiba;
 
-/**
- * Created by Administrador on 22/08/2017.
- */
-
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.os.Bundle;
@@ -13,6 +9,7 @@ import android.widget.DatePicker;
 import android.widget.TextView;
 
 import java.util.Calendar;
+import java.util.Date;
 
 public class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
 
@@ -24,8 +21,19 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
         int month = c.get( Calendar.MONTH );
         int day = c.get( Calendar.DAY_OF_MONTH );
 
+        Date today = new Date( );
+        c.setTime( today );
+        long minDate = c.getTime( ).getTime( ); //Set de minimum date to today
+
+        c.add( Calendar.DAY_OF_YEAR, 14 ); //Add a limit for 14 days to the pickerDialog
+        long maxDate = c.getTime( ).getTime( );
+
         // Create a new instance of DatePickerDialog and return it
-        return new DatePickerDialog( getActivity( ), this, year, month, day );
+        DatePickerDialog pickerDialog = new DatePickerDialog( getActivity( ), this, year, month, day );
+        pickerDialog.getDatePicker( ).setMaxDate( maxDate );
+        pickerDialog.getDatePicker( ).setMinDate( minDate );
+
+        return pickerDialog;
     }
 
     public void onDateSet( DatePicker view, int year, int month, int day ) {
