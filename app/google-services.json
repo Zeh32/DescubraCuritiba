@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "963167254948",
+    "firebase_url": "https://descubra-curitiba.firebaseio.com",
+    "project_id": "descubra-curitiba",
+    "storage_bucket": "descubra-curitiba.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:963167254948:android:fd6096d21faf7f22",
+        "android_client_info": {
+          "package_name": "com.example.jgaug.descubracuritiba"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "963167254948-987pnempa64g3i52f7qs1g4d4uvka2t0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.jgaug.descubracuritiba",
+            "certificate_hash": "3a28b15b7ea44ee84033f417ca65b7c381ce01c6"
+          }
+        },
+        {
+          "client_id": "963167254948-n67ltggfndu055nd9ks4seojif6hvdqt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA_mv3uw2kaunESIb2iHPh-c4Q_3mK6uu0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "963167254948-n67ltggfndu055nd9ks4seojif6hvdqt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
