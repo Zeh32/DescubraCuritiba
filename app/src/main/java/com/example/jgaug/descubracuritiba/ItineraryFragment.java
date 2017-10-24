@@ -48,10 +48,10 @@ public class ItineraryFragment extends Fragment {
 
     private List< Place > getPlacesToVisit( ) {
         List< Place > placesToVisit = new ArrayList<>( );
-        placesToVisit.add( new Place( "1 - Jardim Botânico", "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat." ) );
-        placesToVisit.add( new Place( "2 - Ópera de Arame", "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat." ) );
-        placesToVisit.add( new Place( "3 - Largo da Ordem", "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat." ) );
-        placesToVisit.add( new Place( "4 - Praça Tiradentes", "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat." ) );
+        placesToVisit.add( new Place( "Jardim botanico.jpg", "1 - Jardim Botânico", "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat." ) );
+        placesToVisit.add( new Place( "opera de arame.jpg", "2 - Ópera de Arame", "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat." ) );
+        placesToVisit.add( new Place( "largo da ordem.jpg", "3 - Largo da Ordem", "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat." ) );
+        placesToVisit.add( new Place( "praca tiradentes.jpg", "4 - Praça Tiradentes", "lalalalala" ) );
 
         return placesToVisit;
     }
