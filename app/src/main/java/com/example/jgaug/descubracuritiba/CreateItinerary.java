@@ -8,8 +8,9 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.Calendar;
 
 public class CreateItinerary extends AppCompatActivity {
     private boolean parksSelected = false;
@@ -17,6 +18,8 @@ public class CreateItinerary extends AppCompatActivity {
     private boolean museumsSelected = false;
     private boolean shoppingSelected = false;
     private boolean foodsSelected = false;
+    private Calendar startDay = Calendar.getInstance( );
+    private Calendar endDay = Calendar.getInstance( );
 
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
@@ -73,6 +76,9 @@ public class CreateItinerary extends AppCompatActivity {
     }
 
     public void setTime( View view ) {
+        //TODO: não deixar setar o tempo, se o dia selecionado é o de hoje e já se passaram das 19
+        //TODO: não deixar setar o tempo de término, se o inicial ainda não foi definido
+
         Bundle bundle = new Bundle( );
         if( view.getId( ) == R.id.textViewStartTime ) {
             bundle.putBoolean( "isStartTime", true );
@@ -86,6 +92,8 @@ public class CreateItinerary extends AppCompatActivity {
     }
 
     public void setDate( View view ) {
+        //TODO: não deixar setar a data de término, se a inicial ainda não foi definida
+
         Bundle bundle = new Bundle( );
         if( view.getId( ) == R.id.textViewStartDay ) {
             bundle.putBoolean( "isStartDay", true );
@@ -96,6 +104,28 @@ public class CreateItinerary extends AppCompatActivity {
         DialogFragment datePickerFragment = new DatePickerFragment( );
         datePickerFragment.setArguments( bundle );
         datePickerFragment.show( getSupportFragmentManager( ), "datePicker" );
+    }
+
+    public void setDay( boolean isStartDay, int year, int month, int day ) {
+        if( isStartDay ) {
+            this.startDay.set( year, month, day );
+        } else {
+            this.endDay.set( year, month, day );
+        }
+    }
+
+    public void setTime( boolean isStartTime, int hourOfDay, int minute ) {
+        if( isStartTime ) {
+            this.startDay.set( Calendar.HOUR_OF_DAY, hourOfDay );
+            this.startDay.set( Calendar.MINUTE, minute );
+        } else {
+            this.endDay.set( Calendar.HOUR_OF_DAY, hourOfDay );
+            this.endDay.set( Calendar.MINUTE, minute );
+        }
+    }
+
+    public Calendar getStartDay( ) {
+        return startDay;
     }
 
     public void onSelectPlacesToVisit( View view ) {
@@ -125,7 +155,7 @@ public class CreateItinerary extends AppCompatActivity {
 
     private void changeImageViewResource( boolean placeSelected, int imageViewId, int checkedImageViewId, int uncheckedImageViewId ) {
         ImageView imageView = ( ImageView ) findViewById( imageViewId );
-        if( placeSelected == true ) {
+        if( placeSelected ) {
             imageView.setImageResource( checkedImageViewId );
         } else {
             imageView.setImageResource( uncheckedImageViewId );
@@ -133,20 +163,20 @@ public class CreateItinerary extends AppCompatActivity {
     }
 
     public void btnMakeItinerary( View view ) {
-        Intent intent = new Intent( this, Itinerary.class );
+        if( !parksSelected && !landmarksSelected && !museumsSelected && !shoppingSelected && !foodsSelected ) {
+            Toast.makeText( this, "Para gerar o itinerário, selecione ao menos um grupo de local para visita!", Toast.LENGTH_SHORT ).show( );
+        } else {
+            long diff = endDay.getTimeInMillis( ) - startDay.getTimeInMillis( ); //result in millis
+            long numberOfDays = ( diff / ( 24 * 60 * 60 * 1000 ) ) + 1;
 
-        TextView textViewStartDay = ( TextView ) findViewById( R.id.textViewStartDay );
-        intent.putExtra( "startDay", textViewStartDay.getText( ).toString( ) );
+            Intent intent = new Intent( this, Itinerary.class );
+            intent.putExtra( "numberOfDays", ( int ) numberOfDays );
+            intent.putExtra( "startHour", startDay.get( Calendar.HOUR_OF_DAY ) );
+            intent.putExtra( "startMinute", startDay.get( Calendar.MINUTE ) );
+            intent.putExtra( "endHour", endDay.get( Calendar.HOUR_OF_DAY ) );
+            intent.putExtra( "endMinute", endDay.get( Calendar.MINUTE ) );
 
-        TextView textViewEndDay = ( TextView ) findViewById( R.id.textViewEndDay );
-        intent.putExtra( "endDay", textViewEndDay.getText( ).toString( ) );
-
-        TextView textViewStartTime = ( TextView ) findViewById( R.id.textViewStartTime );
-        intent.putExtra( "startTime", textViewStartTime.getText( ).toString( ) );
-
-        TextView textViewEndTime = ( TextView ) findViewById( R.id.textViewEndTime );
-        intent.putExtra( "endTime", textViewEndTime.getText( ).toString( ) );
-
-        startActivity( intent );
+            startActivity( intent );
+        }
     }
 }

@@ -8,6 +8,7 @@ import android.support.v4.app.DialogFragment;
 import android.text.format.DateFormat;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import java.util.Calendar;
 
@@ -30,12 +31,28 @@ public class TimePickerFragment extends DialogFragment implements TimePickerDial
 
         Bundle args = getArguments( );
         boolean isStartTime = args.getBoolean( "isStartTime" );
-        if( isStartTime == true ) {
-            TextView textViewStartTime = ( TextView ) getActivity( ).findViewById( R.id.textViewStartTime );
-            textViewStartTime.setText( formattedHour + " : " + formattedMinute );
+        if( isStartTime ) {
+            if( hourOfDay > 19 ) {
+                Toast.makeText( getActivity(), "Não é possível definir um horário de início após às 20 horas!", Toast.LENGTH_LONG ).show( );
+            } else if( hourOfDay < 5 ) {
+                Toast.makeText( getActivity(), "Não é possível definir um horário de início inferior às 5 horas!", Toast.LENGTH_LONG ).show( );
+            } else {
+                ( ( CreateItinerary ) getActivity( ) ).setTime( true, hourOfDay, minute );
+
+                TextView textViewStartTime = ( TextView ) getActivity( ).findViewById( R.id.textViewStartTime );
+                textViewStartTime.setText( formattedHour + " : " + formattedMinute );
+            }
         } else {
-            TextView textViewEndTime = ( TextView ) getActivity( ).findViewById( R.id.textViewEndTime );
-            textViewEndTime.setText( formattedHour + " : " + formattedMinute );
+            if( hourOfDay > 20 ) {
+                Toast.makeText( getActivity(), "Não é possível definir um horário de término após às 20 horas!", Toast.LENGTH_SHORT ).show( );
+            } else {
+                ( ( CreateItinerary ) getActivity( ) ).setTime( false, hourOfDay, minute );
+
+                TextView textViewEndTime = ( TextView ) getActivity( ).findViewById( R.id.textViewEndTime );
+                textViewEndTime.setText( formattedHour + " : " + formattedMinute );
+            }
         }
+
+        //TODO: verificar se a hora de término é maior que a de início
     }
 }

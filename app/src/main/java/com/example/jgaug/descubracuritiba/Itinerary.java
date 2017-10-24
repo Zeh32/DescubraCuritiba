@@ -73,21 +73,13 @@ public class Itinerary extends AppCompatActivity {
 
         @Override
         public int getCount( ) {
-            // Show 3 total pages.
-            return 3;
+            return getIntent().getIntExtra( "numberOfDays", 1 );
         }
 
         @Override
         public CharSequence getPageTitle( int position ) {
-            switch( position ) {
-                case 0:
-                    return "Dia 1";
-                case 1:
-                    return "Dia 2";
-                case 2:
-                    return "Dia 3";
-            }
-            return null;
+            String title = "Dia " + ( position + 1 );
+            return title;
         }
     }
 }
