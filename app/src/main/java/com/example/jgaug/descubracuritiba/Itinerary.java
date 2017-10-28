@@ -12,8 +12,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 public class Itinerary extends AppCompatActivity {
-    private SectionsPagerAdapter mSectionsPagerAdapter;
-    private ViewPager mViewPager;
 
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
@@ -23,11 +21,11 @@ public class Itinerary extends AppCompatActivity {
         Toolbar toolbar = ( Toolbar ) findViewById( R.id.toolbar );
         setSupportActionBar( toolbar );
 
-        // Create the adapter that will return a fragment for each of the three primary sections of the activity.
-        mSectionsPagerAdapter = new SectionsPagerAdapter( getSupportFragmentManager( ) );
+        // Create the adapter that will return a fragment for each section of the activity.
+        SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter( getSupportFragmentManager( ) );
 
         // Set up the ViewPager with the sections adapter.
-        mViewPager = ( ViewPager ) findViewById( R.id.container );
+        ViewPager mViewPager = ( ViewPager ) findViewById( R.id.container );
         mViewPager.setAdapter( mSectionsPagerAdapter );
 
         TabLayout tabLayout = ( TabLayout ) findViewById( R.id.tabs );
@@ -78,8 +76,7 @@ public class Itinerary extends AppCompatActivity {
 
         @Override
         public CharSequence getPageTitle( int position ) {
-            String title = "Dia " + ( position + 1 );
-            return title;
+            return "Dia " + ( position + 1 );
         }
     }
 }

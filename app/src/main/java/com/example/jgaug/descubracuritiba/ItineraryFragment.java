@@ -56,4 +56,3 @@ public class ItineraryFragment extends Fragment {
         return placesToVisit;
     }
 }
-

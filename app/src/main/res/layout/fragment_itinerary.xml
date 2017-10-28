@@ -7,4 +7,5 @@
     android:layout_height="match_parent"
     android:divider="@null"
     android:clipToPadding="false"
+    android:paddingBottom="65dp"
     tools:context="com.example.jgaug.descubracuritiba.ItineraryFragment"/>

@@ -164,7 +164,7 @@ public class CreateItinerary extends AppCompatActivity {
 
     public void btnMakeItinerary( View view ) {
         if( !parksSelected && !landmarksSelected && !museumsSelected && !shoppingSelected && !foodsSelected ) {
-            Toast.makeText( this, "Para gerar o itinerário, selecione ao menos um grupo de local para visita!", Toast.LENGTH_SHORT ).show( );
+            Toast.makeText( this, "Para gerar o itinerário, selecione ao menos um grupo de locais para visita!", Toast.LENGTH_SHORT ).show( );
         } else {
             long diff = endDay.getTimeInMillis( ) - startDay.getTimeInMillis( ); //result in millis
             long numberOfDays = ( diff / ( 24 * 60 * 60 * 1000 ) ) + 1;

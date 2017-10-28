@@ -22,11 +22,9 @@ import java.io.IOException;
 import java.util.List;
 
 public class CustomAdapter extends BaseAdapter {
-
     private LayoutInflater layoutinflater;
     private List< Place > listStorage;
     private Context context;
-    private StorageReference mStorageRef;
 
     public CustomAdapter( Context context, List< Place > customizedListView ) {
         this.context = context;
@@ -52,7 +50,6 @@ public class CustomAdapter extends BaseAdapter {
     @Override
     public View getView( int position, View convertView, ViewGroup parent ) {
         final ViewHolder listViewHolder;
-        mStorageRef = FirebaseStorage.getInstance().getReference();
 
         if( convertView == null ) {
             listViewHolder = new ViewHolder( );
@@ -67,25 +64,25 @@ public class CustomAdapter extends BaseAdapter {
         }
         //listViewHolder.placeImage.setImageResource( listStorage.get( position ).getScreenShot( ) );
 
+        StorageReference mStorageRef = FirebaseStorage.getInstance( ).getReference( );
         try {
-            final File localFile = File.createTempFile("images", "jpg");
-            StorageReference imageRef = mStorageRef.child(listStorage.get( position ).getImage( ));
-            imageRef.getFile(localFile)
-                    .addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                            Bitmap bitmap = BitmapFactory.decodeFile(localFile.getAbsolutePath());
-                            listViewHolder.placeImage.setImageBitmap(bitmap);
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
+            final File localFile = File.createTempFile( "images", "jpg" );
+            StorageReference imageRef = mStorageRef.child( listStorage.get( position ).getImage( ) );
+            imageRef.getFile( localFile ).addOnSuccessListener( new OnSuccessListener< FileDownloadTask.TaskSnapshot >( ) {
                 @Override
-                public void onFailure(@NonNull Exception exception) {
+                public void onSuccess( FileDownloadTask.TaskSnapshot taskSnapshot ) {
+                    Bitmap bitmap = BitmapFactory.decodeFile( localFile.getAbsolutePath( ) );
+                    listViewHolder.placeImage.setImageBitmap( bitmap );
+                }
+            } ).addOnFailureListener( new OnFailureListener( ) {
+                @Override
+                public void onFailure( @NonNull Exception exception ) {
                     // Handle failed download
                     // ...
                 }
-            });
-        } catch (IOException e) {
-            e.printStackTrace();
+            } );
+        } catch( IOException e ) {
+            e.printStackTrace( );
         }
 
         listViewHolder.placeName.setText( listStorage.get( position ).getName( ) );
