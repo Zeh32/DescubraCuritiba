@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "963167254948-2sg5ip4e52lod0kj2pq84eg75duk2k64.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.jgaug.descubracuritiba",
+            "certificate_hash": "24ced8e98bada777af93dd2188cd734e9de24bfb"
+          }
+        },
+        {
           "client_id": "963167254948-5hf1v8oak8eqa6p45nv7mmig73cv80k8.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

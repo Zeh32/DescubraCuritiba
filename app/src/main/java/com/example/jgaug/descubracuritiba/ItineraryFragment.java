@@ -9,7 +9,8 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
+import com.example.jgaug.descubracuritiba.Helpers.Place;
+
 import java.util.List;
 
 public class ItineraryFragment extends Fragment {
@@ -28,13 +29,14 @@ public class ItineraryFragment extends Fragment {
     @Override
     public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
         View view = inflater.inflate( R.layout.fragment_itinerary, container, false );
-//        TextView textView = ( TextView ) rootView.findViewById( R.id.section_label );
-//        textView.setText( getString( R.string.section_format, getArguments( ).getInt( ARG_SECTION_NUMBER ) ) );
+        //        TextView textView = ( TextView ) rootView.findViewById( R.id.section_label );
+        //        textView.setText( getString( R.string.section_format, getArguments( ).getInt( ARG_SECTION_NUMBER ) ) );
+
+
+        List< Place > placesToVisit = ( ( Itinerary ) getActivity( ) ).getPlacesToVisit( );
+        CustomAdapter customAdapter = new CustomAdapter( getActivity( ), placesToVisit );
 
         ListView listView = ( ListView ) view.findViewById( R.id.itinerary_list_view );
-
-        List< Place > placesToVisit = getPlacesToVisit( );
-        CustomAdapter customAdapter = new CustomAdapter( getActivity( ), placesToVisit );
         listView.setAdapter( customAdapter );
 
         listView.setOnItemClickListener( new AdapterView.OnItemClickListener( ) {
@@ -43,16 +45,7 @@ public class ItineraryFragment extends Fragment {
                 Toast.makeText( getActivity( ), "Position: " + position, Toast.LENGTH_SHORT ).show( );
             }
         } );
+
         return view;
-    }
-
-    private List< Place > getPlacesToVisit( ) {
-        List< Place > placesToVisit = new ArrayList<>( );
-        placesToVisit.add( new Place( "Jardim botanico.jpg", "1 - Jardim Botânico", "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat." ) );
-        placesToVisit.add( new Place( "opera de arame.jpg", "2 - Ópera de Arame", "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat." ) );
-        placesToVisit.add( new Place( "largo da ordem.jpg", "3 - Largo da Ordem", "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat." ) );
-        placesToVisit.add( new Place( "praca tiradentes.jpg", "4 - Praça Tiradentes", "lalalalala" ) );
-
-        return placesToVisit;
     }
 }

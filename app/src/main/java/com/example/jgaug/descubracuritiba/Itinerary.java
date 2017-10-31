@@ -11,6 +11,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.jgaug.descubracuritiba.Helpers.Place;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class Itinerary extends AppCompatActivity {
 
     @Override
@@ -54,6 +59,16 @@ public class Itinerary extends AppCompatActivity {
         return super.onOptionsItemSelected( item );
     }
 
+    public List< Place > getPlacesToVisit( ) {
+        List< Place > placesToVisit = new ArrayList<>( );
+        placesToVisit.add( new Place( "Jardim botanico.jpg", "1 - Jardim Botânico", "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat." ) );
+        placesToVisit.add( new Place( "opera de arame.jpg", "2 - Ópera de Arame", "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat." ) );
+        placesToVisit.add( new Place( "largo da ordem.jpg", "3 - Largo da Ordem", "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat." ) );
+        placesToVisit.add( new Place( "praca tiradentes.jpg", "4 - Praça Tiradentes", "lalalalala" ) );
+
+        return placesToVisit;
+    }
+
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
@@ -71,7 +86,7 @@ public class Itinerary extends AppCompatActivity {
 
         @Override
         public int getCount( ) {
-            return getIntent().getIntExtra( "numberOfDays", 1 );
+            return getIntent( ).getIntExtra( "numberOfDays", 1 );
         }
 
         @Override
