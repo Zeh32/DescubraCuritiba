@@ -14,26 +14,24 @@ import com.example.jgaug.descubracuritiba.Helpers.Place;
 import java.util.List;
 
 public class ItineraryFragment extends Fragment {
-
     public ItineraryFragment( ) {
     }
 
     public static ItineraryFragment newInstance( int sectionNumber ) {
         ItineraryFragment fragment = new ItineraryFragment( );
+
         Bundle args = new Bundle( );
         args.putInt( "sectionNumber", sectionNumber );
         fragment.setArguments( args );
+
         return fragment;
     }
 
     @Override
     public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
         View view = inflater.inflate( R.layout.fragment_itinerary, container, false );
-        //        TextView textView = ( TextView ) rootView.findViewById( R.id.section_label );
-        //        textView.setText( getString( R.string.section_format, getArguments( ).getInt( ARG_SECTION_NUMBER ) ) );
 
-
-        List< Place > placesToVisit = ( ( Itinerary ) getActivity( ) ).getPlacesToVisit( );
+        List< Place > placesToVisit = ( ( Itinerary ) getActivity( ) ).getPlacesToVisit( getArguments( ).getInt( "sectionNumber" ) );
         CustomAdapter customAdapter = new CustomAdapter( getActivity( ), placesToVisit );
 
         ListView listView = ( ListView ) view.findViewById( R.id.itinerary_list_view );

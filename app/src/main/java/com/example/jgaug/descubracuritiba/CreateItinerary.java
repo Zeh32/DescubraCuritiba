@@ -1,15 +1,22 @@
 package com.example.jgaug.descubracuritiba;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.jgaug.descubracuritiba.Helpers.Place;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
 import java.util.Calendar;
 
 public class CreateItinerary extends AppCompatActivity {
@@ -25,50 +32,6 @@ public class CreateItinerary extends AppCompatActivity {
     protected void onCreate( Bundle savedInstanceState ) {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_create_itinerary );
-
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences( getApplicationContext( ) );
-        SharedPreferences.Editor editor = settings.edit( );
-        editor.putString( "parques", "Parques não" );
-        editor.putString( "museus", "Museus não" );
-        editor.putString( "locais historicos", "Locais históricos não" );
-        editor.putString( "pracas", "Praças não" );
-        editor.putString( "restaurantes", "Restaurantes não" );
-        editor.apply( );
-
-        /*dateView = ( TextView ) findViewById( R.id.textView13 );
-        //day = 22;
-        //month = 07;
-        //year = 2017;
-        calendar = Calendar.getInstance( );
-        year = calendar.get( Calendar.YEAR );
-        month = calendar.get( Calendar.MONTH );
-        day = calendar.get( Calendar.DAY_OF_MONTH );
-        showDate1( year, month + 1, day );
-
-        editor.putInt( "year1", year );
-        editor.putInt( "month1", month );
-        editor.putInt( "day1", day );
-        editor.apply( );
-
-        dateView2 = ( TextView ) findViewById( R.id.textView14 );
-        //day2 = 22;
-        //month2 = 07;
-        //year2 = 2017;
-        calendar2 = Calendar.getInstance( );
-        year2 = calendar2.get( Calendar.YEAR );
-        month2 = calendar2.get( Calendar.MONTH );
-        day2 = calendar2.get( Calendar.DAY_OF_MONTH );
-        showDate2( year2, month2 + 1, day2 );
-        editor.putInt( "year2", year2 );
-        editor.putInt( "month2", month2 );
-        editor.putInt( "day2", day2 );
-        editor.apply( );
-
-        TextView tv1 = ( TextView ) findViewById( R.id.textView15 );
-        tv1.setText( "00 : 00" );
-
-        TextView tv2 = ( TextView ) findViewById( R.id.textView16 );
-        tv2.setText( "00 : 00" );*/
     }
 
     public void btnSelectPlaceOnMap( View view ) {
@@ -169,14 +132,31 @@ public class CreateItinerary extends AppCompatActivity {
             long diff = endDay.getTimeInMillis( ) - startDay.getTimeInMillis( ); //result in millis
             long numberOfDays = ( diff / ( 24 * 60 * 60 * 1000 ) ) + 1;
 
-            Intent intent = new Intent( this, Itinerary.class );
-            intent.putExtra( "numberOfDays", ( int ) numberOfDays );
+            final Intent intent = new Intent( this, Itinerary.class );
             intent.putExtra( "startHour", startDay.get( Calendar.HOUR_OF_DAY ) );
             intent.putExtra( "startMinute", startDay.get( Calendar.MINUTE ) );
             intent.putExtra( "endHour", endDay.get( Calendar.HOUR_OF_DAY ) );
             intent.putExtra( "endMinute", endDay.get( Calendar.MINUTE ) );
+            intent.putExtra( "numberOfDays", ( int ) numberOfDays );
 
-            startActivity( intent );
+            final FirebaseDatabase database = FirebaseDatabase.getInstance( );
+            DatabaseReference ref = database.getReference( "" );
+
+            // Attach a listener to read the data at our posts reference
+            ref.addValueEventListener( new ValueEventListener( ) {
+                @Override
+                public void onDataChange( DataSnapshot dataSnapshot ) {
+                    ArrayList< Place > places = dataSnapshot.child( "places" ).getValue( new GenericTypeIndicator< ArrayList< Place > >( ) { } );
+
+                    //TODO: passar o places para a activity do Itinerary
+                    CreateItinerary.this.startActivity( intent );
+                }
+
+                @Override
+                public void onCancelled( DatabaseError databaseError ) {
+                    System.out.println( "The read failed: " + databaseError.getCode( ) );
+                }
+            } );
         }
     }
 }

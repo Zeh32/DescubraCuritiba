@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Itinerary extends AppCompatActivity {
+    //private List< Place > places;
 
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
@@ -35,6 +36,8 @@ public class Itinerary extends AppCompatActivity {
 
         TabLayout tabLayout = ( TabLayout ) findViewById( R.id.tabs );
         tabLayout.setupWithViewPager( mViewPager );
+
+        //TODO: receber o array de places da activity CreateItinerary
     }
 
     @Override
@@ -59,7 +62,7 @@ public class Itinerary extends AppCompatActivity {
         return super.onOptionsItemSelected( item );
     }
 
-    public List< Place > getPlacesToVisit( ) {
+    public List< Place > getPlacesToVisit( int day ) {
         List< Place > placesToVisit = new ArrayList<>( );
         placesToVisit.add( new Place( "Jardim botanico.jpg", "1 - Jardim Botânico", "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat." ) );
         placesToVisit.add( new Place( "opera de arame.jpg", "2 - Ópera de Arame", "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat." ) );

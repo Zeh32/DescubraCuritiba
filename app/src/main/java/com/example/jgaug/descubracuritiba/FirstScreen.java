@@ -57,7 +57,6 @@ public class FirstScreen extends AppCompatActivity {
             @Override
             public void onDataChange( DataSnapshot dataSnapshot ) {
                 ArrayList< Place > children = dataSnapshot.child( "places" ).getValue( new GenericTypeIndicator< ArrayList< Place > >( ) { } );
-                System.out.print( "" );
             }
 
             @Override
