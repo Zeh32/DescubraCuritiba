@@ -21,8 +21,9 @@ public class Place {
         this.description = description;
     }
 
-    public Place( String name, boolean weatherDependent, int relevance, int visitTime, ArrayList< Integer > placeGroup, String description ) {
+    public Place( String name, String image, boolean weatherDependent, int relevance, int visitTime, ArrayList< Integer > placeGroup, String description ) {
         this.name = name;
+        this.image = image;
         this.weatherDependent = weatherDependent;
         this.relevance = relevance;
         this.visitTime = visitTime;
