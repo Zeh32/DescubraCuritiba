@@ -27,6 +27,8 @@ public class CreateItinerary extends AppCompatActivity {
     private boolean foodsSelected = false;
     private Calendar startDay = Calendar.getInstance( );
     private Calendar endDay = Calendar.getInstance( );
+    public int mudouTempoinicio = 0;
+    public int mudouTempofim = 0;
 
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
@@ -81,9 +83,11 @@ public class CreateItinerary extends AppCompatActivity {
         if( isStartTime ) {
             this.startDay.set( Calendar.HOUR_OF_DAY, hourOfDay );
             this.startDay.set( Calendar.MINUTE, minute );
+            mudouTempoinicio = 1;
         } else {
             this.endDay.set( Calendar.HOUR_OF_DAY, hourOfDay );
             this.endDay.set( Calendar.MINUTE, minute );
+            mudouTempofim = 1;
         }
     }
 
@@ -130,33 +134,54 @@ public class CreateItinerary extends AppCompatActivity {
             Toast.makeText( this, "Para gerar o itinerário, selecione ao menos um grupo de locais para visita!", Toast.LENGTH_SHORT ).show( );
         } else {
             long diff = endDay.getTimeInMillis( ) - startDay.getTimeInMillis( ); //result in millis
-            long numberOfDays = ( diff / ( 24 * 60 * 60 * 1000 ) ) + 1;
 
-            final Intent intent = new Intent( this, Itinerary.class );
-            intent.putExtra( "startHour", startDay.get( Calendar.HOUR_OF_DAY ) );
-            intent.putExtra( "startMinute", startDay.get( Calendar.MINUTE ) );
-            intent.putExtra( "endHour", endDay.get( Calendar.HOUR_OF_DAY ) );
-            intent.putExtra( "endMinute", endDay.get( Calendar.MINUTE ) );
-            intent.putExtra( "numberOfDays", ( int ) numberOfDays );
+            if(startDay.getTimeInMillis() == 0){
+                Toast.makeText( this, "Preencha o primeiro dia!", Toast.LENGTH_SHORT ).show( );
+            }
+            else if(endDay.getTimeInMillis() == 0){
+                Toast.makeText( this, "Preencha o último dia!", Toast.LENGTH_SHORT ).show( );
+            }
+            else if(diff < 0){
+                Toast.makeText( this, "O último dia tem que vir depois do primeiro!", Toast.LENGTH_SHORT ).show( );
+            }
+            else if(mudouTempoinicio == 0){
+                Toast.makeText( this, "Preencha o horário de início!", Toast.LENGTH_SHORT ).show( );
+            }
+            else if(mudouTempofim == 0){
+                Toast.makeText( this, "Preencha o horário de fim!", Toast.LENGTH_SHORT ).show( );
+            }
+            else{
+                long numberOfDays = ( diff / ( 24 * 60 * 60 * 1000 ) ) + 1;
+                mudouTempofim = 0;
+                mudouTempoinicio = 0;
 
-            final FirebaseDatabase database = FirebaseDatabase.getInstance( );
-            DatabaseReference ref = database.getReference( "" );
+                final Intent intent = new Intent( this, Itinerary.class );
+                intent.putExtra( "startHour", startDay.get( Calendar.HOUR_OF_DAY ) );
+                intent.putExtra( "startMinute", startDay.get( Calendar.MINUTE ) );
+                intent.putExtra( "endHour", endDay.get( Calendar.HOUR_OF_DAY ) );
+                intent.putExtra( "endMinute", endDay.get( Calendar.MINUTE ) );
+                intent.putExtra( "numberOfDays", ( int ) numberOfDays );
 
-            // Attach a listener to read the data at our posts reference
-            ref.addValueEventListener( new ValueEventListener( ) {
-                @Override
-                public void onDataChange( DataSnapshot dataSnapshot ) {
-                    ArrayList< Place > places = dataSnapshot.child( "places" ).getValue( new GenericTypeIndicator< ArrayList< Place > >( ) { } );
+                final FirebaseDatabase database = FirebaseDatabase.getInstance( );
+                DatabaseReference ref = database.getReference( "" );
 
-                    //TODO: passar o places para a activity do Itinerary
-                    CreateItinerary.this.startActivity( intent );
-                }
+                // Attach a listener to read the data at our posts reference
+                ref.addValueEventListener( new ValueEventListener( ) {
+                    @Override
+                    public void onDataChange( DataSnapshot dataSnapshot ) {
+                        ArrayList< Place > places = dataSnapshot.child( "places" ).getValue( new GenericTypeIndicator< ArrayList< Place > >( ) { } );
 
-                @Override
-                public void onCancelled( DatabaseError databaseError ) {
-                    System.out.println( "The read failed: " + databaseError.getCode( ) );
-                }
-            } );
+                        //TODO: passar o places para a activity do Itinerary
+                        CreateItinerary.this.startActivity( intent );
+                    }
+
+                    @Override
+                    public void onCancelled( DatabaseError databaseError ) {
+                        System.out.println( "The read failed: " + databaseError.getCode( ) );
+                    }
+                } );
+            }
+
         }
     }
 }
