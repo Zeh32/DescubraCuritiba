@@ -5,6 +5,8 @@ import java.util.ArrayList;
 public class Place {
     public String image;
     public String name;
+    public double latitude;
+    public double longitude;
     public boolean weatherDependent;
     public int relevance;
     public int visitTime;
@@ -21,9 +23,11 @@ public class Place {
         this.description = description;
     }
 
-    public Place( String name, String image, boolean weatherDependent, int relevance, int visitTime, ArrayList< Integer > placeGroup, String description ) {
+    public Place( String name, String image, double latitude, double longitude, boolean weatherDependent, int relevance, int visitTime, ArrayList< Integer > placeGroup, String description ) {
         this.name = name;
         this.image = image;
+        this.latitude = latitude;
+        this.longitude = longitude;
         this.weatherDependent = weatherDependent;
         this.relevance = relevance;
         this.visitTime = visitTime;
