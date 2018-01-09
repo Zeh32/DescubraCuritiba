@@ -1,4 +1,4 @@
-package com.example.jgaug.descubracuritiba;
+package com.example.jgaug.descubracuritiba.Fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -9,7 +9,10 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.example.jgaug.descubracuritiba.Activities.Itinerary;
+import com.example.jgaug.descubracuritiba.CustomAdapter;
 import com.example.jgaug.descubracuritiba.Helpers.Place;
+import com.example.jgaug.descubracuritiba.R;
 
 import java.util.List;
 
@@ -31,7 +34,7 @@ public class ItineraryFragment extends Fragment {
     public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
         View view = inflater.inflate( R.layout.fragment_itinerary, container, false );
 
-        List< Place > placesToVisit = ( ( Itinerary ) getActivity( ) ).getPlacesToVisit( getArguments( ).getInt( "sectionNumber" ) );
+        List< Place > placesToVisit = ( (Itinerary) getActivity( ) ).getPlacesToVisit( getArguments( ).getInt( "sectionNumber" ) );
         CustomAdapter customAdapter = new CustomAdapter( getActivity( ), placesToVisit );
 
         ListView listView = ( ListView ) view.findViewById( R.id.itinerary_list_view );

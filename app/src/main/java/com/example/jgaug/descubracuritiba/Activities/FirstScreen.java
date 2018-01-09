@@ -1,4 +1,4 @@
-package com.example.jgaug.descubracuritiba;
+package com.example.jgaug.descubracuritiba.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,8 +8,10 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import com.example.jgaug.descubracuritiba.Activities.CreateItinerary;
 import com.example.jgaug.descubracuritiba.Helpers.Place;
 import com.example.jgaug.descubracuritiba.Helpers.PlaceGroup;
+import com.example.jgaug.descubracuritiba.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -31,6 +33,7 @@ public class FirstScreen extends AppCompatActivity {
         //Set to fullscreen
         requestWindowFeature( Window.FEATURE_NO_TITLE );
         getWindow( ).setFlags( WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN );
+//        addPlaces();
 
         setContentView( R.layout.activity_first_screen );
     }

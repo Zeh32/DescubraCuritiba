@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".FirstScreen"
+            android:name=".Activities.FirstScreen"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -19,15 +19,15 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".CreateItinerary"
+            android:name=".Activities.CreateItinerary"
             android:label="@string/create_itinerary"
-            android:parentActivityName=".FirstScreen">
+            android:parentActivityName=".Activities.FirstScreen">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".FirstScreen"/>
+                android:value=".Activities.FirstScreen"/>
         </activity>
         <activity
-            android:name=".Itinerary"
+            android:name=".Activities.Itinerary"
             android:label="@string/title_activity_itinerary"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>

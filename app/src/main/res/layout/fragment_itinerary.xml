@@ -8,4 +8,4 @@
     android:divider="@null"
     android:clipToPadding="false"
     android:paddingBottom="65dp"
-    tools:context="com.example.jgaug.descubracuritiba.ItineraryFragment"/>
+    tools:context="com.example.jgaug.descubracuritiba.Fragments.ItineraryFragment"/>

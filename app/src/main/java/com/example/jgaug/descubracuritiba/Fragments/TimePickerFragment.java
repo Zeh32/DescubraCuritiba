@@ -1,4 +1,4 @@
-package com.example.jgaug.descubracuritiba;
+package com.example.jgaug.descubracuritiba.Fragments;
 
 import android.app.Dialog;
 import android.app.TimePickerDialog;
@@ -9,6 +9,9 @@ import android.text.format.DateFormat;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
+
+import com.example.jgaug.descubracuritiba.Activities.CreateItinerary;
+import com.example.jgaug.descubracuritiba.R;
 
 import java.util.Calendar;
 
@@ -37,7 +40,7 @@ public class TimePickerFragment extends DialogFragment implements TimePickerDial
             } else if( hourOfDay < 5 ) {
                 Toast.makeText( getActivity(), "Não é possível definir um horário de início inferior às 5 horas!", Toast.LENGTH_LONG ).show( );
             } else {
-                ( ( CreateItinerary ) getActivity( ) ).setTime( true, hourOfDay, minute );
+                ( (CreateItinerary) getActivity( ) ).setTime( true, hourOfDay, minute );
 
                 TextView textViewStartTime = ( TextView ) getActivity( ).findViewById( R.id.textViewStartTime );
                 textViewStartTime.setText( formattedHour + " : " + formattedMinute );

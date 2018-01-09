@@ -1,8 +1,13 @@
 package com.example.jgaug.descubracuritiba.Helpers;
 
-import java.util.ArrayList;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-public class Place {
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Place implements Parcelable{
     public String image;
     public String name;
     public double latitude;
@@ -35,6 +40,7 @@ public class Place {
         this.description = description;
     }
 
+
     public String getImage( ) {
         return image;
     }
@@ -54,4 +60,46 @@ public class Place {
     public int getRelevance( ) {
         return relevance;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+
+        parcel.writeString(this.name);
+        parcel.writeString(this.image);
+        parcel.writeDouble(this.latitude);
+        parcel.writeDouble(this.longitude);
+//        parcel.writeBooleanArray(this.weatherDependent);
+        parcel.writeInt(this.relevance);
+        parcel.writeInt(this.visitTime);
+        parcel.writeList(this.placeGroup);
+        parcel.writeString(this.description);
+    }
+
+    public Place(Parcel in) {
+        this.name = in.readString();
+        this.image = in.readString();
+        this.latitude = in.readDouble();
+        this.longitude = in.readDouble();
+        this.relevance = in.readInt();
+        this.visitTime = in.readInt();
+        this.placeGroup = in.readArrayList(ArrayList.class.getClassLoader());
+        this.description = in.readString();
+    }
+
+    public static final Creator<Place> CREATOR = new Creator<Place>() {
+        @Override
+        public Place createFromParcel(Parcel source) {
+            return new Place(source);
+        }
+
+        @Override
+        public Place[] newArray(int size) {
+            return new Place[size];
+        }
+    };
 }

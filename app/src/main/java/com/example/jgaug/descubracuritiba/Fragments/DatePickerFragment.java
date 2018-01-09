@@ -1,4 +1,4 @@
-package com.example.jgaug.descubracuritiba;
+package com.example.jgaug.descubracuritiba.Fragments;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -7,6 +7,9 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.widget.DatePicker;
 import android.widget.TextView;
+
+import com.example.jgaug.descubracuritiba.Activities.CreateItinerary;
+import com.example.jgaug.descubracuritiba.R;
 
 import java.util.Calendar;
 
@@ -30,7 +33,7 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
 
             return pickerDialog;
         } else {
-            Calendar startDay = ( Calendar ) ( ( CreateItinerary ) getActivity( ) ).getStartDay( ).clone( );
+            Calendar startDay = ( Calendar ) ( (CreateItinerary) getActivity( ) ).getStartDay( ).clone( );
             DatePickerDialog pickerDialog = new DatePickerDialog( getActivity( ), this, startDay.get( Calendar.YEAR ), startDay.get( Calendar.MONTH ), startDay.get( Calendar.DAY_OF_MONTH ) );
 
             long minDate = startDay.getTime( ).getTime( ); //Set de minimum date to the first date

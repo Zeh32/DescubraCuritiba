@@ -1,4 +1,4 @@
-package com.example.jgaug.descubracuritiba;
+package com.example.jgaug.descubracuritiba.Activities;
 
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -12,12 +12,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.jgaug.descubracuritiba.Helpers.Place;
+import com.example.jgaug.descubracuritiba.Fragments.ItineraryFragment;
+import com.example.jgaug.descubracuritiba.R;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Itinerary extends AppCompatActivity {
-    //private List< Place > places;
+    private ArrayList<Place> places;
 
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
@@ -36,6 +38,8 @@ public class Itinerary extends AppCompatActivity {
 
         TabLayout tabLayout = ( TabLayout ) findViewById( R.id.tabs );
         tabLayout.setupWithViewPager( mViewPager );
+
+        places = getIntent().getParcelableArrayListExtra("Places");
 
         //TODO: receber o array de places da activity CreateItinerary
     }

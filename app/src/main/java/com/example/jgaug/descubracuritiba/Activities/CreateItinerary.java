@@ -1,14 +1,18 @@
-package com.example.jgaug.descubracuritiba;
+package com.example.jgaug.descubracuritiba.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.jgaug.descubracuritiba.Fragments.DatePickerFragment;
 import com.example.jgaug.descubracuritiba.Helpers.Place;
+import com.example.jgaug.descubracuritiba.R;
+import com.example.jgaug.descubracuritiba.Fragments.TimePickerFragment;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -18,6 +22,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 public class CreateItinerary extends AppCompatActivity {
     private boolean parksSelected = false;
@@ -166,10 +171,17 @@ public class CreateItinerary extends AppCompatActivity {
                 DatabaseReference ref = database.getReference( "" );
 
                 // Attach a listener to read the data at our posts reference
-                ref.addValueEventListener( new ValueEventListener( ) {
+                ref.child("places").addValueEventListener( new ValueEventListener( ) {
                     @Override
                     public void onDataChange( DataSnapshot dataSnapshot ) {
-                        ArrayList< Place > places = dataSnapshot.child( "places" ).getValue( new GenericTypeIndicator< ArrayList< Place > >( ) { } );
+
+                        List places = new ArrayList<>();
+                        for(DataSnapshot placeDataSnapshot : dataSnapshot.getChildren()){
+                            Place place = placeDataSnapshot.getValue(Place.class);
+                            places.add(place);
+                        }
+
+                        intent.putParcelableArrayListExtra("places", (ArrayList<? extends Parcelable>) places);
 
                         //TODO: passar o places para a activity do Itinerary
                         CreateItinerary.this.startActivity( intent );
