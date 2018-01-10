@@ -39,7 +39,9 @@ public class Itinerary extends AppCompatActivity {
         TabLayout tabLayout = ( TabLayout ) findViewById( R.id.tabs );
         tabLayout.setupWithViewPager( mViewPager );
 
-        places = getIntent().getParcelableArrayListExtra("Places");
+        places = getIntent().getParcelableArrayListExtra("places");
+
+//        int i = 0;
 
         //TODO: receber o array de places da activity CreateItinerary
     }

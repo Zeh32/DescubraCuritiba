@@ -4,11 +4,13 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.jgaug.descubracuritiba.Helpers.Place;
@@ -22,10 +24,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-public class CustomAdapter extends BaseAdapter {
+public class CustomAdapter extends RecyclerView.Adapter {
     private LayoutInflater layoutinflater;
     private List< Place > listStorage;
     private Context context;
+     OnItemClickListener itemClickListener;
 
     public CustomAdapter( Context context, List< Place > customizedListView ) {
         this.context = context;
@@ -33,37 +36,29 @@ public class CustomAdapter extends BaseAdapter {
         this.listStorage = customizedListView;
     }
 
-    @Override
-    public int getCount( ) {
-        return listStorage.size( );
+    public void setOnItemClickListener(final CustomAdapter.OnItemClickListener itemClickListener) {
+        this.itemClickListener = itemClickListener;
+    }
+
+    public interface OnItemClickListener {
+        void onClickDetalhes(int position);
+
+        void onClickClima(int position);
+
+        void onClickNavegar(int position);
     }
 
     @Override
-    public Object getItem( int position ) {
-        return position;
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        final LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        final View view = inflater.inflate(R.layout.itinerary_list_item, parent, false);
+
+        return new ViewHolder(view);
     }
 
     @Override
-    public long getItemId( int position ) {
-        return position;
-    }
-
-    @Override
-    public View getView( int position, View convertView, ViewGroup parent ) {
-        final ViewHolder listViewHolder;
-
-        if( convertView == null ) {
-            listViewHolder = new ViewHolder( );
-            convertView = layoutinflater.inflate( R.layout.itinerary_list_item, parent, false );
-            listViewHolder.placeImage = ( ImageView ) convertView.findViewById( R.id.place_image );
-            listViewHolder.placeName = ( TextView ) convertView.findViewById( R.id.place_name );
-            listViewHolder.placeDescription = ( TextView ) convertView.findViewById( R.id.place_description );
-
-            convertView.setTag( listViewHolder );
-        } else {
-            listViewHolder = ( ViewHolder ) convertView.getTag( );
-        }
-        //listViewHolder.placeImage.setImageResource( listStorage.get( position ).getScreenShot( ) );
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        final ViewHolder listViewHolder = (ViewHolder) holder;
 
         StorageReference mStorageRef = FirebaseStorage.getInstance( ).getReference( );
         try {
@@ -85,16 +80,52 @@ public class CustomAdapter extends BaseAdapter {
         } catch( IOException e ) {
             e.printStackTrace( );
         }
-
+        listViewHolder.placeDetalhes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                itemClickListener.onClickDetalhes(listViewHolder.getAdapterPosition());
+            }
+        });
+        listViewHolder.placeClima.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                itemClickListener.onClickClima(listViewHolder.getAdapterPosition());
+            }
+        });
+        listViewHolder.placeNavegar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                itemClickListener.onClickNavegar(listViewHolder.getAdapterPosition());
+            }
+        });
         listViewHolder.placeName.setText( listStorage.get( position ).getName( ) );
         listViewHolder.placeDescription.setText( listStorage.get( position ).getDescription( ) );
-
-        return convertView;
     }
 
-    private static class ViewHolder {
+    @Override
+    public int getItemCount() {
+        return listStorage.size( );
+    }
+
+    private static class ViewHolder extends RecyclerView.ViewHolder{
         ImageView placeImage;
         TextView placeName;
         TextView placeDescription;
+        LinearLayout placeDetalhes;
+        LinearLayout placeClima;
+        LinearLayout placeNavegar;
+
+        public ViewHolder(View itemView) {
+            super(itemView);
+
+            placeImage = (ImageView) itemView.findViewById(R.id.place_image);
+            placeName = (TextView) itemView.findViewById(R.id.place_name);
+            placeDescription = (TextView) itemView.findViewById(R.id.place_description);
+            placeDetalhes = (LinearLayout) itemView.findViewById(R.id.btn_detalhes);
+            placeClima = (LinearLayout) itemView.findViewById(R.id.btn_clima);
+            placeNavegar = (LinearLayout) itemView.findViewById(R.id.btn_navegar);
+
+        }
     }
+
 }

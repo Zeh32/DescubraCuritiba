@@ -2,6 +2,8 @@ package com.example.jgaug.descubracuritiba.Fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,15 +39,28 @@ public class ItineraryFragment extends Fragment {
         List< Place > placesToVisit = ( (Itinerary) getActivity( ) ).getPlacesToVisit( getArguments( ).getInt( "sectionNumber" ) );
         CustomAdapter customAdapter = new CustomAdapter( getActivity( ), placesToVisit );
 
-        ListView listView = ( ListView ) view.findViewById( R.id.itinerary_list_view );
-        listView.setAdapter( customAdapter );
+        RecyclerView recyclerView = ( RecyclerView ) view.findViewById( R.id.itinerary_recycler_view );
+        recyclerView.setAdapter( customAdapter );
 
-        listView.setOnItemClickListener( new AdapterView.OnItemClickListener( ) {
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,false));
+
+        customAdapter.setOnItemClickListener(new CustomAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick( AdapterView< ? > parent, View view, int position, long id ) {
+            public void onClickDetalhes(int position) {
+
                 Toast.makeText( getActivity( ), "Position: " + position, Toast.LENGTH_SHORT ).show( );
             }
-        } );
+
+            @Override
+            public void onClickClima(int position) {
+
+            }
+
+            @Override
+            public void onClickNavegar(int position){
+
+            }
+        });
 
         return view;
     }

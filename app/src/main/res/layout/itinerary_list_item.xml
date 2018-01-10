@@ -71,6 +71,7 @@
                 android:orientation="horizontal">
 
                 <LinearLayout
+                    android:id="@+id/btn_detalhes"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="33"
@@ -81,7 +82,7 @@
                         android:layout_height="22dp"
                         android:layout_gravity="center"
                         android:contentDescription="@string/magnifier_description"
-                        android:src="@drawable/details"/>
+                        android:src="@drawable/details" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -89,10 +90,11 @@
                         android:layout_marginTop="5dp"
                         android:gravity="center"
                         android:text="Detalhes"
-                        android:textSize="12sp"/>
+                        android:textSize="12sp" />
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/btn_clima"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="33"
@@ -103,7 +105,7 @@
                         android:layout_height="22dp"
                         android:layout_gravity="center"
                         android:contentDescription="@string/weather_description"
-                        android:src="@drawable/weather_sun"/>
+                        android:src="@drawable/weather_sun" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -111,10 +113,11 @@
                         android:layout_marginTop="5dp"
                         android:gravity="center"
                         android:text="Clima"
-                        android:textSize="12sp"/>
+                        android:textSize="12sp" />
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/btn_navegar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="33"
@@ -125,7 +128,7 @@
                         android:layout_height="22dp"
                         android:layout_gravity="center"
                         android:contentDescription="@string/navigate_description"
-                        android:src="@drawable/navigation"/>
+                        android:src="@drawable/navigation" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -133,7 +136,7 @@
                         android:layout_marginTop="5dp"
                         android:gravity="center"
                         android:text="Navegar"
-                        android:textSize="12sp"/>
+                        android:textSize="12sp" />
                 </LinearLayout>
 
             </LinearLayout>
