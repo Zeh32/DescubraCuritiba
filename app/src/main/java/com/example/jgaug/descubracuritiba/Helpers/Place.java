@@ -53,6 +53,14 @@ public class Place implements Parcelable{
         return description;
     }
 
+    public double getLatitude(){
+        return latitude;
+    }
+
+    public double getLongitude(){
+        return longitude;
+    }
+
     public boolean isWeatherDependent( ) {
         return weatherDependent;
     }

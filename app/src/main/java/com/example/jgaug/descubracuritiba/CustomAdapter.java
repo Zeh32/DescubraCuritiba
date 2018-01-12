@@ -3,6 +3,7 @@ package com.example.jgaug.descubracuritiba;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 import com.example.jgaug.descubracuritiba.Helpers.Place;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -57,29 +59,36 @@ public class CustomAdapter extends RecyclerView.Adapter {
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
         final ViewHolder listViewHolder = (ViewHolder) holder;
 
         StorageReference mStorageRef = FirebaseStorage.getInstance( ).getReference( );
-        try {
-            final File localFile = File.createTempFile( "images", "jpg" );
-            StorageReference imageRef = mStorageRef.child( listStorage.get( position ).getImage( ) );
-            imageRef.getFile( localFile ).addOnSuccessListener( new OnSuccessListener< FileDownloadTask.TaskSnapshot >( ) {
-                @Override
-                public void onSuccess( FileDownloadTask.TaskSnapshot taskSnapshot ) {
-                    Bitmap bitmap = BitmapFactory.decodeFile( localFile.getAbsolutePath( ) );
-                    listViewHolder.placeImage.setImageBitmap( bitmap );
-                }
-            } ).addOnFailureListener( new OnFailureListener( ) {
-                @Override
-                public void onFailure( @NonNull Exception exception ) {
-                    // Handle failed download
-                    // ...
-                }
-            } );
-        } catch( IOException e ) {
-            e.printStackTrace( );
-        }
+        mStorageRef.child(listStorage.get(position).getImage()).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                GlideUtil.loadImageFinal(context, uri.toString() , ((ViewHolder) holder).placeImage);
+            }
+        });
+//        try {
+//            final File localFile = File.createTempFile( "images", "jpg" );
+//            StorageReference imageRef = mStorageRef.child( listStorage.get( position ).getImage( ) );
+//            imageRef.getFile( localFile ).addOnSuccessListener( new OnSuccessListener< FileDownloadTask.TaskSnapshot >( ) {
+//                @Override
+//                public void onSuccess( FileDownloadTask.TaskSnapshot taskSnapshot ) {
+//                    Bitmap bitmap = BitmapFactory.decodeFile( localFile.getAbsolutePath( ) );
+//                    listViewHolder.placeImage.setImageBitmap( bitmap );
+//                }
+//            } ).addOnFailureListener( new OnFailureListener( ) {
+//                @Override
+//                public void onFailure( @NonNull Exception exception ) {
+//                    // Handle failed download
+//                    // ...
+//                }
+//            } );
+//        } catch( IOException e ) {
+//            e.printStackTrace( );
+//        }
+
         listViewHolder.placeDetalhes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

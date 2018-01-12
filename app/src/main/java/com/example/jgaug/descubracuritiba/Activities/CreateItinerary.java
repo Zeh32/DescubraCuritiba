@@ -1,5 +1,6 @@
 package com.example.jgaug.descubracuritiba.Activities;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -34,6 +35,7 @@ public class CreateItinerary extends AppCompatActivity {
     private Calendar endDay = Calendar.getInstance( );
     public int mudouTempoinicio = 0;
     public int mudouTempofim = 0;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
@@ -135,6 +137,10 @@ public class CreateItinerary extends AppCompatActivity {
     }
 
     public void btnMakeItinerary( View view ) {
+
+        progressDialog = ProgressDialog.show(this, "",
+                "Carregando", true);
+
         if( !parksSelected && !landmarksSelected && !museumsSelected && !shoppingSelected && !foodsSelected ) {
             Toast.makeText( this, "Para gerar o itinerário, selecione ao menos um grupo de locais para visita!", Toast.LENGTH_SHORT ).show( );
         } else {
@@ -180,10 +186,11 @@ public class CreateItinerary extends AppCompatActivity {
                             Place place = placeDataSnapshot.getValue(Place.class);
                             places.add(place);
                         }
-
-                        intent.putParcelableArrayListExtra("places", (ArrayList<? extends Parcelable>) places);
+                        //Paassar todos os places pro intent demora muito, deve fazer o algoritmo de escolha aqui.
+//                        intent.putParcelableArrayListExtra("places", (ArrayList<? extends Parcelable>) places);
 
                         //TODO: passar o places para a activity do Itinerary
+                        progressDialog.dismiss();
                         CreateItinerary.this.startActivity( intent );
                     }
 
