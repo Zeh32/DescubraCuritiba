@@ -39,7 +39,7 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
             long minDate = startDay.getTime( ).getTime( ); //Set de minimum date to the first date
             pickerDialog.getDatePicker( ).setMinDate( minDate );
 
-            startDay.add( Calendar.DAY_OF_YEAR, 14 ); //Add a limit for 14 days to the pickerDialog
+            startDay.add( Calendar.DAY_OF_YEAR, 7 ); //Add a limit for 14 days to the pickerDialog
             long maxDate = startDay.getTime( ).getTime( );
             pickerDialog.getDatePicker( ).setMaxDate( maxDate );
 
