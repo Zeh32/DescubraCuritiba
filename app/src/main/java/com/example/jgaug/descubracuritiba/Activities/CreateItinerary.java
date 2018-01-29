@@ -11,14 +11,14 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.jgaug.descubracuritiba.Fragments.DatePickerFragment;
-import com.example.jgaug.descubracuritiba.Helpers.Place;
-import com.example.jgaug.descubracuritiba.R;
 import com.example.jgaug.descubracuritiba.Fragments.TimePickerFragment;
+import com.example.jgaug.descubracuritiba.Helpers.Place;
+import com.example.jgaug.descubracuritiba.Helpers.PlaceGroup;
+import com.example.jgaug.descubracuritiba.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -48,7 +48,6 @@ public class CreateItinerary extends AppCompatActivity {
     }
 
     public void setTime( View view ) {
-        //TODO: não deixar setar o tempo, se o dia selecionado é o de hoje e já se passaram das 19
         //TODO: não deixar setar o tempo de término, se o inicial ainda não foi definido
 
         Bundle bundle = new Bundle( );
@@ -65,6 +64,7 @@ public class CreateItinerary extends AppCompatActivity {
 
     public void setDate( View view ) {
         //TODO: não deixar setar a data de término, se a inicial ainda não foi definida
+        //TODO: não deixar setar para o dia de hoje se já passaram das xx horas
 
         Bundle bundle = new Bundle( );
         if( view.getId( ) == R.id.textViewStartDay ) {
@@ -137,32 +137,27 @@ public class CreateItinerary extends AppCompatActivity {
     }
 
     public void btnMakeItinerary( View view ) {
-
-        progressDialog = ProgressDialog.show(this, "",
-                "Carregando", true);
+        //TODO: Fazer um limite de seleção de dias... se selecionar só gastronômicos por exemplo, não deixar mais de 1 dia
 
         if( !parksSelected && !landmarksSelected && !museumsSelected && !shoppingSelected && !foodsSelected ) {
             Toast.makeText( this, "Para gerar o itinerário, selecione ao menos um grupo de locais para visita!", Toast.LENGTH_SHORT ).show( );
         } else {
             long diff = endDay.getTimeInMillis( ) - startDay.getTimeInMillis( ); //result in millis
 
-            if(startDay.getTimeInMillis() == 0){
+            if( startDay.getTimeInMillis( ) == 0 ) {
                 Toast.makeText( this, "Preencha o primeiro dia!", Toast.LENGTH_SHORT ).show( );
-            }
-            else if(endDay.getTimeInMillis() == 0){
+            } else if( endDay.getTimeInMillis( ) == 0 ) {
                 Toast.makeText( this, "Preencha o último dia!", Toast.LENGTH_SHORT ).show( );
-            }
-            else if(diff < 0){
+            } else if( diff < 0 ) {
                 Toast.makeText( this, "O último dia tem que vir depois do primeiro!", Toast.LENGTH_SHORT ).show( );
-            }
-            else if(mudouTempoinicio == 0){
+            } else if( mudouTempoinicio == 0 ) {
                 Toast.makeText( this, "Preencha o horário de início!", Toast.LENGTH_SHORT ).show( );
-            }
-            else if(mudouTempofim == 0){
+            } else if( mudouTempofim == 0 ) {
                 Toast.makeText( this, "Preencha o horário de fim!", Toast.LENGTH_SHORT ).show( );
-            }
-            else{
-                long numberOfDays = ( diff / ( 24 * 60 * 60 * 1000 ) ) + 1;
+            } else {
+                progressDialog = ProgressDialog.show( this, "", "Carregando", true );
+
+                final long numberOfDays = ( diff / ( 24 * 60 * 60 * 1000 ) ) + 1;
                 mudouTempofim = 0;
                 mudouTempoinicio = 0;
 
@@ -177,20 +172,36 @@ public class CreateItinerary extends AppCompatActivity {
                 DatabaseReference ref = database.getReference( "" );
 
                 // Attach a listener to read the data at our posts reference
-                ref.child("places").addValueEventListener( new ValueEventListener( ) {
+                ref.child( "places" ).addValueEventListener( new ValueEventListener( ) {
                     @Override
                     public void onDataChange( DataSnapshot dataSnapshot ) {
+                        //Obtém a lista de lugares e mantém apenas os selecionados pelo usuário
+                        List selectedPlaces = new ArrayList< Place >( );
+                        for( DataSnapshot placeDataSnapshot : dataSnapshot.getChildren( ) ) {
+                            Place place = placeDataSnapshot.getValue( Place.class );
 
-                        List places = new ArrayList<>();
-                        for(DataSnapshot placeDataSnapshot : dataSnapshot.getChildren()){
-                            Place place = placeDataSnapshot.getValue(Place.class);
-                            places.add(place);
+                            boolean belongsToSelectedGroup = ( place.placeGroup.contains( PlaceGroup.PARKS ) && parksSelected ) ||
+                                ( place.placeGroup.contains( PlaceGroup.LANDMARKS ) && landmarksSelected ) ||
+                                ( place.placeGroup.contains( PlaceGroup.MUSEUMS ) && museumsSelected ) ||
+                                ( place.placeGroup.contains( PlaceGroup.SHOPPING ) && shoppingSelected ) ||
+                                ( place.placeGroup.contains( PlaceGroup.FOOD ) && foodsSelected );
+
+                            if( belongsToSelectedGroup ) {
+                                selectedPlaces.add( place );
+                            }
                         }
-                        //Paassar todos os places pro intent demora muito, deve fazer o algoritmo de escolha aqui.
-//                        intent.putParcelableArrayListExtra("places", (ArrayList<? extends Parcelable>) places);
 
-                        //TODO: passar o places para a activity do Itinerary
-                        progressDialog.dismiss();
+                        //Cria um itinerário teste, com os 4 primeiros lugares da lista em cada dia
+                        List itinerary = new ArrayList< >( );
+                        for( int day = 0; day < numberOfDays; day++ ) {
+                            List dailyItinerary = selectedPlaces.subList( day * 4, day * 4 + 4 );
+                            itinerary.add( dailyItinerary );
+                        }
+
+                        intent.putParcelableArrayListExtra( "places", ( ArrayList<? extends Parcelable > ) itinerary );
+
+                        progressDialog.dismiss( );
+
                         CreateItinerary.this.startActivity( intent );
                     }
 
@@ -200,7 +211,6 @@ public class CreateItinerary extends AppCompatActivity {
                     }
                 } );
             }
-
         }
     }
 }
