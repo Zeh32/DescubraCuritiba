@@ -35,8 +35,8 @@ public class TimePickerFragment extends DialogFragment implements TimePickerDial
         Bundle args = getArguments( );
         boolean isStartTime = args.getBoolean( "isStartTime" );
         if( isStartTime ) {
-            if( hourOfDay > 19 ) {
-                Toast.makeText( getActivity(), "Não é possível definir um horário de início após às 20 horas!", Toast.LENGTH_LONG ).show( );
+            if( hourOfDay >= 19 ) {
+                Toast.makeText( getActivity(), "Não é possível definir um horário de início após às 19 horas!", Toast.LENGTH_LONG ).show( );
             } else if( hourOfDay < 5 ) {
                 Toast.makeText( getActivity(), "Não é possível definir um horário de início inferior às 5 horas!", Toast.LENGTH_LONG ).show( );
             } else {
@@ -46,7 +46,7 @@ public class TimePickerFragment extends DialogFragment implements TimePickerDial
                 textViewStartTime.setText( formattedHour + " : " + formattedMinute );
             }
         } else {
-            if( hourOfDay > 20 ) {
+            if( hourOfDay >= 20 ) {
                 Toast.makeText( getActivity(), "Não é possível definir um horário de término após às 20 horas!", Toast.LENGTH_SHORT ).show( );
             } else {
                 ( ( CreateItinerary ) getActivity( ) ).setTime( false, hourOfDay, minute );

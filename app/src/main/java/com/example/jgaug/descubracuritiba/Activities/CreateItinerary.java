@@ -137,6 +137,47 @@ public class CreateItinerary extends AppCompatActivity {
     }
 
     public void btnMakeItinerary( View view ) {
+        if( checkConstraints( ) ) {
+            progressDialog = ProgressDialog.show( this, "", "Carregando", true );
+
+            long diff = endDay.getTimeInMillis( ) - startDay.getTimeInMillis( ); //result in millis
+            final long numberOfDays = ( diff / ( 24 * 60 * 60 * 1000 ) ) + 1;
+            mudouTempofim = 0;
+            mudouTempoinicio = 0;
+
+            final Intent intent = new Intent( this, Itinerary.class );
+            intent.putExtra( "startHour", startDay.get( Calendar.HOUR_OF_DAY ) );
+            intent.putExtra( "startMinute", startDay.get( Calendar.MINUTE ) );
+            intent.putExtra( "endHour", endDay.get( Calendar.HOUR_OF_DAY ) );
+            intent.putExtra( "endMinute", endDay.get( Calendar.MINUTE ) );
+            intent.putExtra( "numberOfDays", ( int ) numberOfDays );
+
+            final FirebaseDatabase database = FirebaseDatabase.getInstance( );
+            DatabaseReference ref = database.getReference( "" );
+
+            // Attach a listener to read the data at our posts reference
+            ref.child( "places" ).addValueEventListener( new ValueEventListener( ) {
+                @Override
+                public void onDataChange( DataSnapshot dataSnapshot ) {
+                    List selectedPlaces = getSelectedPlaces( dataSnapshot );
+                    List itinerary = makeItinerary( selectedPlaces, numberOfDays );
+
+                    intent.putParcelableArrayListExtra( "places", ( ArrayList<? extends Parcelable > ) itinerary );
+
+                    progressDialog.dismiss( );
+
+                    CreateItinerary.this.startActivity( intent );
+                }
+
+                @Override
+                public void onCancelled( DatabaseError databaseError ) {
+                    System.out.println( "The read failed: " + databaseError.getCode( ) );
+                }
+            } );
+        }
+    }
+
+    private boolean checkConstraints( ) {
         //TODO: Fazer um limite de seleção de dias... se selecionar só gastronômicos por exemplo, não deixar mais de 1 dia
 
         if( !parksSelected && !landmarksSelected && !museumsSelected && !shoppingSelected && !foodsSelected ) {
@@ -155,62 +196,61 @@ public class CreateItinerary extends AppCompatActivity {
             } else if( mudouTempofim == 0 ) {
                 Toast.makeText( this, "Preencha o horário de fim!", Toast.LENGTH_SHORT ).show( );
             } else {
-                progressDialog = ProgressDialog.show( this, "", "Carregando", true );
-
-                final long numberOfDays = ( diff / ( 24 * 60 * 60 * 1000 ) ) + 1;
-                mudouTempofim = 0;
-                mudouTempoinicio = 0;
-
-                final Intent intent = new Intent( this, Itinerary.class );
-                intent.putExtra( "startHour", startDay.get( Calendar.HOUR_OF_DAY ) );
-                intent.putExtra( "startMinute", startDay.get( Calendar.MINUTE ) );
-                intent.putExtra( "endHour", endDay.get( Calendar.HOUR_OF_DAY ) );
-                intent.putExtra( "endMinute", endDay.get( Calendar.MINUTE ) );
-                intent.putExtra( "numberOfDays", ( int ) numberOfDays );
-
-                final FirebaseDatabase database = FirebaseDatabase.getInstance( );
-                DatabaseReference ref = database.getReference( "" );
-
-                // Attach a listener to read the data at our posts reference
-                ref.child( "places" ).addValueEventListener( new ValueEventListener( ) {
-                    @Override
-                    public void onDataChange( DataSnapshot dataSnapshot ) {
-                        //Obtém a lista de lugares e mantém apenas os selecionados pelo usuário
-                        List selectedPlaces = new ArrayList< Place >( );
-                        for( DataSnapshot placeDataSnapshot : dataSnapshot.getChildren( ) ) {
-                            Place place = placeDataSnapshot.getValue( Place.class );
-
-                            boolean belongsToSelectedGroup = ( place.placeGroup.contains( PlaceGroup.PARKS ) && parksSelected ) ||
-                                ( place.placeGroup.contains( PlaceGroup.LANDMARKS ) && landmarksSelected ) ||
-                                ( place.placeGroup.contains( PlaceGroup.MUSEUMS ) && museumsSelected ) ||
-                                ( place.placeGroup.contains( PlaceGroup.SHOPPING ) && shoppingSelected ) ||
-                                ( place.placeGroup.contains( PlaceGroup.FOOD ) && foodsSelected );
-
-                            if( belongsToSelectedGroup ) {
-                                selectedPlaces.add( place );
-                            }
-                        }
-
-                        //Cria um itinerário teste, com os 4 primeiros lugares da lista em cada dia
-                        List itinerary = new ArrayList< >( );
-                        for( int day = 0; day < numberOfDays; day++ ) {
-                            List dailyItinerary = selectedPlaces.subList( day * 4, day * 4 + 4 );
-                            itinerary.add( dailyItinerary );
-                        }
-
-                        intent.putParcelableArrayListExtra( "places", ( ArrayList<? extends Parcelable > ) itinerary );
-
-                        progressDialog.dismiss( );
-
-                        CreateItinerary.this.startActivity( intent );
-                    }
-
-                    @Override
-                    public void onCancelled( DatabaseError databaseError ) {
-                        System.out.println( "The read failed: " + databaseError.getCode( ) );
-                    }
-                } );
+                return true;
             }
         }
+
+        return false;
+    }
+
+    private List getSelectedPlaces( DataSnapshot dataSnapshot ) {
+        List selectedPlaces =  new ArrayList< Place >( );
+
+        for( DataSnapshot placeDataSnapshot : dataSnapshot.getChildren( ) ) {
+            Place place = placeDataSnapshot.getValue( Place.class );
+
+            boolean belongsToSelectedGroup = ( place.placeGroup.contains( PlaceGroup.PARKS ) && parksSelected ) ||
+                ( place.placeGroup.contains( PlaceGroup.LANDMARKS ) && landmarksSelected ) ||
+                ( place.placeGroup.contains( PlaceGroup.MUSEUMS ) && museumsSelected ) ||
+                ( place.placeGroup.contains( PlaceGroup.SHOPPING ) && shoppingSelected ) ||
+                ( place.placeGroup.contains( PlaceGroup.FOOD ) && foodsSelected );
+
+            if( belongsToSelectedGroup ) {
+                selectedPlaces.add( place );
+            }
+        }
+
+        return selectedPlaces;
+    }
+
+    //Cria um itinerário teste, com os locais em sequência conforme obtidos do banco
+    private List makeItinerary( List selectedPlaces, long numberOfDays ) {
+        List itinerary = new ArrayList< >( );
+        int placeIndex = 0;
+        for( int day = 0; day < numberOfDays; day++ ) {
+            Calendar startTime = ( Calendar ) startDay.clone();
+            startTime.add( Calendar.DAY_OF_YEAR, day );
+
+            Calendar endTime = ( Calendar ) startDay.clone();
+            endTime.add( Calendar.DAY_OF_YEAR, day );
+            endTime.set( Calendar.HOUR_OF_DAY, endDay.get( Calendar.HOUR_OF_DAY ) );
+            endTime.set( Calendar.MINUTE, endDay.get( Calendar.MINUTE ) );
+
+            List dailyItinerary = new ArrayList< Place >( );
+            do {
+                ( ( Place ) selectedPlaces.get( placeIndex ) ).setStartTime( ( Calendar ) startTime.clone() );
+
+                dailyItinerary.add( selectedPlaces.get( placeIndex ) );
+
+                int visitTime = ( ( Place ) selectedPlaces.get( placeIndex ) ).getVisitTime( );
+                startTime.add( Calendar.MINUTE, visitTime + 10 ); //10 é o tempo de deslocamento padrão de um lugar para outro
+
+                placeIndex++;
+            } while( endTime.after( startTime ) );
+
+            itinerary.add( dailyItinerary );
+        }
+
+        return itinerary;
     }
 }

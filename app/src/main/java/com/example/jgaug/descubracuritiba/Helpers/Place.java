@@ -3,9 +3,8 @@ package com.example.jgaug.descubracuritiba.Helpers;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Calendar;
 
 public class Place implements Parcelable{
     public String image;
@@ -17,16 +16,11 @@ public class Place implements Parcelable{
     public int visitTime;
     public ArrayList< Integer > placeGroup;
     public String description;
+    public Calendar startTime;
     //TODO: Horário de funcionamento
 
     //Firebase needs an empty constructor in order to map places back from database
     public Place( ) { }
-
-    public Place( String image, String name, String description ) {
-        this.image = image;
-        this.name = name;
-        this.description = description;
-    }
 
     public Place( String name, String image, double latitude, double longitude, boolean weatherDependent, int relevance, int visitTime, ArrayList< Integer > placeGroup, String description ) {
         this.name = name;
@@ -38,8 +32,8 @@ public class Place implements Parcelable{
         this.visitTime = visitTime;
         this.placeGroup = placeGroup;
         this.description = description;
+        this.startTime = Calendar.getInstance();
     }
-
 
     public String getImage( ) {
         return image;
@@ -61,12 +55,31 @@ public class Place implements Parcelable{
         return longitude;
     }
 
-    public boolean isWeatherDependent( ) {
-        return weatherDependent;
+    public int getVisitTime( ) {
+        return visitTime;
+    }
+
+    public String getVisitPeriod( ) {
+        String formattedHour = String.format( "%02d", startTime.get( Calendar.HOUR_OF_DAY ) );
+        String formattedMinute = String.format( "%02d", startTime.get( Calendar.MINUTE ) );
+
+        String visitPeriod = formattedHour + ":" + formattedMinute + " - ";
+
+        startTime.add( Calendar.MINUTE, visitTime );
+        formattedHour = String.format( "%02d", startTime.get( Calendar.HOUR_OF_DAY ) );
+        formattedMinute = String.format( "%02d", startTime.get( Calendar.MINUTE ) );
+
+        visitPeriod += formattedHour + ":" + formattedMinute;
+
+        return visitPeriod;
     }
 
     public int getRelevance( ) {
         return relevance;
+    }
+
+    public void setStartTime( Calendar startTime ) {
+        this.startTime = startTime;
     }
 
     @Override
@@ -86,6 +99,7 @@ public class Place implements Parcelable{
         parcel.writeInt(this.visitTime);
         parcel.writeList(this.placeGroup);
         parcel.writeString(this.description);
+        parcel.writeValue( this.startTime );
     }
 
     public Place(Parcel in) {
@@ -97,6 +111,7 @@ public class Place implements Parcelable{
         this.visitTime = in.readInt();
         this.placeGroup = in.readArrayList(ArrayList.class.getClassLoader());
         this.description = in.readString();
+        this.startTime = ( Calendar ) in.readValue( Calendar.class.getClassLoader() );
     }
 
     public static final Creator<Place> CREATOR = new Creator<Place>() {

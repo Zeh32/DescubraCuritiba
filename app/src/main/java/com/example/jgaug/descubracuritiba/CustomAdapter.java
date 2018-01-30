@@ -21,7 +21,7 @@ public class CustomAdapter extends RecyclerView.Adapter {
     private LayoutInflater layoutinflater;
     private List< Place > listStorage;
     private Context context;
-    OnItemClickListener itemClickListener;
+    private OnItemClickListener itemClickListener;
 
     public CustomAdapter( Context context, List< Place > customizedListView ) {
         this.context = context;
@@ -98,8 +98,10 @@ public class CustomAdapter extends RecyclerView.Adapter {
                 itemClickListener.onClickNavegar(listViewHolder.getAdapterPosition());
             }
         });
+
         listViewHolder.placeName.setText( listStorage.get( position ).getName( ) );
         listViewHolder.placeDescription.setText( listStorage.get( position ).getDescription( ) );
+        listViewHolder.placeVisitTime.setText( listStorage.get( position ).getVisitPeriod( ) );
     }
 
     @Override
@@ -111,6 +113,7 @@ public class CustomAdapter extends RecyclerView.Adapter {
         ImageView placeImage;
         TextView placeName;
         TextView placeDescription;
+        TextView placeVisitTime;
         LinearLayout placeDetalhes;
         LinearLayout placeClima;
         LinearLayout placeNavegar;
@@ -121,6 +124,7 @@ public class CustomAdapter extends RecyclerView.Adapter {
             placeImage = (ImageView) itemView.findViewById(R.id.place_image);
             placeName = (TextView) itemView.findViewById(R.id.place_name);
             placeDescription = (TextView) itemView.findViewById(R.id.place_description);
+            placeVisitTime = ( TextView ) itemView.findViewById( R.id.place_visit_time );
             placeDetalhes = (LinearLayout) itemView.findViewById(R.id.btn_detalhes);
             placeClima = (LinearLayout) itemView.findViewById(R.id.btn_clima);
             placeNavegar = (LinearLayout) itemView.findViewById(R.id.btn_navegar);

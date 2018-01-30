@@ -11,7 +11,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="220dp"
         android:background="@drawable/layout_background"
         android:orientation="horizontal">
 
@@ -41,6 +41,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="start"
                 android:text="1 - Nome do Local"
+                android:lines="2"
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="16sp"/>
 
