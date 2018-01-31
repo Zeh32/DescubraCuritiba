@@ -1,6 +1,7 @@
 package com.example.jgaug.descubracuritiba.Activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -17,10 +18,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 
 public class FirstScreen extends AppCompatActivity {
@@ -42,12 +47,30 @@ public class FirstScreen extends AppCompatActivity {
         startActivity( intent );
     }
 
-    public void btnManageSavedItineraries( View view ) {
-        Toast.makeText( this, "Não implementado", Toast.LENGTH_SHORT ).show( );
+    public void btnRetrieveLastSavedItinerary( View view ) {
+        //List itinerary = getLastSavedItinerary( );
+
+        if( true ) {
+            Toast.makeText( this, "Não há nenhum itinerário salvo", Toast.LENGTH_SHORT ).show( );
+        } else {
+            //Intent intent = new Intent( this, Itinerary.class );
+            //intent.putParcelableArrayListExtra( "places", ( ArrayList<? extends Parcelable > ) itinerary );
+            //startActivity( intent );
+        }
     }
 
     public void btnPlacesToVisit( View view ) {
         Toast.makeText( this, "Não implementado", Toast.LENGTH_SHORT ).show( );
+    }
+
+    private List getLastSavedItinerary( ) {
+        SharedPreferences settings = getSharedPreferences( "mySharedPreferences", MODE_PRIVATE );
+        String itineraryJson = settings.getString( "itinerary", "fail" );
+
+        Type type = new TypeToken<List<Place>>(){}.getType();
+        List< Place > itinerary = new Gson( ).fromJson( itineraryJson, type );
+
+        return itinerary;
     }
 
     private void getPlaces( ) {

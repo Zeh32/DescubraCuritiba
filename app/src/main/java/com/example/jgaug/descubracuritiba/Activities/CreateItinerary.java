@@ -2,6 +2,7 @@ package com.example.jgaug.descubracuritiba.Activities;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.DialogFragment;
@@ -20,6 +21,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -162,6 +164,8 @@ public class CreateItinerary extends AppCompatActivity {
                     List selectedPlaces = getSelectedPlaces( dataSnapshot );
                     List itinerary = makeItinerary( selectedPlaces, numberOfDays );
 
+                    //saveItinerary( itinerary );
+
                     intent.putParcelableArrayListExtra( "places", ( ArrayList<? extends Parcelable > ) itinerary );
 
                     progressDialog.dismiss( );
@@ -252,5 +256,16 @@ public class CreateItinerary extends AppCompatActivity {
         }
 
         return itinerary;
+    }
+
+    private void saveItinerary( List itinerary ) {
+        SharedPreferences settings = getSharedPreferences( "mySharedPreferences", MODE_PRIVATE );
+        SharedPreferences.Editor editor = settings.edit();
+
+        String teste = new Gson().toJson( itinerary.get( 0 ) );
+        editor.putString( "itinerary", teste );
+
+        // Commit the edits!
+        editor.apply();
     }
 }
