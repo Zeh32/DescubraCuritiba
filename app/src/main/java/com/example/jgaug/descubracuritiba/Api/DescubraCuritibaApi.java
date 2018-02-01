@@ -4,7 +4,6 @@ package com.example.jgaug.descubracuritiba.Api;
  * Created by eadcn on 29/01/2018.
  */
 
-import com.example.jgaug.descubracuritiba.Api.Response.DistanciaResponse;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
@@ -43,7 +42,7 @@ public class DescubraCuritibaApi {
     private Retrofit mRetrofit;
     private OkHttpClient mHttpClient;
     private Map<String, Object> mServicesPool = new HashMap<>();
-    public static String URL_BASE = "https://maps.googleapis.com/maps/";
+    public static String URL_BASE = "https://maps.googleapis.com/";
 
     public DescubraCuritibaApi() {
         // Define the interceptor, add authentication headers

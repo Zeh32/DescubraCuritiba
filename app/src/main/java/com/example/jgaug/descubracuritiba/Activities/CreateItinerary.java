@@ -11,6 +11,13 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.jgaug.descubracuritiba.Api.DescubraCuritibaApi;
+import com.example.jgaug.descubracuritiba.Api.Response.Distance;
+import com.example.jgaug.descubracuritiba.Api.Response.DistanceTeste;
+import com.example.jgaug.descubracuritiba.Api.Response.DistanciaResponse;
+import com.example.jgaug.descubracuritiba.Api.Response.Element;
+import com.example.jgaug.descubracuritiba.Api.Response.Row;
+import com.example.jgaug.descubracuritiba.Api.endpoint.distanciaApi;
 import com.example.jgaug.descubracuritiba.Fragments.DatePickerFragment;
 import com.example.jgaug.descubracuritiba.Fragments.TimePickerFragment;
 import com.example.jgaug.descubracuritiba.Helpers.Place;
@@ -27,6 +34,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class CreateItinerary extends AppCompatActivity {
     private boolean parksSelected = false;
     private boolean landmarksSelected = false;
@@ -38,6 +49,7 @@ public class CreateItinerary extends AppCompatActivity {
     public int mudouTempoinicio = 0;
     public int mudouTempofim = 0;
     private ProgressDialog progressDialog;
+    public Integer distancia;
 
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
@@ -167,6 +179,7 @@ public class CreateItinerary extends AppCompatActivity {
                     //saveItinerary( itinerary );
 
                     intent.putParcelableArrayListExtra( "places", ( ArrayList<? extends Parcelable > ) itinerary );
+//                    intent.putExtra("distancia", distancia);
 
                     progressDialog.dismiss( );
 
@@ -231,6 +244,9 @@ public class CreateItinerary extends AppCompatActivity {
     private List makeItinerary( List selectedPlaces, long numberOfDays ) {
         List itinerary = new ArrayList< >( );
         int placeIndex = 0;
+
+        getDistancia("-25.438029,-49.26347","-25.4392404,-49.2347639");
+
         for( int day = 0; day < numberOfDays; day++ ) {
             Calendar startTime = ( Calendar ) startDay.clone();
             startTime.add( Calendar.DAY_OF_YEAR, day );
@@ -267,5 +283,35 @@ public class CreateItinerary extends AppCompatActivity {
 
         // Commit the edits!
         editor.apply();
+    }
+
+    public void getDistancia(String latlonOrigem, String latlonDest){
+        final distanciaApi distanciaEndpoint = new DescubraCuritibaApi()
+                .distanciaApi();
+
+        final Integer[] distanciaaux = new Integer[1];
+
+        retrofit2.Call<DistanciaResponse> call;
+
+        call = distanciaEndpoint.getDistancia(latlonOrigem,latlonDest,"AIzaSyA2yt9xJV1gwgqJTpn-zUKnKIMK44iRCJA");
+
+        call.enqueue(new Callback<DistanciaResponse>() {
+            @Override
+            public void onResponse(Call<DistanciaResponse> call, Response<DistanciaResponse> response) {
+                DistanciaResponse distanciaResponse = response.body();
+
+                List<Row> lista = distanciaResponse.getRows();
+                Row row = lista.get(0);
+                List<Element> elementList = row.getElements();
+                Element element = elementList.get(0);
+                Distance distance = element.getDistance();
+                distancia = distance.getValue();
+            }
+
+            @Override
+            public void onFailure(Call<DistanciaResponse> call, Throwable t) {
+
+            }
+        });
     }
 }

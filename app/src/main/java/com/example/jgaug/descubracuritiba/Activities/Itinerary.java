@@ -19,6 +19,7 @@ import java.util.ArrayList;
 
 public class Itinerary extends AppCompatActivity {
     private ArrayList places;
+    public Integer distancia;
 
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
@@ -39,6 +40,8 @@ public class Itinerary extends AppCompatActivity {
         tabLayout.setupWithViewPager( mViewPager );
 
         places = getIntent().getParcelableArrayListExtra("places");
+        distancia = getIntent().getIntExtra("distancia",0);
+        int i = 0;
     }
 
     @Override
