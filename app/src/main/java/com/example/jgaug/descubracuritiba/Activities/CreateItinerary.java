@@ -4,7 +4,6 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -13,7 +12,6 @@ import android.widget.Toast;
 
 import com.example.jgaug.descubracuritiba.Api.DescubraCuritibaApi;
 import com.example.jgaug.descubracuritiba.Api.Response.Distance;
-import com.example.jgaug.descubracuritiba.Api.Response.DistanceTeste;
 import com.example.jgaug.descubracuritiba.Api.Response.DistanciaResponse;
 import com.example.jgaug.descubracuritiba.Api.Response.Element;
 import com.example.jgaug.descubracuritiba.Api.Response.Row;
@@ -32,7 +30,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -95,7 +92,7 @@ public class CreateItinerary extends AppCompatActivity {
         datePickerFragment.show( getSupportFragmentManager( ), "datePicker" );
     }
 
-    public void setDay( boolean isStartDay, int year, int month, int day ) {
+    public void setDate( boolean isStartDay, int year, int month, int day ) {
         if( isStartDay ) {
             this.startDay.set( year, month, day );
         } else {
