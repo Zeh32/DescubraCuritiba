@@ -12,13 +12,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.jgaug.descubracuritiba.Fragments.ItineraryFragment;
+import com.example.jgaug.descubracuritiba.Helpers.Dia;
+import com.example.jgaug.descubracuritiba.Helpers.Itinerário;
 import com.example.jgaug.descubracuritiba.Helpers.Place;
 import com.example.jgaug.descubracuritiba.R;
 
 import java.util.ArrayList;
 
 public class Itinerary extends AppCompatActivity {
-    private ArrayList places;
+    private Itinerário places;
     public Integer distancia;
 
     @Override
@@ -39,7 +41,7 @@ public class Itinerary extends AppCompatActivity {
         TabLayout tabLayout = ( TabLayout ) findViewById( R.id.tabs );
         tabLayout.setupWithViewPager( mViewPager );
 
-        places = getIntent().getParcelableArrayListExtra("places");
+        places = (Itinerário) getIntent().getSerializableExtra("places");
         distancia = getIntent().getIntExtra("distancia",0);
         int i = 0;
     }
@@ -66,8 +68,9 @@ public class Itinerary extends AppCompatActivity {
         return super.onOptionsItemSelected( item );
     }
 
-    public ArrayList< Place > getPlacesToVisit( int day ) {
-        return ( ArrayList< Place > ) places.get( day );
+    public Dia getPlacesToVisit(int day ) {
+        int i = 0;
+        return places.getDias().get(day);
     }
 
     /**

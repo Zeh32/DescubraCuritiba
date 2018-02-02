@@ -20,6 +20,8 @@ import com.example.jgaug.descubracuritiba.Api.Response.Row;
 import com.example.jgaug.descubracuritiba.Api.endpoint.distanciaApi;
 import com.example.jgaug.descubracuritiba.Fragments.DatePickerFragment;
 import com.example.jgaug.descubracuritiba.Fragments.TimePickerFragment;
+import com.example.jgaug.descubracuritiba.Helpers.Dia;
+import com.example.jgaug.descubracuritiba.Helpers.Itinerário;
 import com.example.jgaug.descubracuritiba.Helpers.Place;
 import com.example.jgaug.descubracuritiba.Helpers.PlaceGroup;
 import com.example.jgaug.descubracuritiba.R;
@@ -30,6 +32,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -174,11 +177,11 @@ public class CreateItinerary extends AppCompatActivity {
                 @Override
                 public void onDataChange( DataSnapshot dataSnapshot ) {
                     List selectedPlaces = getSelectedPlaces( dataSnapshot );
-                    List itinerary = makeItinerary( selectedPlaces, numberOfDays );
+                    Itinerário itinerary = makeItinerary( selectedPlaces, numberOfDays );
 
-                    //saveItinerary( itinerary );
+                    saveItinerary( itinerary );
 
-                    intent.putParcelableArrayListExtra( "places", ( ArrayList<? extends Parcelable > ) itinerary );
+                    intent.putExtra( "places", itinerary);
 //                    intent.putExtra("distancia", distancia);
 
                     progressDialog.dismiss( );
@@ -241,8 +244,9 @@ public class CreateItinerary extends AppCompatActivity {
     }
 
     //Cria um itinerário teste, com os locais em sequência conforme obtidos do banco
-    private List makeItinerary( List selectedPlaces, long numberOfDays ) {
-        List itinerary = new ArrayList< >( );
+    private Itinerário makeItinerary( List selectedPlaces, long numberOfDays ) {
+        ArrayList<Dia> itinerary = new ArrayList<>();
+        Dia dia = new Dia();
         int placeIndex = 0;
 
         getDistancia("-25.438029,-49.26347","-25.4392404,-49.2347639");
@@ -256,29 +260,33 @@ public class CreateItinerary extends AppCompatActivity {
             endTime.set( Calendar.HOUR_OF_DAY, endDay.get( Calendar.HOUR_OF_DAY ) );
             endTime.set( Calendar.MINUTE, endDay.get( Calendar.MINUTE ) );
 
-            List dailyItinerary = new ArrayList< Place >( );
+            ArrayList<Place> dailyItinerary = new ArrayList<>( );
             do {
                 ( ( Place ) selectedPlaces.get( placeIndex ) ).setStartTime( ( Calendar ) startTime.clone() );
 
-                dailyItinerary.add( selectedPlaces.get( placeIndex ) );
+                dailyItinerary.add( (Place) selectedPlaces.get( placeIndex ) );
 
                 int visitTime = ( ( Place ) selectedPlaces.get( placeIndex ) ).getVisitTime( );
                 startTime.add( Calendar.MINUTE, visitTime + 10 ); //10 é o tempo de deslocamento padrão de um lugar para outro
 
                 placeIndex++;
-            } while( endTime.after( startTime ) );
+            } while( endTime.after( startTime ) && placeIndex < (selectedPlaces.size()-1) );
 
-            itinerary.add( dailyItinerary );
+            dia.setListPlaces(dailyItinerary);
+            itinerary.add(dia);
         }
 
-        return itinerary;
+        Itinerário itinerário = new Itinerário();
+        itinerário.setDias(itinerary);
+
+        return itinerário;
     }
 
-    private void saveItinerary( List itinerary ) {
+    private void saveItinerary( Itinerário itinerary ) {
         SharedPreferences settings = getSharedPreferences( "mySharedPreferences", MODE_PRIVATE );
         SharedPreferences.Editor editor = settings.edit();
 
-        String teste = new Gson().toJson( itinerary.get( 0 ) );
+        String teste = new Gson().toJson( itinerary );
         editor.putString( "itinerary", teste );
 
         // Commit the edits!

@@ -3,12 +3,15 @@ package com.example.jgaug.descubracuritiba.Activities;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import com.example.jgaug.descubracuritiba.Helpers.Dia;
+import com.example.jgaug.descubracuritiba.Helpers.Itinerário;
 import com.example.jgaug.descubracuritiba.Helpers.Place;
 import com.example.jgaug.descubracuritiba.Helpers.PlaceGroup;
 import com.example.jgaug.descubracuritiba.R;
@@ -48,14 +51,15 @@ public class FirstScreen extends AppCompatActivity {
     }
 
     public void btnRetrieveLastSavedItinerary( View view ) {
-        //List itinerary = getLastSavedItinerary( );
+        Itinerário itinerary = getLastSavedItinerary( );
 
-        if( true ) {
+        if( itinerary == null ) {
             Toast.makeText( this, "Não há nenhum itinerário salvo", Toast.LENGTH_SHORT ).show( );
         } else {
-            //Intent intent = new Intent( this, Itinerary.class );
-            //intent.putParcelableArrayListExtra( "places", ( ArrayList<? extends Parcelable > ) itinerary );
-            //startActivity( intent );
+            Intent intent = new Intent( this, Itinerary.class );
+            intent.putExtra( "places", itinerary);
+            intent.putExtra("numberOfDays",itinerary.getDias().size());
+            startActivity( intent );
         }
     }
 
@@ -63,12 +67,12 @@ public class FirstScreen extends AppCompatActivity {
         Toast.makeText( this, "Não implementado", Toast.LENGTH_SHORT ).show( );
     }
 
-    private List getLastSavedItinerary( ) {
+    private Itinerário getLastSavedItinerary( ) {
         SharedPreferences settings = getSharedPreferences( "mySharedPreferences", MODE_PRIVATE );
         String itineraryJson = settings.getString( "itinerary", "fail" );
 
-        Type type = new TypeToken<List<Place>>(){}.getType();
-        List< Place > itinerary = new Gson( ).fromJson( itineraryJson, type );
+//        Type type = new TypeToken<List<Dia>>(){}.getType();
+        Itinerário itinerary = new Gson( ).fromJson( itineraryJson, Itinerário.class);
 
         return itinerary;
     }

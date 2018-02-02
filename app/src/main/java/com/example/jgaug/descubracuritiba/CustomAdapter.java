@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.jgaug.descubracuritiba.Helpers.Dia;
 import com.example.jgaug.descubracuritiba.Helpers.Place;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
@@ -19,11 +20,11 @@ import java.util.List;
 
 public class CustomAdapter extends RecyclerView.Adapter {
     private LayoutInflater layoutinflater;
-    private List< Place > listStorage;
+    private Dia listStorage;
     private Context context;
     private OnItemClickListener itemClickListener;
 
-    public CustomAdapter( Context context, List< Place > customizedListView ) {
+    public CustomAdapter( Context context, Dia customizedListView ) {
         this.context = context;
         this.layoutinflater = ( LayoutInflater ) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
         this.listStorage = customizedListView;
@@ -54,7 +55,7 @@ public class CustomAdapter extends RecyclerView.Adapter {
         final ViewHolder listViewHolder = (ViewHolder) holder;
 
         StorageReference mStorageRef = FirebaseStorage.getInstance( ).getReference( );
-        mStorageRef.child(listStorage.get(position).getImage()).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+        mStorageRef.child(listStorage.getListPlaces().get(position).getImage()).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
                 GlideUtil.loadImageFinal(context, uri.toString() , ((ViewHolder) holder).placeImage);
@@ -99,14 +100,14 @@ public class CustomAdapter extends RecyclerView.Adapter {
             }
         });
 
-        listViewHolder.placeName.setText( listStorage.get( position ).getName( ) );
-        listViewHolder.placeDescription.setText( listStorage.get( position ).getDescription( ) );
-        listViewHolder.placeVisitTime.setText( listStorage.get( position ).getVisitPeriod( ) );
+        listViewHolder.placeName.setText( listStorage.getListPlaces().get( position ).getName( ) );
+        listViewHolder.placeDescription.setText( listStorage.getListPlaces().get( position ).getDescription( ) );
+        listViewHolder.placeVisitTime.setText( listStorage.getListPlaces().get( position ).getVisitPeriod( ) );
     }
 
     @Override
     public int getItemCount() {
-        return listStorage.size( );
+        return listStorage.getListPlaces().size();
     }
 
     private static class ViewHolder extends RecyclerView.ViewHolder{

@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.example.jgaug.descubracuritiba.Activities.Itinerary;
 import com.example.jgaug.descubracuritiba.CustomAdapter;
+import com.example.jgaug.descubracuritiba.Helpers.Dia;
 import com.example.jgaug.descubracuritiba.Helpers.Place;
 import com.example.jgaug.descubracuritiba.R;
 
@@ -41,7 +42,7 @@ public class ItineraryFragment extends Fragment {
     public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
         View view = inflater.inflate( R.layout.fragment_itinerary, container, false );
 
-        final List< Place > placesToVisit = ( ( Itinerary ) getActivity( ) ).getPlacesToVisit( getArguments( ).getInt( "sectionNumber" ) );
+        final Dia placesToVisit = ( ( Itinerary ) getActivity( ) ).getPlacesToVisit( getArguments( ).getInt( "sectionNumber" ) );
         CustomAdapter customAdapter = new CustomAdapter( getActivity( ), placesToVisit );
 
         RecyclerView recyclerView = ( RecyclerView ) view.findViewById( R.id.itinerary_recycler_view );
@@ -67,8 +68,8 @@ public class ItineraryFragment extends Fragment {
 
                 //Toast.makeText( getActivity( ), "Position: " + position, Toast.LENGTH_SHORT ).show( );
 
-                latitude = placesToVisit.get( position ).getLatitude( );
-                longitude = placesToVisit.get( position ).getLongitude( );
+                latitude = placesToVisit.getListPlaces().get( position ).getLatitude( );
+                longitude = placesToVisit.getListPlaces().get( position ).getLongitude( );
 
                 uri = String.format( Locale.ENGLISH, "geo:0,0?q=" ) + android.net.Uri.encode( String.format( "%s,%s", Double.toString( latitude ), Double.toString( longitude ) ), "UTF-8" );
                 Intent mapIntent = new Intent( Intent.ACTION_VIEW, Uri.parse( uri ) );
