@@ -39,7 +39,7 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
             long minDate = startDay.getTime( ).getTime( ); //Set de minimum date to the first date
             pickerDialog.getDatePicker( ).setMinDate( minDate );
 
-            startDay.add( Calendar.DAY_OF_YEAR, 7 ); //Add a limit for 14 days to the pickerDialog
+            startDay.add( Calendar.DAY_OF_YEAR, 7 ); //Add a limit for 7 days to the pickerDialog
             long maxDate = startDay.getTime( ).getTime( );
             pickerDialog.getDatePicker( ).setMaxDate( maxDate );
 
@@ -55,12 +55,12 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
         Bundle args = getArguments( );
         boolean isStartDay = args.getBoolean( "isStartDay" );
         if( isStartDay == true ) {
-            ( ( CreateItinerary ) getActivity( ) ).setDay( true, year, month, day );
+            ( ( CreateItinerary ) getActivity( ) ).setDate( true, year, month, day );
 
             TextView textViewStartDay = ( TextView ) getActivity( ).findViewById( R.id.textViewStartDay );
             textViewStartDay.setText( formattedDay + " / " + formattedMonth + " / " + formattedYear );
         } else {
-            ( ( CreateItinerary ) getActivity( ) ).setDay( false, year, month, day );
+            ( ( CreateItinerary ) getActivity( ) ).setDate( false, year, month, day );
 
             TextView textViewEndDay = ( TextView ) getActivity( ).findViewById( R.id.textViewEndDay );
             textViewEndDay.setText( formattedDay + " / " + formattedMonth + " / " + formattedYear );

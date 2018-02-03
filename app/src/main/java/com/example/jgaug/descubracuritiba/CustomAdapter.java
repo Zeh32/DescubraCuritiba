@@ -10,21 +10,18 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.example.jgaug.descubracuritiba.Helpers.Dia;
-import com.example.jgaug.descubracuritiba.Helpers.Place;
+import com.example.jgaug.descubracuritiba.Helpers.DailyItinerary;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import java.util.List;
-
 public class CustomAdapter extends RecyclerView.Adapter {
     private LayoutInflater layoutinflater;
-    private Dia listStorage;
+    private DailyItinerary listStorage;
     private Context context;
     private OnItemClickListener itemClickListener;
 
-    public CustomAdapter( Context context, Dia customizedListView ) {
+    public CustomAdapter( Context context, DailyItinerary customizedListView ) {
         this.context = context;
         this.layoutinflater = ( LayoutInflater ) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
         this.listStorage = customizedListView;
@@ -55,31 +52,12 @@ public class CustomAdapter extends RecyclerView.Adapter {
         final ViewHolder listViewHolder = (ViewHolder) holder;
 
         StorageReference mStorageRef = FirebaseStorage.getInstance( ).getReference( );
-        mStorageRef.child(listStorage.getListPlaces().get(position).getImage()).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+        mStorageRef.child(listStorage.getPlaces().get(position).getImage()).getDownloadUrl().addOnSuccessListener( new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
                 GlideUtil.loadImageFinal(context, uri.toString() , ((ViewHolder) holder).placeImage);
             }
         });
-//        try {
-//            final File localFile = File.createTempFile( "images", "jpg" );
-//            StorageReference imageRef = mStorageRef.child( listStorage.get( position ).getImage( ) );
-//            imageRef.getFile( localFile ).addOnSuccessListener( new OnSuccessListener< FileDownloadTask.TaskSnapshot >( ) {
-//                @Override
-//                public void onSuccess( FileDownloadTask.TaskSnapshot taskSnapshot ) {
-//                    Bitmap bitmap = BitmapFactory.decodeFile( localFile.getAbsolutePath( ) );
-//                    listViewHolder.placeImage.setImageBitmap( bitmap );
-//                }
-//            } ).addOnFailureListener( new OnFailureListener( ) {
-//                @Override
-//                public void onFailure( @NonNull Exception exception ) {
-//                    // Handle failed download
-//                    // ...
-//                }
-//            } );
-//        } catch( IOException e ) {
-//            e.printStackTrace( );
-//        }
 
         listViewHolder.placeDetalhes.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,14 +78,14 @@ public class CustomAdapter extends RecyclerView.Adapter {
             }
         });
 
-        listViewHolder.placeName.setText( listStorage.getListPlaces().get( position ).getName( ) );
-        listViewHolder.placeDescription.setText( listStorage.getListPlaces().get( position ).getDescription( ) );
-        listViewHolder.placeVisitTime.setText( listStorage.getListPlaces().get( position ).getVisitPeriod( ) );
+        listViewHolder.placeName.setText( listStorage.getPlaces().get( position ).getName( ) );
+        listViewHolder.placeDescription.setText( listStorage.getPlaces().get( position ).getDescription( ) );
+        listViewHolder.placeVisitTime.setText( listStorage.getPlaces().get( position ).getVisitPeriod( ) );
     }
 
     @Override
     public int getItemCount() {
-        return listStorage.getListPlaces().size();
+        return listStorage.getPlaces().size();
     }
 
     private static class ViewHolder extends RecyclerView.ViewHolder{

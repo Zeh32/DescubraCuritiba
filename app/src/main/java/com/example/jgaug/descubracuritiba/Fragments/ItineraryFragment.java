@@ -13,11 +13,9 @@ import android.widget.Toast;
 
 import com.example.jgaug.descubracuritiba.Activities.Itinerary;
 import com.example.jgaug.descubracuritiba.CustomAdapter;
-import com.example.jgaug.descubracuritiba.Helpers.Dia;
-import com.example.jgaug.descubracuritiba.Helpers.Place;
+import com.example.jgaug.descubracuritiba.Helpers.DailyItinerary;
 import com.example.jgaug.descubracuritiba.R;
 
-import java.util.List;
 import java.util.Locale;
 
 public class ItineraryFragment extends Fragment {
@@ -42,7 +40,7 @@ public class ItineraryFragment extends Fragment {
     public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
         View view = inflater.inflate( R.layout.fragment_itinerary, container, false );
 
-        final Dia placesToVisit = ( ( Itinerary ) getActivity( ) ).getPlacesToVisit( getArguments( ).getInt( "sectionNumber" ) );
+        final DailyItinerary placesToVisit = ( ( Itinerary ) getActivity( ) ).getDailyItinerary( getArguments( ).getInt( "sectionNumber" ) );
         CustomAdapter customAdapter = new CustomAdapter( getActivity( ), placesToVisit );
 
         RecyclerView recyclerView = ( RecyclerView ) view.findViewById( R.id.itinerary_recycler_view );
@@ -65,11 +63,8 @@ public class ItineraryFragment extends Fragment {
 
             @Override
             public void onClickNavegar( int position ) {
-
-                //Toast.makeText( getActivity( ), "Position: " + position, Toast.LENGTH_SHORT ).show( );
-
-                latitude = placesToVisit.getListPlaces().get( position ).getLatitude( );
-                longitude = placesToVisit.getListPlaces().get( position ).getLongitude( );
+                latitude = placesToVisit.getPlaces().get( position ).getLatitude( );
+                longitude = placesToVisit.getPlaces().get( position ).getLongitude( );
 
                 uri = String.format( Locale.ENGLISH, "geo:0,0?q=" ) + android.net.Uri.encode( String.format( "%s,%s", Double.toString( latitude ), Double.toString( longitude ) ), "UTF-8" );
                 Intent mapIntent = new Intent( Intent.ACTION_VIEW, Uri.parse( uri ) );

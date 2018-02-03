@@ -3,15 +3,13 @@ package com.example.jgaug.descubracuritiba.Activities;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-import com.example.jgaug.descubracuritiba.Helpers.Dia;
-import com.example.jgaug.descubracuritiba.Helpers.Itinerário;
+import com.example.jgaug.descubracuritiba.Helpers.DailyItineraryList;
 import com.example.jgaug.descubracuritiba.Helpers.Place;
 import com.example.jgaug.descubracuritiba.Helpers.PlaceGroup;
 import com.example.jgaug.descubracuritiba.R;
@@ -22,13 +20,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 
 public class FirstScreen extends AppCompatActivity {
@@ -40,7 +35,6 @@ public class FirstScreen extends AppCompatActivity {
         //Set to fullscreen
         requestWindowFeature( Window.FEATURE_NO_TITLE );
         getWindow( ).setFlags( WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN );
-//        addPlaces();
 
         setContentView( R.layout.activity_first_screen );
     }
@@ -51,30 +45,22 @@ public class FirstScreen extends AppCompatActivity {
     }
 
     public void btnRetrieveLastSavedItinerary( View view ) {
-        Itinerário itinerary = getLastSavedItinerary( );
+        SharedPreferences settings = getSharedPreferences( "mySharedPreferences", MODE_PRIVATE );
+        String itineraryJson = settings.getString( "itineraryJson", "fail" );
+
+        DailyItineraryList itinerary = new Gson( ).fromJson( itineraryJson, DailyItineraryList.class );
 
         if( itinerary == null ) {
             Toast.makeText( this, "Não há nenhum itinerário salvo", Toast.LENGTH_SHORT ).show( );
         } else {
             Intent intent = new Intent( this, Itinerary.class );
-            intent.putExtra( "places", itinerary);
-            intent.putExtra("numberOfDays",itinerary.getDias().size());
+            intent.putExtra( "itinerary", itinerary );
             startActivity( intent );
         }
     }
 
     public void btnPlacesToVisit( View view ) {
         Toast.makeText( this, "Não implementado", Toast.LENGTH_SHORT ).show( );
-    }
-
-    private Itinerário getLastSavedItinerary( ) {
-        SharedPreferences settings = getSharedPreferences( "mySharedPreferences", MODE_PRIVATE );
-        String itineraryJson = settings.getString( "itinerary", "fail" );
-
-//        Type type = new TypeToken<List<Dia>>(){}.getType();
-        Itinerário itinerary = new Gson( ).fromJson( itineraryJson, Itinerário.class);
-
-        return itinerary;
     }
 
     private void getPlaces( ) {
@@ -85,7 +71,8 @@ public class FirstScreen extends AppCompatActivity {
         ref.addValueEventListener( new ValueEventListener( ) {
             @Override
             public void onDataChange( DataSnapshot dataSnapshot ) {
-                ArrayList< Place > children = dataSnapshot.child( "places" ).getValue( new GenericTypeIndicator< ArrayList< Place > >( ) { } );
+                ArrayList< Place > children = dataSnapshot.child( "places" ).getValue( new GenericTypeIndicator< ArrayList< Place > >( ) {
+                } );
             }
 
             @Override
@@ -101,7 +88,7 @@ public class FirstScreen extends AppCompatActivity {
         DatabaseReference postsRef = ref.child( "places" );
 
         ArrayList< Place > places = new ArrayList<>( );
-        places.add( new Place( "Jardim Botânico", "Jardim botanico.jpg",-25.4431219,-49.2449701, true, 5, 120, new ArrayList< Integer >( Arrays.asList( PlaceGroup.LANDMARKS, PlaceGroup.PARKS ) ), "O Jardim Botânico de Curitiba foi inaugurado em 1991, com uma área de 245 mil m². Seus jardins geométricos e a estufa de três abóbadas tornaram-se um dos principais cartões postais de Curitiba" ) );
+        places.add( new Place( "Jardim Botânico", "Jardim botanico.jpg", -25.4431219, -49.2449701, true, 5, 120, new ArrayList< Integer >( Arrays.asList( PlaceGroup.LANDMARKS, PlaceGroup.PARKS ) ), "O Jardim Botânico de Curitiba foi inaugurado em 1991, com uma área de 245 mil m². Seus jardins geométricos e a estufa de três abóbadas tornaram-se um dos principais cartões postais de Curitiba" ) );
         places.add( new Place( "Bosque Alemão", "bosque alemao.jpg", -25.404949, -49.2869558, true, 3, 90, new ArrayList< Integer >( Collections.singletonList( PlaceGroup.PARKS ) ), "Situado em uma área de fundo de vale com 38.000m2 no Jardim Schaffer, local onde no final do século passado a família que deu nome ao bairro era responsável por uma leiteria famosa na região, este bosque conta com equipamentos relacionados à cultura germânica, sendo assim uma homenagem do Prefeito Rafael Greca e da cidade de Curitiba à etnia que aqui se estabeleceu no século 19, a partir de 1833." ) );
         places.add( new Place( "Parque Tanguá", "parque tangua.jpg", -25.3779871, -49.2839598, true, 5, 120, new ArrayList< Integer >( Arrays.asList( PlaceGroup.LANDMARKS, PlaceGroup.PARKS ) ), "Inaugurado em 1996, o Parque Tanguá surpreende pela sua beleza. Envolve uma área de 235 mil m², lugar de um antigo complexo de pedreiras desativadas. O Parque Tanguá preserva áreas verdes próximas à nascente do Rio Barigui, com araucárias. Possui uma cascata, dois lagos e um túnel artificial que pode ser visitado de barco ou à pé. O conjunto do parque inclui, também, um mirante, ciclovia, pista de Cooper e lanchonete." ) );
         places.add( new Place( "Parque Barigui", "parque barigui.jpg", -25.4201877, -49.3060934, true, 4, 150, new ArrayList< Integer >( Collections.singletonList( PlaceGroup.PARKS ) ), "\"O nome Barigui tem origem indígena e significa \"rio do fruto espinhoso\", em alusão às pinhas das araucárias nativas, ainda remanescentes. O lugar, uma antiga \"sesmaria\" pertencente a Mateus MartinsLeme, foi transformado em parque em 1972 pelo então prefeito Jaime Lerner. Por sua localização, próximo ao centro da cidade, e sua infraestrutura, o Barigui é o parque mais freqüentado de Curitiba.\"" ) );
@@ -110,12 +97,12 @@ public class FirstScreen extends AppCompatActivity {
         places.add( new Place( "Parque São Lourenço", "parque sao loureco.jpg", -25.3870153, -49.2673593, true, 3, 90, new ArrayList< Integer >( Collections.singletonList( PlaceGroup.PARKS ) ), "O Parque São Lourenço foi Inaugurado em 1972, com 204 mil m² de área. Sua criação ocorreu após uma enchente do rio Belém, em 1970, que provocou o rompimento da represa de São Lourenço, paralisando um curtume e a fabrica de cola, que funcionavam no local. O Parque surgiu com as abras de contenção de cheias e de recuperação da área." ) );
         places.add( new Place( "Praça do Japão", "praca do japao.jpg", -25.4455213, -49.2874269, true, 3, 60, new ArrayList< Integer >( Collections.singletonList( PlaceGroup.PARKS ) ), "Numa área bem arborizada de 14 mil m², no bairro de Água Verde, está a Praça do Japão. Uma homenagem à imigração japonesa em Curitiba. Seu projeto foi iniciado em 1958 e a Praça concluída em 1962. Uma reforma, em 1993, incluiu o Portal Japonês e o Memorial da Imigração Japonesa." ) );
         places.add( new Place( "Zoológico Municipal de Curitiba", "zoologico minicipal.jpg", -25.5595508, -49.2310989, true, 3, 120, new ArrayList< Integer >( Collections.singletonList( PlaceGroup.PARKS ) ), "O Zoológico de Curitiba está situado no Parque Municipal do Iguaçu, ocupando uma área de 589 mil metros quadrados e que atualmente, está entre os cinco zoológicos mais conceituados do Brasil. Recebe cerca de 650 mil visitantes por ano e está aberto ao público de terça a sexta das 09 às 17 horas e sábados, domingo e feriados das 10h às 16 horas." ) );
-        places.add( new Place( "Praça da Espanha", "praca da espanha.jpg", -25.4350475, -49.2867557, true, 2, 60, new ArrayList< Integer >( Collections.singletonList( PlaceGroup.PARKS ) ),"Ponto de encontro com fonte perto da qual crianças brincam e famílias passeiam, entorno com sorvetes e pipoca." ) );
-        places.add( new Place( "Bosque Reinhard Maack", "bosque reinhard maack.jpg", -25.4890593, -49.2601908, true, 1, 60, new ArrayList< Integer >( Collections.singletonList( PlaceGroup.PARKS ) ),"Criado em 1989, com 78 mil m² de área, o Bosque Reinhard Maack é uma opção de lazer especial, principalmente para crianças. Inclui uma trilha de aventuras para recreação infantil, onde 15 brinquedos oferecem desafios e obstáculos em níveis variados." ) );
-        places.add( new Place( "Passeio Público", "passeio publico.jpg", -25.4253578, -49.2674283, true, 4, 90, new ArrayList< Integer >( Arrays.asList( PlaceGroup.LANDMARKS, PlaceGroup.PARKS ) ),"O Passeio Público é o parque mais central e o primeiro de Curitiba. Inaugurado em 1886 com cerca de 70 mil m² de mata natural, nas margens do rio Belém. Na época sua iluminação era feita por lampiões alimentados por azeite de peixe." ) );
+        places.add( new Place( "Praça da Espanha", "praca da espanha.jpg", -25.4350475, -49.2867557, true, 2, 60, new ArrayList< Integer >( Collections.singletonList( PlaceGroup.PARKS ) ), "Ponto de encontro com fonte perto da qual crianças brincam e famílias passeiam, entorno com sorvetes e pipoca." ) );
+        places.add( new Place( "Bosque Reinhard Maack", "bosque reinhard maack.jpg", -25.4890593, -49.2601908, true, 1, 60, new ArrayList< Integer >( Collections.singletonList( PlaceGroup.PARKS ) ), "Criado em 1989, com 78 mil m² de área, o Bosque Reinhard Maack é uma opção de lazer especial, principalmente para crianças. Inclui uma trilha de aventuras para recreação infantil, onde 15 brinquedos oferecem desafios e obstáculos em níveis variados." ) );
+        places.add( new Place( "Passeio Público", "passeio publico.jpg", -25.4253578, -49.2674283, true, 4, 90, new ArrayList< Integer >( Arrays.asList( PlaceGroup.LANDMARKS, PlaceGroup.PARKS ) ), "O Passeio Público é o parque mais central e o primeiro de Curitiba. Inaugurado em 1886 com cerca de 70 mil m² de mata natural, nas margens do rio Belém. Na época sua iluminação era feita por lampiões alimentados por azeite de peixe." ) );
 
-        places.add( new Place( "Praça Osório", "praca osorio.jpg", -25.4329247, -49.2758622, true, 3, 60, new ArrayList< Integer >( Arrays.asList( PlaceGroup.LANDMARKS, PlaceGroup.PARKS ) ),"Nasceu em 1874 e recebeu, em 1878, o nome de Largo Oceano Pacífico. É Praça General Osório desde 1879. Teve coreto em 1914, construído pelo prefeito Cândido Ferreira de Abreu e demolido no início dos anos 50. Seu relógio, restaurado em 1993, relembra o primeiro lá instalado, e marca a hora oficial da cidade. Tem fonte luminosa e equipamentos de lazer para a garotada." ) );
-        places.add( new Place( "Praça Santos Andrade", "praca santos andrade.jpg", -25.428763, -49.2665674, true, 2, 30, new ArrayList< Integer >( Arrays.asList( PlaceGroup.LANDMARKS, PlaceGroup.PARKS ) ),"Uma praça cercada de tradição cultural, no Centro de Curitiba. De um lado, a Universidade Federal do Paraná, do outro o Teatro Guaíra, um dos mais importantes do Brasil. A Praça Santos Andrade abriga árvores antigas, vários bustos de personalidades históricas e uma fonte no centro." ) );
+        places.add( new Place( "Praça Osório", "praca osorio.jpg", -25.4329247, -49.2758622, true, 3, 60, new ArrayList< Integer >( Arrays.asList( PlaceGroup.LANDMARKS, PlaceGroup.PARKS ) ), "Nasceu em 1874 e recebeu, em 1878, o nome de Largo Oceano Pacífico. É Praça General Osório desde 1879. Teve coreto em 1914, construído pelo prefeito Cândido Ferreira de Abreu e demolido no início dos anos 50. Seu relógio, restaurado em 1993, relembra o primeiro lá instalado, e marca a hora oficial da cidade. Tem fonte luminosa e equipamentos de lazer para a garotada." ) );
+        places.add( new Place( "Praça Santos Andrade", "praca santos andrade.jpg", -25.428763, -49.2665674, true, 2, 30, new ArrayList< Integer >( Arrays.asList( PlaceGroup.LANDMARKS, PlaceGroup.PARKS ) ), "Uma praça cercada de tradição cultural, no Centro de Curitiba. De um lado, a Universidade Federal do Paraná, do outro o Teatro Guaíra, um dos mais importantes do Brasil. A Praça Santos Andrade abriga árvores antigas, vários bustos de personalidades históricas e uma fonte no centro." ) );
         places.add( new Place( "Ópera de Arame", "opera de arame.jpg", -25.384578, -49.2761655, true, 3, 60, new ArrayList< Integer >( Collections.singletonList( PlaceGroup.LANDMARKS ) ), "A Ópera de Arame foi construída em estrutura tubular e teto de policarbonato transparente. O projeto é do arquiteto Domingos Bongestabs, professor do departamento de Arquitetura e Urbanismo da UFPR, o mesmo autor do projeto da Unilivre. Tem capacidade para 2.400 espectadores e um palco de 400m² destinado a apresentações artísticas e culturais." ) );
         places.add( new Place( "Largo da Ordem", "largo da ordem.jpg", -25.4278063, -49.2722547, true, 5, 60, new ArrayList< Integer >( Collections.singletonList( PlaceGroup.LANDMARKS ) ), "O Largo da Ordem é o coração do Centro Histórico de Curitiba e onde se encontra a Igreja da Ordem Terceira de São Francisco das Chagas, a mais antiga de Curitiba. Nos séculos 18, 19 e boa parte do século 20, o Largo era uma área de intenso comércio." ) );
         places.add( new Place( "Estádio Joaquim Américo Guimarães", "estadio joaquim americo.jpg", -25.4482116, -49.2769866, false, 2, 60, new ArrayList< Integer >( Collections.singletonList( PlaceGroup.LANDMARKS ) ), "Conhecido como Arena da Baixada, o espaço foi o primeiro palco do futebol brasileiro a adotar o naming rights com o título de Kyocera Arena entre 2005 e 1º de abril de 2008 e com a escolha de Curitiba para ser uma das sedes da Copa do Mundo de 2014, a Arena, entre 2012 e 2014, foi reformada, com a ampliação de capacidade de modo a atender os padrões exigidos pela FIFA, passando a ter 42.370 lugares (capacidade de operação conforme CNEF/CBF 2014 é idêntico a capacidade oficial)." ) );
@@ -147,7 +134,7 @@ public class FirstScreen extends AppCompatActivity {
         places.add( new Place( "Shopping Cidade", "shopping cidade.jpg", -25.471794, -49.252598, false, 1, 90, new ArrayList< Integer >( Arrays.asList( PlaceGroup.FOOD, PlaceGroup.SHOPPING ) ), "Em 2003, nascia o Shopping Cidade. A prova de que preços imbatíveis podem conviver com um ambiente superagradável, cheio de opções de lazer, cultura e diversão para toda a família. Venha nos fazer uma visita e conhecer tudo o que preparamos para você. Aqui todo mundo é muito bem-vindo." ) );
         places.add( new Place( "Shopping Total", "shopping total.jpg", -25.4787444, -49.2943671, false, 2, 90, new ArrayList< Integer >( Arrays.asList( PlaceGroup.FOOD, PlaceGroup.SHOPPING ) ), "Localizado no bairro Portão, o Shopping Total Curitiba foi construído em um terreno de 31 mil m² e conta com 77 mil m² de área construída. Famoso na cidade por oferecer um amplo mix de lojas com preço sempre mais barato, o shopping está a 15 minutos do centro de Curitiba com fácil acesso para quem mora nos bairros Cidade Industrial, Novo Mundo, Fazendinha, Sitio Cercado, Água Verde, Capão Raso, Boqueirão e Alto Boqueirão. O Shopping Total Curitiba conta hoje com 4 lojas âncora: Americanas, Havan, Cassol e Casa China, além de cinco salas de cinema com a marca Cinesystem e uma grande praça de alimentação com 16 lojas, entre elas Burger King, Bobs, McDonald’s, Subway, Difrango, Rock Grill e Bier Hoff. Com acesso facilitado a todos os públicos, o shopping conta com forte divulgação na mídia e promoções sazonais." ) );
         places.add( new Place( "Shopping Crystal", "shopping crystal.jpg", -25.4391307, -49.2812202, false, 2, 90, new ArrayList< Integer >( Arrays.asList( PlaceGroup.FOOD, PlaceGroup.SHOPPING ) ), "Reconhecido pela arquitetura moderna e ambiente acolhedor, o Shopping Crystal reúne diversas opções de compras, serviços e gastronomia para atender o público da região com conforto e conveniência." ) );
-        places.add( new Place( "Shopping Mueller", "shopping mueller.jpg", -25.4234408, -49.2704616, false, 3, 150, new ArrayList< Integer >( Arrays.asList( PlaceGroup.FOOD, PlaceGroup.SHOPPING ) ), "Aqui você encontra mais de 200 lojas de marcas de renome nacional e internacional, o moderno complexo de cinemas Cinemark, que conta com salas de exibição em 3D, além de restaurantes, atividades culturais e as melhores experiências.") );
+        places.add( new Place( "Shopping Mueller", "shopping mueller.jpg", -25.4234408, -49.2704616, false, 3, 150, new ArrayList< Integer >( Arrays.asList( PlaceGroup.FOOD, PlaceGroup.SHOPPING ) ), "Aqui você encontra mais de 200 lojas de marcas de renome nacional e internacional, o moderno complexo de cinemas Cinemark, que conta com salas de exibição em 3D, além de restaurantes, atividades culturais e as melhores experiências." ) );
         places.add( new Place( "Shopping Pátio Batel", "shopping patio batel.jpg", -25.4430477, -49.2909159, false, 3, 150, new ArrayList< Integer >( Arrays.asList( PlaceGroup.FOOD, PlaceGroup.SHOPPING ) ), "Reunimos aqui Compras, Lazer, Entretenimento e Cultura, de um jeito que só Curitiba pode oferecer. Muito verde, luz natural, áreas de circulação amplas e espaços criados para proporcionar encontros com a família, com os amigos e consigo mesmo." ) );
         places.add( new Place( "Shopping Jardim das Américas", "shopping jardim da americas.jpg", -25.4513486, -49.2284538, false, 1, 90, new ArrayList< Integer >( Arrays.asList( PlaceGroup.FOOD, PlaceGroup.SHOPPING ) ), "Localizado no bairro Jardim das Américas, o Shopping tem desenvolvido uma forte relação com a comunidade local, seja por meio dos laços de compras ou primando pelo desenvolvimento social. O resultado disso pode ser observado na fidelização dos clientes e na confiança que as pessoas têm no empreendimento." ) );
 

@@ -8,6 +8,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.jgaug.descubracuritiba.Api.DescubraCuritibaApi;
@@ -18,8 +19,8 @@ import com.example.jgaug.descubracuritiba.Api.Response.Row;
 import com.example.jgaug.descubracuritiba.Api.endpoint.distanciaApi;
 import com.example.jgaug.descubracuritiba.Fragments.DatePickerFragment;
 import com.example.jgaug.descubracuritiba.Fragments.TimePickerFragment;
-import com.example.jgaug.descubracuritiba.Helpers.Dia;
-import com.example.jgaug.descubracuritiba.Helpers.Itinerário;
+import com.example.jgaug.descubracuritiba.Helpers.DailyItinerary;
+import com.example.jgaug.descubracuritiba.Helpers.DailyItineraryList;
 import com.example.jgaug.descubracuritiba.Helpers.Place;
 import com.example.jgaug.descubracuritiba.Helpers.PlaceGroup;
 import com.example.jgaug.descubracuritiba.R;
@@ -46,9 +47,6 @@ public class CreateItinerary extends AppCompatActivity {
     private boolean foodsSelected = false;
     private Calendar startDay = Calendar.getInstance( );
     private Calendar endDay = Calendar.getInstance( );
-    public int mudouTempoinicio = 0;
-    public int mudouTempofim = 0;
-    private ProgressDialog progressDialog;
     public Integer distancia;
 
     @Override
@@ -59,21 +57,6 @@ public class CreateItinerary extends AppCompatActivity {
 
     public void btnSelectPlaceOnMap( View view ) {
         Toast.makeText( this, "Não implementado", Toast.LENGTH_SHORT ).show( );
-    }
-
-    public void setTime( View view ) {
-        //TODO: não deixar setar o tempo de término, se o inicial ainda não foi definido
-
-        Bundle bundle = new Bundle( );
-        if( view.getId( ) == R.id.textViewStartTime ) {
-            bundle.putBoolean( "isStartTime", true );
-        } else {
-            bundle.putBoolean( "isStartTime", false );
-        }
-
-        DialogFragment timePickerFragment = new TimePickerFragment( );
-        timePickerFragment.setArguments( bundle );
-        timePickerFragment.show( getSupportFragmentManager( ), "timePicker" );
     }
 
     public void setDate( View view ) {
@@ -92,6 +75,21 @@ public class CreateItinerary extends AppCompatActivity {
         datePickerFragment.show( getSupportFragmentManager( ), "datePicker" );
     }
 
+    public void setTime( View view ) {
+        //TODO: não deixar setar o tempo de término, se o inicial ainda não foi definido
+
+        Bundle bundle = new Bundle( );
+        if( view.getId( ) == R.id.textViewStartTime ) {
+            bundle.putBoolean( "isStartTime", true );
+        } else {
+            bundle.putBoolean( "isStartTime", false );
+        }
+
+        DialogFragment timePickerFragment = new TimePickerFragment( );
+        timePickerFragment.setArguments( bundle );
+        timePickerFragment.show( getSupportFragmentManager( ), "timePicker" );
+    }
+
     public void setDate( boolean isStartDay, int year, int month, int day ) {
         if( isStartDay ) {
             this.startDay.set( year, month, day );
@@ -104,11 +102,9 @@ public class CreateItinerary extends AppCompatActivity {
         if( isStartTime ) {
             this.startDay.set( Calendar.HOUR_OF_DAY, hourOfDay );
             this.startDay.set( Calendar.MINUTE, minute );
-            mudouTempoinicio = 1;
         } else {
             this.endDay.set( Calendar.HOUR_OF_DAY, hourOfDay );
             this.endDay.set( Calendar.MINUTE, minute );
-            mudouTempofim = 1;
         }
     }
 
@@ -152,19 +148,7 @@ public class CreateItinerary extends AppCompatActivity {
 
     public void btnMakeItinerary( View view ) {
         if( checkConstraints( ) ) {
-            progressDialog = ProgressDialog.show( this, "", "Carregando", true );
-
-            long diff = endDay.getTimeInMillis( ) - startDay.getTimeInMillis( ); //result in millis
-            final long numberOfDays = ( diff / ( 24 * 60 * 60 * 1000 ) ) + 1;
-            mudouTempofim = 0;
-            mudouTempoinicio = 0;
-
-            final Intent intent = new Intent( this, Itinerary.class );
-            intent.putExtra( "startHour", startDay.get( Calendar.HOUR_OF_DAY ) );
-            intent.putExtra( "startMinute", startDay.get( Calendar.MINUTE ) );
-            intent.putExtra( "endHour", endDay.get( Calendar.HOUR_OF_DAY ) );
-            intent.putExtra( "endMinute", endDay.get( Calendar.MINUTE ) );
-            intent.putExtra( "numberOfDays", ( int ) numberOfDays );
+            ProgressDialog progressDialog = ProgressDialog.show( this, "", "Gerando itinerário. Por favor, aguarde...", true );
 
             final FirebaseDatabase database = FirebaseDatabase.getInstance( );
             DatabaseReference ref = database.getReference( "" );
@@ -173,13 +157,16 @@ public class CreateItinerary extends AppCompatActivity {
             ref.child( "places" ).addValueEventListener( new ValueEventListener( ) {
                 @Override
                 public void onDataChange( DataSnapshot dataSnapshot ) {
+                    long diff = endDay.getTimeInMillis( ) - startDay.getTimeInMillis( ); //result in millis
+                    long numberOfDays = ( diff / ( 24 * 60 * 60 * 1000 ) ) + 1;
+
                     List selectedPlaces = getSelectedPlaces( dataSnapshot );
-                    Itinerário itinerary = makeItinerary( selectedPlaces, numberOfDays );
+                    DailyItineraryList itinerary = makeItinerary( selectedPlaces, numberOfDays );
 
                     saveItinerary( itinerary );
 
-                    intent.putExtra( "places", itinerary);
-//                    intent.putExtra("distancia", distancia);
+                    Intent intent = new Intent( CreateItinerary.this, Itinerary.class );
+                    intent.putExtra( "itinerary", itinerary );
 
                     progressDialog.dismiss( );
 
@@ -202,15 +189,15 @@ public class CreateItinerary extends AppCompatActivity {
         } else {
             long diff = endDay.getTimeInMillis( ) - startDay.getTimeInMillis( ); //result in millis
 
-            if( startDay.getTimeInMillis( ) == 0 ) {
-                Toast.makeText( this, "Preencha o primeiro dia!", Toast.LENGTH_SHORT ).show( );
-            } else if( endDay.getTimeInMillis( ) == 0 ) {
-                Toast.makeText( this, "Preencha o último dia!", Toast.LENGTH_SHORT ).show( );
-            } else if( diff < 0 ) {
+            if( diff < 0 ) {
                 Toast.makeText( this, "O último dia tem que vir depois do primeiro!", Toast.LENGTH_SHORT ).show( );
-            } else if( mudouTempoinicio == 0 ) {
+            } else if( ( ( TextView ) findViewById( R.id.textViewStartDay ) ).getText( ) == "" ) {
+                Toast.makeText( this, "Preencha o primeiro dia!", Toast.LENGTH_SHORT ).show( );
+            } else if( ( ( TextView ) findViewById( R.id.textViewEndDay ) ).getText( ) == "" ) {
+                Toast.makeText( this, "Preencha o último dia!", Toast.LENGTH_SHORT ).show( );
+            } else if( ( ( TextView ) findViewById( R.id.textViewStartTime ) ).getText( ) == "" ) {
                 Toast.makeText( this, "Preencha o horário de início!", Toast.LENGTH_SHORT ).show( );
-            } else if( mudouTempofim == 0 ) {
+            } else if( ( ( TextView ) findViewById( R.id.textViewEndTime ) ).getText( ) == "" ) {
                 Toast.makeText( this, "Preencha o horário de fim!", Toast.LENGTH_SHORT ).show( );
             } else {
                 return true;
@@ -221,16 +208,12 @@ public class CreateItinerary extends AppCompatActivity {
     }
 
     private List getSelectedPlaces( DataSnapshot dataSnapshot ) {
-        List selectedPlaces =  new ArrayList< Place >( );
+        List selectedPlaces = new ArrayList< Place >( );
 
         for( DataSnapshot placeDataSnapshot : dataSnapshot.getChildren( ) ) {
             Place place = placeDataSnapshot.getValue( Place.class );
 
-            boolean belongsToSelectedGroup = ( place.placeGroup.contains( PlaceGroup.PARKS ) && parksSelected ) ||
-                ( place.placeGroup.contains( PlaceGroup.LANDMARKS ) && landmarksSelected ) ||
-                ( place.placeGroup.contains( PlaceGroup.MUSEUMS ) && museumsSelected ) ||
-                ( place.placeGroup.contains( PlaceGroup.SHOPPING ) && shoppingSelected ) ||
-                ( place.placeGroup.contains( PlaceGroup.FOOD ) && foodsSelected );
+            boolean belongsToSelectedGroup = ( place.placeGroup.contains( PlaceGroup.PARKS ) && parksSelected ) || ( place.placeGroup.contains( PlaceGroup.LANDMARKS ) && landmarksSelected ) || ( place.placeGroup.contains( PlaceGroup.MUSEUMS ) && museumsSelected ) || ( place.placeGroup.contains( PlaceGroup.SHOPPING ) && shoppingSelected ) || ( place.placeGroup.contains( PlaceGroup.FOOD ) && foodsSelected );
 
             if( belongsToSelectedGroup ) {
                 selectedPlaces.add( place );
@@ -241,82 +224,85 @@ public class CreateItinerary extends AppCompatActivity {
     }
 
     //Cria um itinerário teste, com os locais em sequência conforme obtidos do banco
-    private Itinerário makeItinerary( List selectedPlaces, long numberOfDays ) {
-        ArrayList<Dia> itinerary = new ArrayList<>();
-        Dia dia = new Dia();
-        int placeIndex = 0;
+    private DailyItineraryList makeItinerary( List selectedPlaces, long numberOfDays ) {
+        //TODO: getDistance("-25.438029,-49.26347","-25.4392404,-49.2347639");
 
-        getDistancia("-25.438029,-49.26347","-25.4392404,-49.2347639");
-
+        DailyItineraryList itinerary = new DailyItineraryList( );
+        Calendar startTime = ( Calendar ) startDay.clone( );
+        Calendar endTime = ( Calendar ) startDay.clone( );
         for( int day = 0; day < numberOfDays; day++ ) {
-            Calendar startTime = ( Calendar ) startDay.clone();
             startTime.add( Calendar.DAY_OF_YEAR, day );
 
-            Calendar endTime = ( Calendar ) startDay.clone();
             endTime.add( Calendar.DAY_OF_YEAR, day );
             endTime.set( Calendar.HOUR_OF_DAY, endDay.get( Calendar.HOUR_OF_DAY ) );
             endTime.set( Calendar.MINUTE, endDay.get( Calendar.MINUTE ) );
 
-            ArrayList<Place> dailyItinerary = new ArrayList<>( );
-            do {
-                ( ( Place ) selectedPlaces.get( placeIndex ) ).setStartTime( ( Calendar ) startTime.clone() );
+            DailyItinerary dailyItinerary = new DailyItinerary( );
+            Calendar nextStartTime = ( Calendar ) startTime.clone( );
+            while( selectedPlaces.size( ) > 0 ) {
+                ( ( Place ) selectedPlaces.get( 0 ) ).setStartTime( nextStartTime );
+                dailyItinerary.addPlace( ( Place ) selectedPlaces.get( 0 ) );
+                Place removedPlace = ( Place ) selectedPlaces.remove( 0 );
 
-                dailyItinerary.add( (Place) selectedPlaces.get( placeIndex ) );
+                if( selectedPlaces.size( ) == 0 ) {
+                    break;
+                }
 
-                int visitTime = ( ( Place ) selectedPlaces.get( placeIndex ) ).getVisitTime( );
-                startTime.add( Calendar.MINUTE, visitTime + 10 ); //10 é o tempo de deslocamento padrão de um lugar para outro
+                int visitTime = removedPlace.getVisitTime( );
+                nextStartTime = ( Calendar ) nextStartTime.clone( );
+                nextStartTime.add( Calendar.MINUTE, visitTime + 10 ); //10 é o tempo de deslocamento padrão de um lugar para outro
 
-                placeIndex++;
-            } while( endTime.after( startTime ) && placeIndex < (selectedPlaces.size()-1) );
+                Calendar nextFinishTime = ( Calendar ) nextStartTime.clone( );
+                nextFinishTime.add( Calendar.MINUTE, ( ( Place ) selectedPlaces.get( 0 ) ).getVisitTime( ) );
 
-            dia.setListPlaces(dailyItinerary);
-            itinerary.add(dia);
+                if( endTime.after( nextFinishTime ) == false ) {
+                    break;
+                }
+            }
+
+            itinerary.addDias( dailyItinerary );
         }
 
-        Itinerário itinerário = new Itinerário();
-        itinerário.setDias(itinerary);
-
-        return itinerário;
+        return itinerary;
     }
 
-    private void saveItinerary( Itinerário itinerary ) {
+    private void saveItinerary( DailyItineraryList itinerary ) {
         SharedPreferences settings = getSharedPreferences( "mySharedPreferences", MODE_PRIVATE );
-        SharedPreferences.Editor editor = settings.edit();
+        SharedPreferences.Editor editor = settings.edit( );
 
-        String teste = new Gson().toJson( itinerary );
-        editor.putString( "itinerary", teste );
+        String itineraryJson = new Gson( ).toJson( itinerary );
+        editor.putString( "itineraryJson", itineraryJson );
 
         // Commit the edits!
-        editor.apply();
+        editor.apply( );
     }
 
-    public void getDistancia(String latlonOrigem, String latlonDest){
-        final distanciaApi distanciaEndpoint = new DescubraCuritibaApi()
-                .distanciaApi();
+    public void getDistance( String latlonOrigem, String latlonDest ) {
+        final distanciaApi distanciaEndpoint = new DescubraCuritibaApi( ).distanciaApi( );
 
-        final Integer[] distanciaaux = new Integer[1];
+        final Integer[] distanciaAux = new Integer[ 1 ];
 
-        retrofit2.Call<DistanciaResponse> call;
+        retrofit2.Call< DistanciaResponse > call;
 
-        call = distanciaEndpoint.getDistancia(latlonOrigem,latlonDest,"AIzaSyA2yt9xJV1gwgqJTpn-zUKnKIMK44iRCJA");
+        call = distanciaEndpoint.getDistancia( latlonOrigem, latlonDest, "AIzaSyA2yt9xJV1gwgqJTpn-zUKnKIMK44iRCJA" );
 
-        call.enqueue(new Callback<DistanciaResponse>() {
+        call.enqueue( new Callback< DistanciaResponse >( ) {
             @Override
-            public void onResponse(Call<DistanciaResponse> call, Response<DistanciaResponse> response) {
-                DistanciaResponse distanciaResponse = response.body();
+            public void onResponse( Call< DistanciaResponse > call, Response< DistanciaResponse > response ) {
+                DistanciaResponse distanciaResponse = response.body( );
 
-                List<Row> lista = distanciaResponse.getRows();
-                Row row = lista.get(0);
-                List<Element> elementList = row.getElements();
-                Element element = elementList.get(0);
-                Distance distance = element.getDistance();
-                distancia = distance.getValue();
+                List< Row > lista = distanciaResponse.getRows( );
+                Row row = lista.get( 0 );
+                List< Element > elementList = row.getElements( );
+                Element element = elementList.get( 0 );
+                Distance distance = element.getDistance( );
+                distancia = distance.getValue( );
             }
 
             @Override
-            public void onFailure(Call<DistanciaResponse> call, Throwable t) {
+            public void onFailure( Call< DistanciaResponse > call, Throwable t ) {
 
             }
-        });
+        } );
     }
 }

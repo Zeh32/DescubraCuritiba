@@ -12,19 +12,19 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.jgaug.descubracuritiba.Fragments.ItineraryFragment;
-import com.example.jgaug.descubracuritiba.Helpers.Dia;
-import com.example.jgaug.descubracuritiba.Helpers.Itinerário;
-import com.example.jgaug.descubracuritiba.Helpers.Place;
+import com.example.jgaug.descubracuritiba.Helpers.DailyItinerary;
+import com.example.jgaug.descubracuritiba.Helpers.DailyItineraryList;
 import com.example.jgaug.descubracuritiba.R;
 
-import java.util.ArrayList;
-
 public class Itinerary extends AppCompatActivity {
-    private Itinerário places;
+    private DailyItineraryList itinerary;
     public Integer distancia;
 
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
+        itinerary = ( DailyItineraryList ) getIntent( ).getSerializableExtra( "itinerary" );
+        //distancia = getIntent( ).getIntExtra( "distancia", 0 );
+
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_itinerary );
 
@@ -40,10 +40,6 @@ public class Itinerary extends AppCompatActivity {
 
         TabLayout tabLayout = ( TabLayout ) findViewById( R.id.tabs );
         tabLayout.setupWithViewPager( mViewPager );
-
-        places = (Itinerário) getIntent().getSerializableExtra("places");
-        distancia = getIntent().getIntExtra("distancia",0);
-        int i = 0;
     }
 
     @Override
@@ -55,9 +51,8 @@ public class Itinerary extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected( MenuItem item ) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+        // Handle action bar item clicks here. The action bar will automatically handle clicks
+        // on the Home/Up button, so long as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId( );
 
         //noinspection SimplifiableIfStatement
@@ -66,11 +61,6 @@ public class Itinerary extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected( item );
-    }
-
-    public Dia getPlacesToVisit(int day ) {
-        int i = 0;
-        return places.getDias().get(day);
     }
 
     /**
@@ -90,12 +80,16 @@ public class Itinerary extends AppCompatActivity {
 
         @Override
         public int getCount( ) {
-            return getIntent( ).getIntExtra( "numberOfDays", 1 );
+            return itinerary.getItinerary().size();
         }
 
         @Override
         public CharSequence getPageTitle( int position ) {
             return "Dia " + ( position + 1 );
         }
+    }
+
+    public DailyItinerary getDailyItinerary( int day ) {
+        return itinerary.getItinerary( ).get( day );
     }
 }
