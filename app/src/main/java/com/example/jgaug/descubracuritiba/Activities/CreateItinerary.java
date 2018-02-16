@@ -48,6 +48,9 @@ public class CreateItinerary extends AppCompatActivity {
     private Calendar startDay = Calendar.getInstance( );
     private Calendar endDay = Calendar.getInstance( );
     public Integer distancia;
+    ProgressDialog progressDialog;
+    public int pesquisa = 0;
+    List<Row> listaFinal = new ArrayList<>() ;
 
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
@@ -148,7 +151,7 @@ public class CreateItinerary extends AppCompatActivity {
 
     public void btnMakeItinerary( View view ) {
         if( checkConstraints( ) ) {
-            ProgressDialog progressDialog = ProgressDialog.show( this, "", "Gerando itinerário. Por favor, aguarde...", true );
+            progressDialog = ProgressDialog.show( this, "", "Gerando itinerário. Por favor, aguarde...", true );
 
             final FirebaseDatabase database = FirebaseDatabase.getInstance( );
             DatabaseReference ref = database.getReference( "" );
@@ -161,16 +164,35 @@ public class CreateItinerary extends AppCompatActivity {
                     long numberOfDays = ( diff / ( 24 * 60 * 60 * 1000 ) ) + 1;
 
                     List selectedPlaces = getSelectedPlaces( dataSnapshot );
-                    DailyItineraryList itinerary = makeItinerary( selectedPlaces, numberOfDays );
+                    Place placeAux = (Place) selectedPlaces.get(0);
+                    String latlongOrigem = String.valueOf(placeAux.getLatitude()+ "," + String.valueOf(placeAux.getLongitude()));
+                    for(int cont=1; cont<10; cont++){
+                        placeAux = (Place) selectedPlaces.get(cont);
+                        latlongOrigem = latlongOrigem + "|" + String.valueOf(placeAux.getLatitude() + "," + String.valueOf(placeAux.getLongitude()));
+                    }
+                    getDistance(latlongOrigem, latlongOrigem, selectedPlaces, numberOfDays);
 
-                    saveItinerary( itinerary );
+                    placeAux = (Place) selectedPlaces.get(9);
+                    Place placeAux2 = (Place) selectedPlaces.get(10);
+                    getDistance(String.valueOf(placeAux.getLatitude() + "," + placeAux.getLongitude()),String.valueOf(placeAux2.getLatitude() + "," + placeAux2.getLongitude()), selectedPlaces, numberOfDays);
 
-                    Intent intent = new Intent( CreateItinerary.this, Itinerary.class );
-                    intent.putExtra( "itinerary", itinerary );
-
-                    progressDialog.dismiss( );
-
-                    CreateItinerary.this.startActivity( intent );
+                    placeAux = (Place) selectedPlaces.get(10);
+                    latlongOrigem = String.valueOf(placeAux.getLatitude()+ "," + String.valueOf(placeAux.getLongitude()));
+                    for(int cont=10; cont<selectedPlaces.size(); cont++){
+                        placeAux = (Place) selectedPlaces.get(cont);
+                        latlongOrigem = latlongOrigem + "|" + String.valueOf(placeAux.getLatitude() + "," + String.valueOf(placeAux.getLongitude()));
+                    }
+                    getDistance(latlongOrigem, latlongOrigem, selectedPlaces, numberOfDays);
+//                    DailyItineraryList itinerary = makeItinerary( selectedPlaces, numberOfDays );
+//
+//                    saveItinerary( itinerary );
+//
+//                    Intent intent = new Intent( CreateItinerary.this, Itinerary.class );
+//                    intent.putExtra( "itinerary", itinerary );
+//
+//                    progressDialog.dismiss( );
+//
+//                    CreateItinerary.this.startActivity( intent );
                 }
 
                 @Override
@@ -224,8 +246,10 @@ public class CreateItinerary extends AppCompatActivity {
     }
 
     //Cria um itinerário teste, com os locais em sequência conforme obtidos do banco
-    private DailyItineraryList makeItinerary( List selectedPlaces, long numberOfDays ) {
+    private DailyItineraryList makeItinerary( List selectedPlaces, long numberOfDays , List<Row> rows) {
         //TODO: getDistance("-25.438029,-49.26347","-25.4392404,-49.2347639");
+
+//        getDistance("-25.438029,-49.26347","-25.4392404,-49.2347639");
 
         DailyItineraryList itinerary = new DailyItineraryList( );
         Calendar startTime = ( Calendar ) startDay.clone( );
@@ -255,7 +279,7 @@ public class CreateItinerary extends AppCompatActivity {
                 Calendar nextFinishTime = ( Calendar ) nextStartTime.clone( );
                 nextFinishTime.add( Calendar.MINUTE, ( ( Place ) selectedPlaces.get( 0 ) ).getVisitTime( ) );
 
-                if( endTime.after( nextFinishTime ) == false ) {
+                if(!endTime.after(nextFinishTime)) {
                     break;
                 }
             }
@@ -277,7 +301,7 @@ public class CreateItinerary extends AppCompatActivity {
         editor.apply( );
     }
 
-    public void getDistance( String latlonOrigem, String latlonDest ) {
+    public void getDistance( String latlonOrigem, String latlonDest, List selectedPlaces, long numberOfDays ) {
         final distanciaApi distanciaEndpoint = new DescubraCuritibaApi( ).distanciaApi( );
 
         final Integer[] distanciaAux = new Integer[ 1 ];
@@ -292,11 +316,30 @@ public class CreateItinerary extends AppCompatActivity {
                 DistanciaResponse distanciaResponse = response.body( );
 
                 List< Row > lista = distanciaResponse.getRows( );
-                Row row = lista.get( 0 );
-                List< Element > elementList = row.getElements( );
-                Element element = elementList.get( 0 );
-                Distance distance = element.getDistance( );
-                distancia = distance.getValue( );
+//                Row row = lista.get( 0 );
+//                List< Element > elementList = row.getElements( );
+//                Element element = elementList.get( 0 );
+//                Distance distance = element.getDistance( );
+//                distancia = distance.getValue( );
+
+                listaFinal.addAll(lista);
+
+                if(pesquisa == 2) {
+
+                    DailyItineraryList itinerary = makeItinerary( selectedPlaces, numberOfDays , listaFinal);
+
+                    saveItinerary(itinerary);
+
+                    Intent intent = new Intent(CreateItinerary.this, Itinerary.class);
+                    intent.putExtra("itinerary", itinerary);
+
+                    progressDialog.dismiss();
+
+                    pesquisa = 0;
+
+                    CreateItinerary.this.startActivity(intent);
+                }
+                pesquisa++;
             }
 
             @Override
