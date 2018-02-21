@@ -77,6 +77,10 @@ public class Place implements Serializable {
         return relevance;
     }
 
+    public boolean isWeatherDependent( ) {
+        return weatherDependent;
+    }
+
     public void setStartTime( Calendar startTime ) {
         this.startTime = startTime;
     }

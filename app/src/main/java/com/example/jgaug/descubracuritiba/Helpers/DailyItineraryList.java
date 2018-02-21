@@ -14,7 +14,7 @@ public class DailyItineraryList implements Serializable {
         return itinerary;
     }
 
-    public void addDias( DailyItinerary dailyItinerary ) {
+    public void addDailyItinerary( DailyItinerary dailyItinerary ) {
         this.itinerary.add( dailyItinerary );
     }
 }
