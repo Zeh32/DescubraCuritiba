@@ -18,10 +18,7 @@ import android.zetterstrom.com.forecast.models.Language;
 import android.zetterstrom.com.forecast.models.Unit;
 
 import com.example.jgaug.descubracuritiba.Api.DescubraCuritibaApi;
-import com.example.jgaug.descubracuritiba.Api.Response.Distance;
 import com.example.jgaug.descubracuritiba.Api.Response.DistanciaResponse;
-import com.example.jgaug.descubracuritiba.Api.Response.Element;
-import com.example.jgaug.descubracuritiba.Api.Response.Row;
 import com.example.jgaug.descubracuritiba.Api.endpoint.distanciaApi;
 import com.example.jgaug.descubracuritiba.Fragments.DatePickerFragment;
 import com.example.jgaug.descubracuritiba.Fragments.TimePickerFragment;
@@ -39,7 +36,6 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -55,9 +51,9 @@ public class CreateItinerary extends AppCompatActivity {
     private boolean foodsSelected = false;
     private boolean considerForecast = true;
     private final double MIN_PRECIP_PROBABILITY = 0.50;
-    public Integer distancia;
-    public int pesquisa = 0;
-    List<Row> listaFinal = new ArrayList<>() ;
+    //public Integer distancia;
+    //public int pesquisa = 0;
+    //List<Row> listaFinal = new ArrayList<>() ;
 
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
@@ -244,7 +240,11 @@ public class CreateItinerary extends AppCompatActivity {
 
         for( DataSnapshot placeDataSnapshot : dataSnapshot.getChildren( ) ) {
             Place place = placeDataSnapshot.getValue( Place.class );
-            boolean belongsToSelectedGroup = ( place.placeGroup.contains( PlaceGroup.PARKS ) && parksSelected ) || ( place.placeGroup.contains( PlaceGroup.LANDMARKS ) && landmarksSelected ) || ( place.placeGroup.contains( PlaceGroup.MUSEUMS ) && museumsSelected ) || ( place.placeGroup.contains( PlaceGroup.SHOPPING ) && shoppingSelected ) || ( place.placeGroup.contains( PlaceGroup.FOOD ) && foodsSelected );
+            boolean belongsToSelectedGroup = ( place.placeGroup.contains( PlaceGroup.PARKS ) && parksSelected ) ||
+                ( place.placeGroup.contains( PlaceGroup.LANDMARKS ) && landmarksSelected ) ||
+                ( place.placeGroup.contains( PlaceGroup.MUSEUMS ) && museumsSelected ) ||
+                ( place.placeGroup.contains( PlaceGroup.SHOPPING ) && shoppingSelected ) ||
+                ( place.placeGroup.contains( PlaceGroup.FOOD ) && foodsSelected );
 
             if( belongsToSelectedGroup ) {
                 selectedPlaces.add( place );
@@ -366,49 +366,36 @@ public class CreateItinerary extends AppCompatActivity {
         editor.apply( );
     }
 
-    public void getDistance( String latlonOrigem, String latlonDest, List selectedPlaces, long numberOfDays ) {
+    public void getDistance( String latlonOrigem, String latlonDest ) {
         final distanciaApi distanciaEndpoint = new DescubraCuritibaApi( ).distanciaApi( );
-
         final Integer[] distanciaAux = new Integer[ 1 ];
 
-        retrofit2.Call< DistanciaResponse > call;
-
-        call = distanciaEndpoint.getDistancia( latlonOrigem, latlonDest, "AIzaSyA2yt9xJV1gwgqJTpn-zUKnKIMK44iRCJA" );
-
+        retrofit2.Call< DistanciaResponse > call = distanciaEndpoint.getDistancia( latlonOrigem, latlonDest, "AIzaSyA2yt9xJV1gwgqJTpn-zUKnKIMK44iRCJA" );
         call.enqueue( new Callback< DistanciaResponse >( ) {
             @Override
-            public void onResponse( Call< DistanciaResponse > call, Response< DistanciaResponse > response ) {
-                DistanciaResponse distanciaResponse = response.body( );
-
-                List< Row > lista = distanciaResponse.getRows( );
+            public void onResponse( @NonNull Call< DistanciaResponse > call, @NonNull Response< DistanciaResponse > response ) {
+//                DistanciaResponse distanciaResponse = response.body( );
+//
+//                List< Row > lista = distanciaResponse.getRows( );
 //                Row row = lista.get( 0 );
 //                List< Element > elementList = row.getElements( );
 //                Element element = elementList.get( 0 );
 //                Distance distance = element.getDistance( );
 //                distancia = distance.getValue( );
+//
+//                listaFinal.addAll(lista);
+//
+//                if(pesquisa == 2) { //total de pesquisas
+//                    pesquisa = 0;
 
-                listaFinal.addAll(lista);
-
-                if(pesquisa == 2) {
-
-                    DailyItineraryList itinerary = makeItinerary( selectedPlaces, numberOfDays , listaFinal);
-
-                    saveItinerary(itinerary);
-
-                    Intent intent = new Intent(CreateItinerary.this, Itinerary.class);
-                    intent.putExtra("itinerary", itinerary);
-
-                    //progressDialog.dismiss();
-
-                    pesquisa = 0;
-
-                    //CreateItinerary.this.startActivity(intent);
-                }
-                pesquisa++;
+//                    1. Faça o itinerário
+//                    2. Salve e passe para a próxima activity
+//                }
+//                pesquisa++;
             }
 
             @Override
-            public void onFailure( Call< DistanciaResponse > call, Throwable t ) {
+            public void onFailure( @NonNull Call< DistanciaResponse > call, @NonNull Throwable t ) {
 
             }
         } );
