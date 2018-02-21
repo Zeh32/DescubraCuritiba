@@ -56,6 +56,8 @@ public class CreateItinerary extends AppCompatActivity {
     private boolean considerForecast = true;
     private final double MIN_PRECIP_PROBABILITY = 0.50;
     public Integer distancia;
+    public int pesquisa = 0;
+    List<Row> listaFinal = new ArrayList<>() ;
 
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
@@ -364,7 +366,7 @@ public class CreateItinerary extends AppCompatActivity {
         editor.apply( );
     }
 
-    public void getDistance( String latlonOrigem, String latlonDest ) {
+    public void getDistance( String latlonOrigem, String latlonDest, List selectedPlaces, long numberOfDays ) {
         final distanciaApi distanciaEndpoint = new DescubraCuritibaApi( ).distanciaApi( );
 
         final Integer[] distanciaAux = new Integer[ 1 ];
@@ -379,11 +381,30 @@ public class CreateItinerary extends AppCompatActivity {
                 DistanciaResponse distanciaResponse = response.body( );
 
                 List< Row > lista = distanciaResponse.getRows( );
-                Row row = lista.get( 0 );
-                List< Element > elementList = row.getElements( );
-                Element element = elementList.get( 0 );
-                Distance distance = element.getDistance( );
-                distancia = distance.getValue( );
+//                Row row = lista.get( 0 );
+//                List< Element > elementList = row.getElements( );
+//                Element element = elementList.get( 0 );
+//                Distance distance = element.getDistance( );
+//                distancia = distance.getValue( );
+
+                listaFinal.addAll(lista);
+
+                if(pesquisa == 2) {
+
+                    DailyItineraryList itinerary = makeItinerary( selectedPlaces, numberOfDays , listaFinal);
+
+                    saveItinerary(itinerary);
+
+                    Intent intent = new Intent(CreateItinerary.this, Itinerary.class);
+                    intent.putExtra("itinerary", itinerary);
+
+                    //progressDialog.dismiss();
+
+                    pesquisa = 0;
+
+                    //CreateItinerary.this.startActivity(intent);
+                }
+                pesquisa++;
             }
 
             @Override
