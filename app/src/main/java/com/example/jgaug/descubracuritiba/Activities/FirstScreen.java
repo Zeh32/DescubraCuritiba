@@ -1,8 +1,10 @@
 package com.example.jgaug.descubracuritiba.Activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Window;
@@ -23,11 +25,13 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Locale;
 
 
 public class FirstScreen extends AppCompatActivity {
-
+    
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
         super.onCreate( savedInstanceState );
@@ -53,14 +57,39 @@ public class FirstScreen extends AppCompatActivity {
         if( itinerary == null ) {
             Toast.makeText( this, "Não há nenhum itinerário salvo", Toast.LENGTH_SHORT ).show( );
         } else {
-            Intent intent = new Intent( this, Itinerary.class );
-            intent.putExtra( "itinerary", itinerary );
-            startActivity( intent );
+            String dialogMessage = getDialogMessage( itinerary );
+
+            AlertDialog.Builder builder = new AlertDialog.Builder( this );
+            builder
+                .setTitle( "Restaurar itinerário" )
+                .setMessage( dialogMessage )
+                .setPositiveButton( "Sim", new DialogInterface.OnClickListener( ) {
+                    public void onClick( DialogInterface dialog, int id ) {
+                        Intent intent = new Intent( FirstScreen.this, Itinerary.class );
+                        intent.putExtra( "itinerary", itinerary );
+                        startActivity( intent );
+                    }
+                } )
+                .setNegativeButton( "Não", new DialogInterface.OnClickListener( ) {
+                    public void onClick( DialogInterface dialog, int id ) {
+                        //Do nothing
+                    }
+                } );
+
+            AlertDialog dialog = builder.create( );
+            dialog.show( );
         }
     }
 
     public void btnPlacesToVisit( View view ) {
         Toast.makeText( this, "Não implementado", Toast.LENGTH_SHORT ).show( );
+    }
+
+    private String getDialogMessage( DailyItineraryList itinerary ) {
+        Calendar firstPlaceStartTime = itinerary.getFirstPlaceStartTime( );
+        String date = firstPlaceStartTime.get( Calendar.DAY_OF_MONTH ) + " de " + firstPlaceStartTime.getDisplayName( Calendar.MONTH, Calendar.LONG, Locale.getDefault( ) ) + " de " + firstPlaceStartTime.get( Calendar.YEAR ) + ", às " + String.format( "%02d", firstPlaceStartTime.get( Calendar.HOUR_OF_DAY ) ) + ":" + String.format( "%02d", firstPlaceStartTime.get( Calendar.MINUTE ) );
+
+        return "O último itinerário salvo teve inicío no dia " + date + ", com extensão de " + itinerary.getItinerary( ).size( ) + " dia(s). Deseja restaurá-lo?";
     }
 
     private void getPlaces( ) {
