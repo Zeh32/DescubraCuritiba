@@ -11,9 +11,19 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.jgaug.descubracuritiba.Helpers.DailyItinerary;
+import com.example.jgaug.descubracuritiba.Helpers.Place;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CustomAdapter extends RecyclerView.Adapter {
     private LayoutInflater layoutinflater;
@@ -81,6 +91,7 @@ public class CustomAdapter extends RecyclerView.Adapter {
         listViewHolder.placeName.setText( listStorage.getPlaces().get( position ).getName( ) );
         listViewHolder.placeDescription.setText( listStorage.getPlaces().get( position ).getDescription( ) );
         listViewHolder.placeVisitTime.setText( listStorage.getPlaces().get( position ).getVisitPeriod( ) );
+        Double time = getTimeTravel(listStorage.getPlaces().get(position).getId(),listStorage.getPlaces().get(position+1).getId());
     }
 
     @Override
@@ -96,6 +107,7 @@ public class CustomAdapter extends RecyclerView.Adapter {
         LinearLayout placeDetalhes;
         LinearLayout placeClima;
         LinearLayout placeNavegar;
+        TextView timeTravel;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -107,8 +119,30 @@ public class CustomAdapter extends RecyclerView.Adapter {
             placeDetalhes = (LinearLayout) itemView.findViewById(R.id.btn_detalhes);
             placeClima = (LinearLayout) itemView.findViewById(R.id.btn_clima);
             placeNavegar = (LinearLayout) itemView.findViewById(R.id.btn_navegar);
+            timeTravel = itemView.findViewById(R.id.timeTravel);
 
         }
     }
 
+    public Double getTimeTravel(int id1,int id2){
+        final FirebaseDatabase database = FirebaseDatabase.getInstance( );
+        DatabaseReference ref = database.getReference( "" );
+
+        // Attach a listener to read the data at our posts reference
+        ref.child( "distances" ).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                List<Double> distances = dataSnapshot.getValue(new GenericTypeIndicator< List< Double > >( ) {
+                } );
+                Double distancia = distances.get(0);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+//        Double distance =
+        return  null;
+    }
 }

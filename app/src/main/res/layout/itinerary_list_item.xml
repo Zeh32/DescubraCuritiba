@@ -161,9 +161,10 @@
             android:src="@drawable/car"/>
 
         <TextView
+            android:id="@+id/timeTravel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="start"
-            android:text="10 minutos de carro"/>
+            android:text="10 minutos de carro" />
     </LinearLayout>
 </LinearLayout>
