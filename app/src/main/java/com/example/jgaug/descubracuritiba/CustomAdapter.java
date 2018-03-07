@@ -91,7 +91,11 @@ public class CustomAdapter extends RecyclerView.Adapter {
         listViewHolder.placeName.setText( listStorage.getPlaces().get( position ).getName( ) );
         listViewHolder.placeDescription.setText( listStorage.getPlaces().get( position ).getDescription( ) );
         listViewHolder.placeVisitTime.setText( listStorage.getPlaces().get( position ).getVisitPeriod( ) );
-        Double time = getTimeTravel(listStorage.getPlaces().get(position).getId(),listStorage.getPlaces().get(position+1).getId());
+        if(position<(listStorage.getPlaces().size()-1)) {
+            populateTimeTravel(listStorage.getPlaces().get(position).getId(), listStorage.getPlaces().get(position + 1).getId(),listViewHolder);
+        }
+        if(position == (listStorage.getPlaces().size()-1))
+            listViewHolder.timeTotal.setVisibility(View.GONE);
     }
 
     @Override
@@ -108,6 +112,7 @@ public class CustomAdapter extends RecyclerView.Adapter {
         LinearLayout placeClima;
         LinearLayout placeNavegar;
         TextView timeTravel;
+        LinearLayout timeTotal;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -120,13 +125,15 @@ public class CustomAdapter extends RecyclerView.Adapter {
             placeClima = (LinearLayout) itemView.findViewById(R.id.btn_clima);
             placeNavegar = (LinearLayout) itemView.findViewById(R.id.btn_navegar);
             timeTravel = itemView.findViewById(R.id.timeTravel);
+            timeTotal = itemView.findViewById(R.id.timeTotal);
 
         }
     }
 
-    public Double getTimeTravel(int id1,int id2){
+    public void populateTimeTravel(int id1,int id2, ViewHolder listviewholder){
         final FirebaseDatabase database = FirebaseDatabase.getInstance( );
         DatabaseReference ref = database.getReference( "" );
+        final Double[] distance = {0D};
 
         // Attach a listener to read the data at our posts reference
         ref.child( "distances" ).addValueEventListener(new ValueEventListener() {
@@ -134,7 +141,11 @@ public class CustomAdapter extends RecyclerView.Adapter {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 List<Double> distances = dataSnapshot.getValue(new GenericTypeIndicator< List< Double > >( ) {
                 } );
-                Double distancia = distances.get(0);
+                distance[0] = distances.get((id1*45) + id2);
+                Double time = 13*60*distance[0]/4500;
+                Double timeSec = time/60;
+                Integer integer = (int) Math.round(timeSec);
+                listviewholder.timeTravel.setText(integer.toString() + " minutos de carro");
             }
 
             @Override
@@ -142,7 +153,5 @@ public class CustomAdapter extends RecyclerView.Adapter {
 
             }
         });
-//        Double distance =
-        return  null;
     }
 }
