@@ -78,6 +78,8 @@ public class Place implements Serializable {
         formattedHour = String.format( "%02d", startTime.get( Calendar.HOUR_OF_DAY ) );
         formattedMinute = String.format( "%02d", startTime.get( Calendar.MINUTE ) );
 
+        startTime.add( Calendar.MINUTE, (-1)*visitTime);
+
         visitPeriod += formattedHour + ":" + formattedMinute;
 
         return visitPeriod;
