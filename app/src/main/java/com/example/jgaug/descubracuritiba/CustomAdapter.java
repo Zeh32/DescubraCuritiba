@@ -11,19 +11,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.jgaug.descubracuritiba.Helpers.DailyItinerary;
-import com.example.jgaug.descubracuritiba.Helpers.Place;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.GenericTypeIndicator;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class CustomAdapter extends RecyclerView.Adapter {
     private LayoutInflater layoutinflater;
@@ -31,79 +21,80 @@ public class CustomAdapter extends RecyclerView.Adapter {
     private Context context;
     private OnItemClickListener itemClickListener;
 
-    public CustomAdapter( Context context, DailyItinerary customizedListView ) {
+    public CustomAdapter( Context context, DailyItinerary dailyItinerary ) {
         this.context = context;
         this.layoutinflater = ( LayoutInflater ) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-        this.listStorage = customizedListView;
+        this.listStorage = dailyItinerary;
     }
 
-    public void setOnItemClickListener(final CustomAdapter.OnItemClickListener itemClickListener) {
+    public void setOnItemClickListener( final CustomAdapter.OnItemClickListener itemClickListener ) {
         this.itemClickListener = itemClickListener;
     }
 
     public interface OnItemClickListener {
-        void onClickDetalhes(int position);
+        void onClickDetalhes( int position );
 
-        void onClickClima(int position);
+        void onClickClima( int position );
 
-        void onClickNavegar(int position);
+        void onClickNavegar( int position );
     }
 
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        final LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        final View view = inflater.inflate(R.layout.itinerary_list_item, parent, false);
+    public RecyclerView.ViewHolder onCreateViewHolder( ViewGroup parent, int viewType ) {
+        final LayoutInflater inflater = LayoutInflater.from( parent.getContext( ) );
+        final View view = inflater.inflate( R.layout.itinerary_list_item, parent, false );
 
-        return new ViewHolder(view);
+        return new ViewHolder( view );
     }
 
     @Override
-    public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
-        final ViewHolder listViewHolder = (ViewHolder) holder;
+    public void onBindViewHolder( final RecyclerView.ViewHolder holder, int position ) {
+        final ViewHolder listViewHolder = ( ViewHolder ) holder;
 
         StorageReference mStorageRef = FirebaseStorage.getInstance( ).getReference( );
-        mStorageRef.child(listStorage.getPlaces().get(position).getImage()).getDownloadUrl().addOnSuccessListener( new OnSuccessListener<Uri>() {
+        mStorageRef.child( listStorage.getPlaces( ).get( position ).getImage( ) ).getDownloadUrl( ).addOnSuccessListener( new OnSuccessListener< Uri >( ) {
             @Override
-            public void onSuccess(Uri uri) {
-                GlideUtil.loadImageFinal(context, uri.toString() , ((ViewHolder) holder).placeImage);
+            public void onSuccess( Uri uri ) {
+                GlideUtil.loadImageFinal( context, uri.toString( ), ( ( ViewHolder ) holder ).placeImage );
             }
-        });
+        } );
 
-        listViewHolder.placeDetalhes.setOnClickListener(new View.OnClickListener() {
+        listViewHolder.placeDetalhes.setOnClickListener( new View.OnClickListener( ) {
             @Override
-            public void onClick(View view) {
-                itemClickListener.onClickDetalhes(listViewHolder.getAdapterPosition());
+            public void onClick( View view ) {
+                itemClickListener.onClickDetalhes( listViewHolder.getAdapterPosition( ) );
             }
-        });
-        listViewHolder.placeClima.setOnClickListener(new View.OnClickListener() {
+        } );
+        listViewHolder.placeClima.setOnClickListener( new View.OnClickListener( ) {
             @Override
-            public void onClick(View view) {
-                itemClickListener.onClickClima(listViewHolder.getAdapterPosition());
+            public void onClick( View view ) {
+                itemClickListener.onClickClima( listViewHolder.getAdapterPosition( ) );
             }
-        });
-        listViewHolder.placeNavegar.setOnClickListener(new View.OnClickListener() {
+        } );
+        listViewHolder.placeNavegar.setOnClickListener( new View.OnClickListener( ) {
             @Override
-            public void onClick(View view) {
-                itemClickListener.onClickNavegar(listViewHolder.getAdapterPosition());
+            public void onClick( View view ) {
+                itemClickListener.onClickNavegar( listViewHolder.getAdapterPosition( ) );
             }
-        });
+        } );
 
-        listViewHolder.placeName.setText( listStorage.getPlaces().get( position ).getName( ) );
-        listViewHolder.placeDescription.setText( listStorage.getPlaces().get( position ).getDescription( ) );
-        listViewHolder.placeVisitTime.setText( listStorage.getPlaces().get( position ).getVisitPeriod( ) );
-        if(position<(listStorage.getPlaces().size()-1)) {
-            populateTimeTravel(listStorage.getPlaces().get(position).getId(), listStorage.getPlaces().get(position + 1).getId(),listViewHolder);
+        listViewHolder.placeName.setText( listStorage.getPlaces( ).get( position ).getName( ) );
+        listViewHolder.placeDescription.setText( listStorage.getPlaces( ).get( position ).getDescription( ) );
+        listViewHolder.placeVisitTime.setText( listStorage.getPlaces( ).get( position ).getVisitPeriod( ) );
+
+        if( position < ( listStorage.getPlaces( ).size( ) - 1 ) ) {
+            populateTimeTravel( listStorage.getPlaces( ).get( position ).getId( ), listStorage.getPlaces( ).get( position + 1 ).getId( ), listViewHolder );
+        } else if( position == ( listStorage.getPlaces( ).size( ) - 1 ) ) {
+            listViewHolder.travelTimeLayout.setVisibility( View.GONE );
         }
-        if(position == (listStorage.getPlaces().size()-1))
-            listViewHolder.timeTotal.setVisibility(View.GONE);
     }
 
     @Override
-    public int getItemCount() {
-        return listStorage.getPlaces().size();
+    public int getItemCount( ) {
+        return listStorage.getPlaces( ).size( );
     }
 
-    private static class ViewHolder extends RecyclerView.ViewHolder{
+    private static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView placeImage;
         TextView placeName;
         TextView placeDescription;
@@ -111,47 +102,26 @@ public class CustomAdapter extends RecyclerView.Adapter {
         LinearLayout placeDetalhes;
         LinearLayout placeClima;
         LinearLayout placeNavegar;
-        TextView timeTravel;
-        LinearLayout timeTotal;
+        TextView travelTime;
+        LinearLayout travelTimeLayout;
 
-        public ViewHolder(View itemView) {
-            super(itemView);
+        public ViewHolder( View itemView ) {
+            super( itemView );
 
-            placeImage = (ImageView) itemView.findViewById(R.id.place_image);
-            placeName = (TextView) itemView.findViewById(R.id.place_name);
-            placeDescription = (TextView) itemView.findViewById(R.id.place_description);
-            placeVisitTime = ( TextView ) itemView.findViewById( R.id.place_visit_time );
-            placeDetalhes = (LinearLayout) itemView.findViewById(R.id.btn_detalhes);
-            placeClima = (LinearLayout) itemView.findViewById(R.id.btn_clima);
-            placeNavegar = (LinearLayout) itemView.findViewById(R.id.btn_navegar);
-            timeTravel = itemView.findViewById(R.id.timeTravel);
-            timeTotal = itemView.findViewById(R.id.timeTotal);
-
+            placeImage = itemView.findViewById( R.id.place_image );
+            placeName = itemView.findViewById( R.id.place_name );
+            placeDescription = itemView.findViewById( R.id.place_description );
+            placeVisitTime = itemView.findViewById( R.id.place_visit_time );
+            placeDetalhes = itemView.findViewById( R.id.btn_detalhes );
+            placeClima = itemView.findViewById( R.id.btn_clima );
+            placeNavegar = itemView.findViewById( R.id.btn_navegar );
+            travelTime = itemView.findViewById( R.id.travelTime );
+            travelTimeLayout = itemView.findViewById( R.id.travelTimeLayout );
         }
     }
 
-    public void populateTimeTravel(int id1,int id2, ViewHolder listviewholder){
-        final FirebaseDatabase database = FirebaseDatabase.getInstance( );
-        DatabaseReference ref = database.getReference( "" );
-        final Double[] distance = {0D};
-
-        // Attach a listener to read the data at our posts reference
-        ref.child( "distances" ).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                List<Double> distances = dataSnapshot.getValue(new GenericTypeIndicator< List< Double > >( ) {
-                } );
-                distance[0] = distances.get((id1*45) + id2);
-                Double time = 13*60*distance[0]/4500;
-                Double timeSec = time/60;
-                Integer integer = (int) Math.round(timeSec);
-                listviewholder.timeTravel.setText(integer.toString() + " minutos de carro");
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+    private void populateTimeTravel( int id1, int id2, ViewHolder listviewholder ) {
+        //TODO: consultar API do google maps aqui e obter tempo de deslocamento de carro
+        listviewholder.travelTime.setText( "10 minutos de carro" );
     }
 }

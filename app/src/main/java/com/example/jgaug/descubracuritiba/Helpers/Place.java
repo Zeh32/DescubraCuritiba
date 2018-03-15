@@ -25,7 +25,7 @@ public class Place implements Serializable {
     public Place( ) {
     }
 
-    public Place(int id, String name, String image, double latitude, double longitude, boolean weatherDependent, int relevance, int visitTime, ArrayList< Integer > placeGroup, String description ) {
+    public Place( int id, String name, String image, double latitude, double longitude, boolean weatherDependent, int relevance, int visitTime, ArrayList< Integer > placeGroup, String description ) {
         this.id = id;
         this.name = name;
         this.image = image;
@@ -39,13 +39,9 @@ public class Place implements Serializable {
         this.startTime = Calendar.getInstance( );
     }
 
-    public int getId() {
+    public int getId( ) {
         return id;
     }
-
-//    public void setId(int id) {
-//        this.id = id;
-//    }
 
     public String getImage( ) {
         return image;
@@ -98,48 +94,4 @@ public class Place implements Serializable {
     public void setStartTime( Calendar startTime ) {
         this.startTime = startTime;
     }
-
-    //    @Override
-    //    public int describeContents() {
-    //        return 0;
-    //    }
-    //
-    //    @Override
-    //    public void writeToParcel(Parcel parcel, int i) {
-    //
-    //        parcel.writeString(this.name);
-    //        parcel.writeString(this.image);
-    //        parcel.writeDouble(this.latitude);
-    //        parcel.writeDouble(this.longitude);
-    ////        parcel.writeBooleanArray(this.weatherDependent);
-    //        parcel.writeInt(this.relevance);
-    //        parcel.writeInt(this.visitTime);
-    //        parcel.writeList(this.placeGroup);
-    //        parcel.writeString(this.description);
-    //        parcel.writeValue( this.startTime );
-    //    }
-    //
-    //    public Place(Parcel in) {
-    //        this.name = in.readString();
-    //        this.image = in.readString();
-    //        this.latitude = in.readDouble();
-    //        this.longitude = in.readDouble();
-    //        this.relevance = in.readInt();
-    //        this.visitTime = in.readInt();
-    //        this.placeGroup = in.readArrayList(ArrayList.class.getClassLoader());
-    //        this.description = in.readString();
-    //        this.startTime = ( Calendar ) in.readValue( Calendar.class.getClassLoader() );
-    //    }
-    //
-    //    public static final Creator<Place> CREATOR = new Creator<Place>() {
-    //        @Override
-    //        public Place createFromParcel(Parcel source) {
-    //            return new Place(source);
-    //        }
-    //
-    //        @Override
-    //        public Place[] newArray(int size) {
-    //            return new Place[size];
-    //        }
-    //    };
 }

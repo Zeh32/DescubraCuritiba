@@ -146,7 +146,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/timeTotal"
+        android:id="@+id/travelTimeLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/fab_margin"
@@ -162,10 +162,10 @@
             android:src="@drawable/car" />
 
         <TextView
-            android:id="@+id/timeTravel"
+            android:id="@+id/travelTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="start"
-            android:text="10 minutos de carro" />
+            android:text="10 minutos de carro"/>
     </LinearLayout>
 </LinearLayout>
