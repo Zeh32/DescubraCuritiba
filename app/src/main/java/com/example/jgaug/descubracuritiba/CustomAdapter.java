@@ -2,6 +2,7 @@ package com.example.jgaug.descubracuritiba;
 
 import android.content.Context;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,10 +11,29 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.jgaug.descubracuritiba.Api.DescubraCuritibaApi;
+import com.example.jgaug.descubracuritiba.Api.Response.Distance;
+import com.example.jgaug.descubracuritiba.Api.Response.DistanciaResponse;
+import com.example.jgaug.descubracuritiba.Api.Response.Duration;
+import com.example.jgaug.descubracuritiba.Api.Response.Element;
+import com.example.jgaug.descubracuritiba.Api.Response.Row;
+import com.example.jgaug.descubracuritiba.Api.endpoint.distanciaApi;
 import com.example.jgaug.descubracuritiba.Helpers.DailyItinerary;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class CustomAdapter extends RecyclerView.Adapter {
     private LayoutInflater layoutinflater;
@@ -83,7 +103,8 @@ public class CustomAdapter extends RecyclerView.Adapter {
         listViewHolder.placeVisitTime.setText( listStorage.getPlaces( ).get( position ).getVisitPeriod( ) );
 
         if( position < ( listStorage.getPlaces( ).size( ) - 1 ) ) {
-            populateTimeTravel( listStorage.getPlaces( ).get( position ).getId( ), listStorage.getPlaces( ).get( position + 1 ).getId( ), listViewHolder );
+            populateTimeTravel( listStorage.getPlaces( ).get( position ).getLatitude( ) + "," + listStorage.getPlaces().get(position).getLongitude(),
+                    listStorage.getPlaces( ).get( position + 1 ).getLatitude( ) + "," + listStorage.getPlaces( ).get( position + 1 ).getLongitude( ), listViewHolder );
         } else if( position == ( listStorage.getPlaces( ).size( ) - 1 ) ) {
             listViewHolder.travelTimeLayout.setVisibility( View.GONE );
         }
@@ -120,8 +141,41 @@ public class CustomAdapter extends RecyclerView.Adapter {
         }
     }
 
-    private void populateTimeTravel( int id1, int id2, ViewHolder listviewholder ) {
+    private void populateTimeTravel( String latlonOrigem, String latlonDest, ViewHolder listviewholder ) {
         //TODO: consultar API do google maps aqui e obter tempo de deslocamento de carro
-        listviewholder.travelTime.setText( "10 minutos de carro" );
+        final distanciaApi distanciaEndpoint = new DescubraCuritibaApi( ).distanciaApi( );
+        final Integer[] distanciaAux = new Integer[ 1 ];
+        String mode = "driving";
+
+        retrofit2.Call<DistanciaResponse> call = distanciaEndpoint.getDistancia( "pt-BR", mode,latlonOrigem, latlonDest, "AIzaSyA2yt9xJV1gwgqJTpn-zUKnKIMK44iRCJA" );
+        call.enqueue( new Callback< DistanciaResponse >( ) {
+            @Override
+            public void onResponse(@NonNull Call< DistanciaResponse > call, @NonNull Response< DistanciaResponse > response ) {
+                DistanciaResponse distanciaResponse = response.body( );
+
+                List<Row> lista = distanciaResponse.getRows( );
+                Row row = lista.get( 0 );
+                List<Element> elementList = row.getElements( );
+                Element element = elementList.get( 0 );
+                Duration duration = element.getDuration( );
+                listviewholder.travelTime.setText( duration.getText() + " " + "de carro" );
+//                distancia = distance.getValue( );
+//
+//                listaFinal.addAll(lista);
+//
+//                if(pesquisa == 2) { //total de pesquisas
+//                    pesquisa = 0;
+//
+//                    1. Faça o itinerário
+//                    2. Salve e passe para a próxima activity
+//                }
+//                pesquisa++;
+            }
+
+            @Override
+            public void onFailure( @NonNull Call< DistanciaResponse > call, @NonNull Throwable t ) {
+
+            }
+        } );
     }
 }
