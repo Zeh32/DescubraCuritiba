@@ -3,29 +3,27 @@ package com.example.jgaug.descubracuritiba.Helpers;
 import com.google.firebase.database.Exclude;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 public class Place implements Serializable {
-
     public int id;
-    public String image;
-    public String name;
+    public int relevance;
+    public int visitTime;
     public double latitude;
     public double longitude;
     public boolean weatherDependent;
-    public int relevance;
-    public int visitTime;
-    public ArrayList< Integer > placeGroup;
+    public String name;
     public String description;
-    public Calendar startTime;
-    //TODO: Horário de funcionamento
+    public String image;
+    public List< Integer > placeGroup;
+    @Exclude public Calendar startTime = null;
 
     //Firebase needs an empty constructor in order to map places back from database
     public Place( ) {
     }
 
-    public Place( int id, String name, String image, double latitude, double longitude, boolean weatherDependent, int relevance, int visitTime, ArrayList< Integer > placeGroup, String description ) {
+    public Place( int id, String name, String image, double latitude, double longitude, boolean weatherDependent, int relevance, int visitTime, List< Integer > placeGroup, String description ) {
         this.id = id;
         this.name = name;
         this.image = image;
@@ -36,7 +34,6 @@ public class Place implements Serializable {
         this.visitTime = visitTime;
         this.placeGroup = placeGroup;
         this.description = description;
-        this.startTime = Calendar.getInstance( );
     }
 
     public int getId( ) {

@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,6 +37,8 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -49,7 +52,6 @@ public class CreateItinerary extends AppCompatActivity {
     private boolean museumsSelected = false;
     private boolean shoppingSelected = false;
     private boolean foodsSelected = false;
-    private boolean considerForecast = true;
     private final double MIN_PRECIP_PROBABILITY = 0.50;
     //public Integer distancia;
     //public int pesquisa = 0;
@@ -144,7 +146,7 @@ public class CreateItinerary extends AppCompatActivity {
     }
 
     private void changeImageViewResource( boolean placeSelected, int imageViewId, int checkedImageViewId, int uncheckedImageViewId ) {
-        ImageView imageView = ( ImageView ) findViewById( imageViewId );
+        ImageView imageView = findViewById( imageViewId );
         if( placeSelected ) {
             imageView.setImageResource( checkedImageViewId );
         } else {
@@ -160,7 +162,7 @@ public class CreateItinerary extends AppCompatActivity {
             DatabaseReference ref = database.getReference( "" );
 
             // Attach a listener to read the data at our posts reference
-            ref.child( "places" ).addValueEventListener( new ValueEventListener( ) {
+            ref.addValueEventListener( new ValueEventListener( ) {
                 @Override
                 public void onDataChange( DataSnapshot dataSnapshot ) {
                     ForecastConfiguration configuration = new ForecastConfiguration.Builder( "cc8d5c7bd7bd6815677077038773bb58" ).
@@ -178,7 +180,7 @@ public class CreateItinerary extends AppCompatActivity {
                                 Toast.makeText( CreateItinerary.this, "Houve uma falha ao obter as informações de previsão do tempo.", Toast.LENGTH_LONG ).show( );
                             } else {
                                 Forecast forecast = response.body( );
-                                ArrayList< Place > selectedPlaces = getSelectedPlaces( dataSnapshot );
+                                List< Place > selectedPlaces = getSelectedPlaces( dataSnapshot.child( "places" ) );
                                 DailyItineraryList itinerary = makeItinerary( selectedPlaces, forecast );
 
                                 saveItinerary( itinerary );
@@ -235,8 +237,8 @@ public class CreateItinerary extends AppCompatActivity {
         return false;
     }
 
-    private ArrayList< Place > getSelectedPlaces( DataSnapshot dataSnapshot ) {
-        ArrayList selectedPlaces = new ArrayList< Place >( );
+    private List< Place > getSelectedPlaces( DataSnapshot dataSnapshot ) {
+        List< Place > selectedPlaces = new ArrayList<>( );
 
         for( DataSnapshot placeDataSnapshot : dataSnapshot.getChildren( ) ) {
             Place place = placeDataSnapshot.getValue( Place.class );
@@ -251,10 +253,15 @@ public class CreateItinerary extends AppCompatActivity {
             }
         }
 
+        //Order selected places in descending order by relevance
+        Collections.sort( selectedPlaces, ( place1, place2 ) -> place2.getRelevance( ) - place1.getRelevance( ) );
+
         return selectedPlaces;
     }
 
-    private DailyItineraryList makeItinerary( ArrayList<Place> selectedPlaces, Forecast forecast ) {
+    private DailyItineraryList makeItinerary( List< Place > selectedPlaces, Forecast forecast ) {
+        boolean considerForecast = ( ( CheckBox ) findViewById( R.id.checkBoxForecast ) ).isChecked();
+
         Calendar todayAtMidnight = Calendar.getInstance( );
         todayAtMidnight.set( Calendar.HOUR_OF_DAY, 0 );
         todayAtMidnight.set( Calendar.MINUTE, 0 );
@@ -294,7 +301,7 @@ public class CreateItinerary extends AppCompatActivity {
         return ( int ) numberOfDays;
     }
 
-    private void getDailyItineraryWithForecast( ArrayList< Place > selectedPlaces, DailyItinerary dailyItinerary, Calendar nextStartTime, Calendar endTime ) {
+    private void getDailyItineraryWithForecast( List< Place > selectedPlaces, DailyItinerary dailyItinerary, Calendar nextStartTime, Calendar endTime ) {
         int placeIndex = 0;
         while( selectedPlaces.size( ) > 0 ) {
             Place removedPlace = null;
@@ -332,17 +339,17 @@ public class CreateItinerary extends AppCompatActivity {
         }
     }
 
-    private void getDailyItineraryWithoutForecast( ArrayList< Place > selectedPlaces, DailyItinerary dailyItinerary, Calendar nextStartTime, Calendar endTime ) {
+    private void getDailyItineraryWithoutForecast( List< Place > selectedPlaces, DailyItinerary dailyItinerary, Calendar nextStartTime, Calendar endTime ) {
         while( selectedPlaces.size( ) > 0 ) {
-            Place removedPlace = selectedPlaces.remove( 0 );
-            removedPlace.setStartTime( nextStartTime );
-            dailyItinerary.addPlace( removedPlace );
+            Place nextPlace = selectedPlaces.remove( 0 );
+            nextPlace.setStartTime( nextStartTime );
+            dailyItinerary.addPlace( nextPlace );
 
             if( selectedPlaces.size( ) == 0 ) {
                 break;
             }
 
-            int visitTime = removedPlace.getVisitTime( );
+            int visitTime = nextPlace.getVisitTime( );
             nextStartTime = ( Calendar ) nextStartTime.clone( );
             nextStartTime.add( Calendar.MINUTE, visitTime + 10 ); //10 é o tempo de deslocamento padrão de um lugar para outro
 
@@ -374,24 +381,24 @@ public class CreateItinerary extends AppCompatActivity {
         call.enqueue( new Callback< DistanciaResponse >( ) {
             @Override
             public void onResponse( @NonNull Call< DistanciaResponse > call, @NonNull Response< DistanciaResponse > response ) {
-//                DistanciaResponse distanciaResponse = response.body( );
-//
-//                List< Row > lista = distanciaResponse.getRows( );
-//                Row row = lista.get( 0 );
-//                List< Element > elementList = row.getElements( );
-//                Element element = elementList.get( 0 );
-//                Distance distance = element.getDistance( );
-//                distancia = distance.getValue( );
-//
-//                listaFinal.addAll(lista);
-//
-//                if(pesquisa == 2) { //total de pesquisas
-//                    pesquisa = 0;
+                //                DistanciaResponse distanciaResponse = response.body( );
+                //
+                //                List< Row > lista = distanciaResponse.getRows( );
+                //                Row row = lista.get( 0 );
+                //                List< Element > elementList = row.getElements( );
+                //                Element element = elementList.get( 0 );
+                //                Distance distance = element.getDistance( );
+                //                distancia = distance.getValue( );
+                //
+                //                listaFinal.addAll(lista);
+                //
+                //                if(pesquisa == 2) { //total de pesquisas
+                //                    pesquisa = 0;
 
-//                    1. Faça o itinerário
-//                    2. Salve e passe para a próxima activity
-//                }
-//                pesquisa++;
+                //                    1. Faça o itinerário
+                //                    2. Salve e passe para a próxima activity
+                //                }
+                //                pesquisa++;
             }
 
             @Override
