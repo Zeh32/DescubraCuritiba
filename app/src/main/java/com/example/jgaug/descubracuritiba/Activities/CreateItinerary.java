@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,7 +19,6 @@ import android.zetterstrom.com.forecast.models.Language;
 import android.zetterstrom.com.forecast.models.Unit;
 
 import com.example.jgaug.descubracuritiba.Api.DescubraCuritibaApi;
-import com.example.jgaug.descubracuritiba.Api.Response.DistanciaResponse;
 import com.example.jgaug.descubracuritiba.Api.endpoint.distanciaApi;
 import com.example.jgaug.descubracuritiba.Fragments.DatePickerFragment;
 import com.example.jgaug.descubracuritiba.Fragments.TimePickerFragment;
@@ -36,6 +36,8 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
