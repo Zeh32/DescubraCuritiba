@@ -13,26 +13,23 @@
         tools:replace="android:label">
         <activity
             android:name=".Activities.FirstScreen"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:screenOrientation="sensorPortrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
-
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
         <activity
             android:name=".Activities.CreateItinerary"
             android:label="@string/create_itinerary"
-            android:parentActivityName=".Activities.FirstScreen">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Activities.FirstScreen"/>
+            android:screenOrientation="sensorPortrait">
         </activity>
         <activity
             android:name=".Activities.Itinerary"
             android:label="@string/title_activity_itinerary"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="sensorPortrait">
         </activity>
     </application>
-
 </manifest>

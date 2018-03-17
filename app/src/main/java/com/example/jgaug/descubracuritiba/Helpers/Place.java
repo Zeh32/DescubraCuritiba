@@ -66,16 +66,15 @@ public class Place implements Serializable {
 
     @Exclude
     public String getVisitPeriod( ) {
-        String formattedHour = String.format( "%02d", startTime.get( Calendar.HOUR_OF_DAY ) );
-        String formattedMinute = String.format( "%02d", startTime.get( Calendar.MINUTE ) );
+        Calendar clonedStartTime = ( Calendar ) startTime.clone();
+        String formattedHour = String.format( "%02d", clonedStartTime.get( Calendar.HOUR_OF_DAY ) );
+        String formattedMinute = String.format( "%02d", clonedStartTime.get( Calendar.MINUTE ) );
 
         String visitPeriod = formattedHour + ":" + formattedMinute + " - ";
 
-        startTime.add( Calendar.MINUTE, visitTime );
-        formattedHour = String.format( "%02d", startTime.get( Calendar.HOUR_OF_DAY ) );
-        formattedMinute = String.format( "%02d", startTime.get( Calendar.MINUTE ) );
-
-        startTime.add( Calendar.MINUTE, (-1)*visitTime);
+        clonedStartTime.add( Calendar.MINUTE, visitTime );
+        formattedHour = String.format( "%02d", clonedStartTime.get( Calendar.HOUR_OF_DAY ) );
+        formattedMinute = String.format( "%02d", clonedStartTime.get( Calendar.MINUTE ) );
 
         visitPeriod += formattedHour + ":" + formattedMinute;
 
