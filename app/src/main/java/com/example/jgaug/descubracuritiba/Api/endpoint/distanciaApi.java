@@ -15,7 +15,7 @@ import retrofit2.http.Query;
 public interface distanciaApi {
 
     @GET("/maps/api/distancematrix/json")
-    Call<DistanciaResponse> getDistancia(@Query("origins") String latLongOrin, @Query("destinations") String latLongDest,
+    Call<DistanciaResponse> getDistancia(@Query("language") String language,@Query("mode") String mode,@Query("origins") String latLongOrin, @Query("destinations") String latLongDest,
                                          @Query("key") String ApiKey
     );
 

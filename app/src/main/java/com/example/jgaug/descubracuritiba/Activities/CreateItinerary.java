@@ -8,7 +8,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,8 +36,6 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -377,34 +374,34 @@ public class CreateItinerary extends AppCompatActivity {
         final distanciaApi distanciaEndpoint = new DescubraCuritibaApi( ).distanciaApi( );
         final Integer[] distanciaAux = new Integer[ 1 ];
 
-        retrofit2.Call< DistanciaResponse > call = distanciaEndpoint.getDistancia( latlonOrigem, latlonDest, "AIzaSyA2yt9xJV1gwgqJTpn-zUKnKIMK44iRCJA" );
-        call.enqueue( new Callback< DistanciaResponse >( ) {
-            @Override
-            public void onResponse( @NonNull Call< DistanciaResponse > call, @NonNull Response< DistanciaResponse > response ) {
-                //                DistanciaResponse distanciaResponse = response.body( );
-                //
-                //                List< Row > lista = distanciaResponse.getRows( );
-                //                Row row = lista.get( 0 );
-                //                List< Element > elementList = row.getElements( );
-                //                Element element = elementList.get( 0 );
-                //                Distance distance = element.getDistance( );
-                //                distancia = distance.getValue( );
-                //
-                //                listaFinal.addAll(lista);
-                //
-                //                if(pesquisa == 2) { //total de pesquisas
-                //                    pesquisa = 0;
-
-                //                    1. Faça o itinerário
-                //                    2. Salve e passe para a próxima activity
-                //                }
-                //                pesquisa++;
-            }
-
-            @Override
-            public void onFailure( @NonNull Call< DistanciaResponse > call, @NonNull Throwable t ) {
-
-            }
-        } );
+//        retrofit2.Call< DistanciaResponse > call = distanciaEndpoint.getDistancia( latlonOrigem, latlonDest, "AIzaSyA2yt9xJV1gwgqJTpn-zUKnKIMK44iRCJA" );
+//        call.enqueue( new Callback< DistanciaResponse >( ) {
+//            @Override
+//            public void onResponse( @NonNull Call< DistanciaResponse > call, @NonNull Response< DistanciaResponse > response ) {
+////                DistanciaResponse distanciaResponse = response.body( );
+////
+////                List< Row > lista = distanciaResponse.getRows( );
+////                Row row = lista.get( 0 );
+////                List< Element > elementList = row.getElements( );
+////                Element element = elementList.get( 0 );
+////                Distance distance = element.getDistance( );
+////                distancia = distance.getValue( );
+////
+////                listaFinal.addAll(lista);
+////
+////                if(pesquisa == 2) { //total de pesquisas
+////                    pesquisa = 0;
+//
+////                    1. Faça o itinerário
+////                    2. Salve e passe para a próxima activity
+////                }
+////                pesquisa++;
+//            }
+//
+//            @Override
+//            public void onFailure( @NonNull Call< DistanciaResponse > call, @NonNull Throwable t ) {
+//
+//            }
+//        } );
     }
 }
