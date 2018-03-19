@@ -10,6 +10,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Switch;
 
 import com.example.jgaug.descubracuritiba.Fragments.ItineraryFragment;
 import com.example.jgaug.descubracuritiba.Helpers.DailyItinerary;
@@ -40,6 +42,7 @@ public class Itinerary extends AppCompatActivity {
 
         TabLayout tabLayout = ( TabLayout ) findViewById( R.id.tabs );
         tabLayout.setupWithViewPager( mViewPager );
+
     }
 
     @Override
@@ -92,4 +95,5 @@ public class Itinerary extends AppCompatActivity {
     public DailyItinerary getDailyItinerary( int day ) {
         return itinerary.getItinerary( ).get( day );
     }
+
 }

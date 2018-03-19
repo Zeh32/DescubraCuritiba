@@ -24,31 +24,6 @@
             app:layout_scrollFlags="scroll|enterAlways"
             app:popupTheme="@style/AppTheme.PopupOverlay">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:text="Carro"
-                android:textStyle="bold"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="50dp"
-                android:layout_marginTop="21dp"
-                android:paddingRight="5dp"/>
-
-            <Switch
-                android:id="@+id/switch2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginTop="17dp"
-                android:gravity="center_horizontal" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:text="A pé"
-                android:textStyle="bold"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="21dp"
-                android:paddingLeft="5dp"/>
-
         </android.support.v7.widget.Toolbar>
 
         <android.support.design.widget.TabLayout

@@ -1,14 +1,17 @@
 package com.example.jgaug.descubracuritiba;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.example.jgaug.descubracuritiba.Api.DescubraCuritibaApi;
@@ -40,11 +43,16 @@ public class CustomAdapter extends RecyclerView.Adapter {
     private DailyItinerary listStorage;
     private Context context;
     private OnItemClickListener itemClickListener;
+    private int travelMode = 0;
+    private String[] times = new String[20];
+    private int[] modes = new int[20];
+    private String mode = "driving";
 
-    public CustomAdapter( Context context, DailyItinerary dailyItinerary ) {
+    public CustomAdapter( Context context, DailyItinerary dailyItinerary, int[] modes) {
         this.context = context;
         this.layoutinflater = ( LayoutInflater ) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
         this.listStorage = dailyItinerary;
+        this.modes = modes;
     }
 
     public void setOnItemClickListener( final CustomAdapter.OnItemClickListener itemClickListener ) {
@@ -57,6 +65,8 @@ public class CustomAdapter extends RecyclerView.Adapter {
         void onClickClima( int position );
 
         void onClickNavegar( int position );
+
+        void onClickMode( int position );
     }
 
     @Override
@@ -97,6 +107,19 @@ public class CustomAdapter extends RecyclerView.Adapter {
                 itemClickListener.onClickNavegar( listViewHolder.getAdapterPosition( ) );
             }
         } );
+        listViewHolder.changeMode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                itemClickListener.onClickMode( listViewHolder.getAdapterPosition( ) );
+            }
+        });
+
+        if(modes[position] == 1) {
+            mode = "walking";
+        }
+        else{
+            mode = "driving";
+        }
 
         listViewHolder.placeName.setText( listStorage.getPlaces( ).get( position ).getName( ) );
         listViewHolder.placeDescription.setText( listStorage.getPlaces( ).get( position ).getDescription( ) );
@@ -104,7 +127,7 @@ public class CustomAdapter extends RecyclerView.Adapter {
 
         if( position < ( listStorage.getPlaces( ).size( ) - 1 ) ) {
             populateTimeTravel( listStorage.getPlaces( ).get( position ).getLatitude( ) + "," + listStorage.getPlaces().get(position).getLongitude(),
-                    listStorage.getPlaces( ).get( position + 1 ).getLatitude( ) + "," + listStorage.getPlaces( ).get( position + 1 ).getLongitude( ), listViewHolder );
+                    listStorage.getPlaces( ).get( position + 1 ).getLatitude( ) + "," + listStorage.getPlaces( ).get( position + 1 ).getLongitude( ), listViewHolder, position );
         } else if( position == ( listStorage.getPlaces( ).size( ) - 1 ) ) {
             listViewHolder.travelTimeLayout.setVisibility( View.GONE );
         }
@@ -125,6 +148,8 @@ public class CustomAdapter extends RecyclerView.Adapter {
         LinearLayout placeNavegar;
         TextView travelTime;
         LinearLayout travelTimeLayout;
+        ImageView imageVehicle;
+        Button changeMode;
 
         public ViewHolder( View itemView ) {
             super( itemView );
@@ -138,14 +163,15 @@ public class CustomAdapter extends RecyclerView.Adapter {
             placeNavegar = itemView.findViewById( R.id.btn_navegar );
             travelTime = itemView.findViewById( R.id.travelTime );
             travelTimeLayout = itemView.findViewById( R.id.travelTimeLayout );
+            imageVehicle = itemView.findViewById(R.id.imageVehicle);
+            changeMode = itemView.findViewById(R.id.changeMode);
         }
     }
 
-    private void populateTimeTravel( String latlonOrigem, String latlonDest, ViewHolder listviewholder ) {
+    private void populateTimeTravel( String latlonOrigem, String latlonDest, ViewHolder listviewholder, int position ) {
         //TODO: consultar API do google maps aqui e obter tempo de deslocamento de carro
         final distanciaApi distanciaEndpoint = new DescubraCuritibaApi( ).distanciaApi( );
         final Integer[] distanciaAux = new Integer[ 1 ];
-        String mode = "driving";
 
         retrofit2.Call<DistanciaResponse> call = distanciaEndpoint.getDistancia( "pt-BR", mode,latlonOrigem, latlonDest, "AIzaSyA2yt9xJV1gwgqJTpn-zUKnKIMK44iRCJA" );
         call.enqueue( new Callback< DistanciaResponse >( ) {
@@ -158,7 +184,18 @@ public class CustomAdapter extends RecyclerView.Adapter {
                 List<Element> elementList = row.getElements( );
                 Element element = elementList.get( 0 );
                 Duration duration = element.getDuration( );
-                listviewholder.travelTime.setText( duration.getText() + " " + "de carro" );
+                if(modes[position] == 0) {
+                    listviewholder.travelTime.setText(duration.getText() + " " + "de carro");
+                    listviewholder.imageVehicle.setImageResource(R.drawable.car);
+                    listviewholder.changeMode.setText("A pé");
+                }
+                else {
+                    listviewholder.travelTime.setText(duration.getText() + " " + "a pé");
+                    listviewholder.imageVehicle.setImageResource(R.drawable.footprints);
+                    listviewholder.changeMode.setText("Carro");
+                }
+                times[position] = duration.getText();
+
 //                distancia = distance.getValue( );
 //
 //                listaFinal.addAll(lista);

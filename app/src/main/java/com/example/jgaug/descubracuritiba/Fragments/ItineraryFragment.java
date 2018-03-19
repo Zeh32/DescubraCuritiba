@@ -41,7 +41,13 @@ public class ItineraryFragment extends Fragment {
         View view = inflater.inflate( R.layout.fragment_itinerary, container, false );
 
         final DailyItinerary placesToVisit = ( ( Itinerary ) getActivity( ) ).getDailyItinerary( getArguments( ).getInt( "sectionNumber" ) );
-        CustomAdapter customAdapter = new CustomAdapter( getActivity( ), placesToVisit );
+
+        int[][] modes = new int[7][20];
+        for(int i=0; i<20; i++){
+            modes[getArguments().getInt("sectionNumber")][i] = 0;
+        }
+
+        CustomAdapter customAdapter = new CustomAdapter( getActivity( ), placesToVisit, modes[getArguments().getInt("sectionNumber")]);
 
         RecyclerView recyclerView = ( RecyclerView ) view.findViewById( R.id.itinerary_recycler_view );
         recyclerView.setAdapter( customAdapter );
@@ -72,6 +78,15 @@ public class ItineraryFragment extends Fragment {
                 if( mapIntent.resolveActivity( getActivity( ).getPackageManager( ) ) != null ) {
                     startActivity( mapIntent );
                 }
+            }
+
+            @Override
+            public void onClickMode(int position) {
+                if(modes[getArguments().getInt("sectionNumber")][position] == 0)
+                    modes[getArguments().getInt("sectionNumber")][position] = 1;
+                else
+                    modes[getArguments().getInt("sectionNumber")][position] = 0;
+                customAdapter.notifyDataSetChanged();
             }
         } );
 
