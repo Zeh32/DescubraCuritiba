@@ -1,14 +1,21 @@
 package com.example.jgaug.descubracuritiba.Activities;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,6 +32,9 @@ import com.example.jgaug.descubracuritiba.Helpers.DailyItineraryList;
 import com.example.jgaug.descubracuritiba.Helpers.Place;
 import com.example.jgaug.descubracuritiba.Helpers.PlaceGroup;
 import com.example.jgaug.descubracuritiba.R;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -32,6 +42,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -42,26 +53,70 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class CreateItinerary extends AppCompatActivity {
-    private Calendar startDay = Calendar.getInstance( );
-    private Calendar endDay = Calendar.getInstance( );
+    private Calendar startDay = Calendar.getInstance();
+    private Calendar endDay = Calendar.getInstance();
+    private FusedLocationProviderClient mFusedLocationClient;
     private boolean parksSelected = false;
     private boolean landmarksSelected = false;
     private boolean museumsSelected = false;
     private boolean shoppingSelected = false;
     private boolean foodsSelected = false;
     private final double MIN_PRECIP_PROBABILITY = 0.50;
+    private EditText address;
+    private int ACCESS_FINE_LOCATION = 199;
     //public Integer distancia;
     //public int pesquisa = 0;
     //List<Row> listaFinal = new ArrayList<>() ;
 
     @Override
-    protected void onCreate( Bundle savedInstanceState ) {
-        super.onCreate( savedInstanceState );
-        setContentView( R.layout.activity_create_itinerary );
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        setContentView(R.layout.activity_create_itinerary);
+        ImageView serch = (ImageView) findViewById(R.id.search);
+        address = (EditText) findViewById(R.id.editTextOrigin);
+
+        serch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Geocoder geocoder = new Geocoder(getApplicationContext());
+                List<Address> addresses = null;
+                try {
+                    addresses = geocoder.getFromLocationName(address.getText().toString(), 1);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                if (addresses != null) {
+                    if (addresses.size() > 0) {
+                        double latitude = addresses.get(0).getLatitude();
+                        double longitude = addresses.get(0).getLongitude();
+                        Toast.makeText(getApplicationContext(), "Coordenada encontradas.", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Coordenada não encontradas. Tente novamente", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        });
     }
 
-    public void btnSelectPlaceOnMap( View view ) {
-        Toast.makeText( this, "Não implementado", Toast.LENGTH_SHORT ).show( );
+    public void btnSelectPlaceOnMap(View view) {
+//        Toast.makeText( this, "Não implementado", Toast.LENGTH_SHORT ).show( );
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    ACCESS_FINE_LOCATION);
+        }
+        else {
+            mFusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            if (location != null) {
+                                address.setText("Localização atual");
+                                Toast.makeText(getApplication(), "Usando a sua localização", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+        }
     }
 
     public void setDate( View view ) {
@@ -404,4 +459,5 @@ public class CreateItinerary extends AppCompatActivity {
 //            }
 //        } );
     }
+
 }
