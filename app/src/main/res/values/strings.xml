@@ -11,7 +11,7 @@
     <!--Create Itinerary-->
     <string name="select_origin">Local de partida</string>
     <string name="map_description">Imagem mapa</string>
-    <string name="select_on_map">Usar localização atual</string>
+    <string name="use_current_location">Usar localização atual</string>
 
     <string name="select_start_day">Primeiro dia de passeio</string>
     <string name="select_end_day">Último dia de passeio</string>

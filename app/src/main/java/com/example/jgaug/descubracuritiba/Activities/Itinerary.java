@@ -10,8 +10,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Switch;
 
 import com.example.jgaug.descubracuritiba.Fragments.ItineraryFragment;
 import com.example.jgaug.descubracuritiba.Helpers.DailyItinerary;
@@ -20,12 +18,10 @@ import com.example.jgaug.descubracuritiba.R;
 
 public class Itinerary extends AppCompatActivity {
     private DailyItineraryList itinerary;
-    public Integer distancia;
 
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
         itinerary = ( DailyItineraryList ) getIntent( ).getSerializableExtra( "itinerary" );
-        //distancia = getIntent( ).getIntExtra( "distancia", 0 );
 
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_itinerary );
@@ -42,7 +38,6 @@ public class Itinerary extends AppCompatActivity {
 
         TabLayout tabLayout = ( TabLayout ) findViewById( R.id.tabs );
         tabLayout.setupWithViewPager( mViewPager );
-
     }
 
     @Override
@@ -83,7 +78,7 @@ public class Itinerary extends AppCompatActivity {
 
         @Override
         public int getCount( ) {
-            return itinerary.getItinerary().size();
+            return itinerary.getItinerary( ).size( );
         }
 
         @Override
@@ -95,5 +90,4 @@ public class Itinerary extends AppCompatActivity {
     public DailyItinerary getDailyItinerary( int day ) {
         return itinerary.getItinerary( ).get( day );
     }
-
 }

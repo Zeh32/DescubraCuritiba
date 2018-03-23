@@ -13,6 +13,7 @@
         android:background="#F5F5F5"
         android:orientation="vertical">
 
+        <!-- focusableInTouchMode and focusable attributes prevents the textView to get focus when the activity starts  -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -20,82 +21,54 @@
             android:padding="10dp"
             android:focusable="true"
             android:focusableInTouchMode="true"
-            android:orientation="vertical"
+            android:orientation="horizontal"
             android:background="@drawable/layout_background">
 
-            <!-- focusableInTouchMode and focusable attributes prevents the textView to get focus when the activity starts  -->
-            <android.support.constraint.ConstraintLayout
+            <ImageView
+                android:id="@+id/imageView1"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_gravity="center_vertical"
+                android:adjustViewBounds="false"
+                android:contentDescription="@string/map_description"
+                android:cropToPadding="false"
+                app:srcCompat="@drawable/map"/>
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
-                android:orientation="horizontal">
-                <!--android:background="@drawable/layout_background">-->
+                android:orientation="vertical">
 
-                <!--<ImageView-->
-                    <!--android:id="@+id/imageView1"-->
-                    <!--android:layout_width="80dp"-->
-                    <!--android:layout_height="80dp"-->
-                    <!--android:layout_gravity="center_vertical"-->
-                    <!--android:adjustViewBounds="false"-->
-                    <!--android:contentDescription="@string/map_description"-->
-                    <!--android:cropToPadding="false"-->
-                    <!--app:srcCompat="@drawable/map"/>-->
-
-                <LinearLayout
-                    android:id="@+id/linearLayout"
-                    android:layout_width="0dp"
+                <TextView
+                    android:id="@+id/textView"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:orientation="vertical"
-                    app:layout_constraintEnd_toStartOf="@+id/search"
-                    app:layout_constraintStart_toStartOf="parent">
+                    android:layout_marginStart="15dp"
+                    android:labelFor="@+id/editTextOrigin"
+                    android:text="@string/select_origin"
+                    android:textColor="@color/colorSecondaryDark"
+                    android:textSize="15sp"/>
 
-                    <TextView
-                        android:id="@+id/textView"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="15dp"
-                        android:labelFor="@+id/editTextOrigin"
-                        android:text="@string/select_origin"
-                        android:textColor="@color/colorSecondaryDark"
-                        android:textSize="15sp" />
+                <EditText
+                    android:id="@+id/editTextOrigin"
+                    android:layout_width="match_parent"
+                    android:layout_height="45dp"
+                    android:layout_marginStart="15dp"
+                    android:inputType="text"
+                    android:textColor="@android:color/black"
+                    android:textSize="20sp"/>
 
-                    <EditText
-                        android:id="@+id/editTextOrigin"
-                        android:layout_width="match_parent"
-                        android:layout_height="45dp"
-                        android:layout_marginStart="15dp"
-                        android:inputType="text"
-                        android:textColor="@android:color/black"
-                        android:textSize="20sp" />
+                <Button
+                    android:id="@+id/btnSelectPlaceOnMap"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="35dp"
+                    android:onClick="btnUseCurrentLocation"
+                    android:background="@color/colorSecondaryLight"
+                    android:text="@string/use_current_location"/>
+            </LinearLayout>
 
-                </LinearLayout>
-
-                <ImageView
-                    android:id="@+id/search"
-                    android:layout_width="37dp"
-                    android:layout_height="37dp"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:contentDescription="@string/map_description"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:srcCompat="@drawable/search_icon" />
-
-            </android.support.constraint.ConstraintLayout>
-
-            <Button
-                android:id="@+id/btnSelectPlaceOnMap"
-                android:layout_marginStart="15dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="15dp"
-                android:layout_width="match_parent"
-                android:layout_height="35dp"
-                android:onClick="btnSelectPlaceOnMap"
-                android:background="@color/colorSecondaryLight"
-                android:text="@string/select_on_map"/>
         </LinearLayout>
 
         <LinearLayout

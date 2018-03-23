@@ -3,6 +3,7 @@ package com.example.jgaug.descubracuritiba.Fragments;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,10 +20,6 @@ import com.example.jgaug.descubracuritiba.R;
 import java.util.Locale;
 
 public class ItineraryFragment extends Fragment {
-    private double latitude = 0;
-    private double longitude = 0;
-    private String uri;
-
     public ItineraryFragment( ) {
     }
 
@@ -37,42 +34,39 @@ public class ItineraryFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
+    public View onCreateView( @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
         View view = inflater.inflate( R.layout.fragment_itinerary, container, false );
 
         final DailyItinerary placesToVisit = ( ( Itinerary ) getActivity( ) ).getDailyItinerary( getArguments( ).getInt( "sectionNumber" ) );
 
-        int[][] modes = new int[7][20];
-        for(int i=0; i<20; i++){
-            modes[getArguments().getInt("sectionNumber")][i] = 0;
-        }
+//        int[][] modes = new int[ 7 ][ 20 ];
+//        for( int i = 0; i < 20; i++ ) {
+//            modes[ getArguments( ).getInt( "sectionNumber" ) ][ i ] = 0;
+//        }
 
-        CustomAdapter customAdapter = new CustomAdapter( getActivity( ), placesToVisit, modes[getArguments().getInt("sectionNumber")]);
+        CustomAdapter customAdapter = new CustomAdapter( getActivity( ), placesToVisit );
 
-        RecyclerView recyclerView = ( RecyclerView ) view.findViewById( R.id.itinerary_recycler_view );
+        RecyclerView recyclerView = view.findViewById( R.id.itinerary_recycler_view );
         recyclerView.setAdapter( customAdapter );
-
         recyclerView.setLayoutManager( new LinearLayoutManager( getContext( ), LinearLayoutManager.VERTICAL, false ) );
 
         customAdapter.setOnItemClickListener( new CustomAdapter.OnItemClickListener( ) {
             @Override
             public void onClickDetalhes( int position ) {
-
                 Toast.makeText( getActivity( ), "Position: " + position, Toast.LENGTH_SHORT ).show( );
             }
 
             @Override
             public void onClickClima( int position ) {
-
                 Toast.makeText( getActivity( ), "Position: " + position, Toast.LENGTH_SHORT ).show( );
             }
 
             @Override
             public void onClickNavegar( int position ) {
-                latitude = placesToVisit.getPlaces().get( position ).getLatitude( );
-                longitude = placesToVisit.getPlaces().get( position ).getLongitude( );
+                double latitude = placesToVisit.getPlaces( ).get( position ).getLatitude( );
+                double longitude = placesToVisit.getPlaces( ).get( position ).getLongitude( );
 
-                uri = String.format( Locale.ENGLISH, "geo:0,0?q=" ) + android.net.Uri.encode( String.format( "%s,%s", Double.toString( latitude ), Double.toString( longitude ) ), "UTF-8" );
+                String uri = String.format( Locale.ENGLISH, "geo:0,0?q=" ) + android.net.Uri.encode( String.format( "%s,%s", Double.toString( latitude ), Double.toString( longitude ) ), "UTF-8" );
                 Intent mapIntent = new Intent( Intent.ACTION_VIEW, Uri.parse( uri ) );
 
                 if( mapIntent.resolveActivity( getActivity( ).getPackageManager( ) ) != null ) {
@@ -80,14 +74,16 @@ public class ItineraryFragment extends Fragment {
                 }
             }
 
-            @Override
-            public void onClickMode(int position) {
-                if(modes[getArguments().getInt("sectionNumber")][position] == 0)
-                    modes[getArguments().getInt("sectionNumber")][position] = 1;
-                else
-                    modes[getArguments().getInt("sectionNumber")][position] = 0;
-                customAdapter.notifyDataSetChanged();
-            }
+//            @Override
+//            public void onClickMode( int position ) {
+//                if( modes[ getArguments( ).getInt( "sectionNumber" ) ][ position ] == 0 ) {
+//                    modes[ getArguments( ).getInt( "sectionNumber" ) ][ position ] = 1;
+//                } else {
+//                    modes[ getArguments( ).getInt( "sectionNumber" ) ][ position ] = 0;
+//                }
+//
+//                customAdapter.notifyDataSetChanged( );
+//            }
         } );
 
         return view;

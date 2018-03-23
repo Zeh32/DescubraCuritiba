@@ -7,7 +7,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -25,6 +24,9 @@ import android.zetterstrom.com.forecast.models.Forecast;
 import android.zetterstrom.com.forecast.models.Language;
 import android.zetterstrom.com.forecast.models.Unit;
 
+import com.example.jgaug.descubracuritiba.Api.DescubraCuritibaApi;
+import com.example.jgaug.descubracuritiba.Api.Response.DistanciaResponse;
+import com.example.jgaug.descubracuritiba.Api.Response.Element;
 import com.example.jgaug.descubracuritiba.Fragments.DatePickerFragment;
 import com.example.jgaug.descubracuritiba.Fragments.TimePickerFragment;
 import com.example.jgaug.descubracuritiba.Helpers.DailyItinerary;
@@ -34,11 +36,11 @@ import com.example.jgaug.descubracuritiba.Helpers.PlaceGroup;
 import com.example.jgaug.descubracuritiba.R;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 
@@ -53,69 +55,52 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class CreateItinerary extends AppCompatActivity {
-    private Calendar startDay = Calendar.getInstance();
-    private Calendar endDay = Calendar.getInstance();
-    private FusedLocationProviderClient mFusedLocationClient;
-    private boolean parksSelected = false;
-    private boolean landmarksSelected = false;
-    private boolean museumsSelected = false;
-    private boolean shoppingSelected = false;
-    private boolean foodsSelected = false;
+    private Calendar startDay = Calendar.getInstance( );
+    private Calendar endDay = Calendar.getInstance( );
+    private List< Integer > selectedPlaceGroups = new ArrayList<>( );
     private final double MIN_PRECIP_PROBABILITY = 0.50;
-    private EditText address;
     private int ACCESS_FINE_LOCATION = 199;
-    //public Integer distancia;
-    //public int pesquisa = 0;
-    //List<Row> listaFinal = new ArrayList<>() ;
+    private FusedLocationProviderClient mFusedLocationClient;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        setContentView(R.layout.activity_create_itinerary);
-        ImageView serch = (ImageView) findViewById(R.id.search);
-        address = (EditText) findViewById(R.id.editTextOrigin);
+    protected void onCreate( Bundle savedInstanceState ) {
+        super.onCreate( savedInstanceState );
+        setContentView( R.layout.activity_create_itinerary );
 
-        serch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Geocoder geocoder = new Geocoder(getApplicationContext());
-                List<Address> addresses = null;
-                try {
-                    addresses = geocoder.getFromLocationName(address.getText().toString(), 1);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                if (addresses != null) {
-                    if (addresses.size() > 0) {
-                        double latitude = addresses.get(0).getLatitude();
-                        double longitude = addresses.get(0).getLongitude();
-                        Toast.makeText(getApplicationContext(), "Coordenada encontradas.", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(getApplicationContext(), "Coordenada não encontradas. Tente novamente", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
-        });
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient( this );
     }
 
-    public void btnSelectPlaceOnMap(View view) {
-//        Toast.makeText( this, "Não implementado", Toast.LENGTH_SHORT ).show( );
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    ACCESS_FINE_LOCATION);
+    public void btnUseCurrentLocation( View view ) {
+        if( ActivityCompat.checkSelfPermission( this, Manifest.permission.ACCESS_FINE_LOCATION ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission( this, Manifest.permission.ACCESS_COARSE_LOCATION ) != PackageManager.PERMISSION_GRANTED ) {
+            ActivityCompat.requestPermissions( this, new String[] { Manifest.permission.ACCESS_FINE_LOCATION }, ACCESS_FINE_LOCATION );
+        } else {
+            mFusedLocationClient.getLastLocation( ).addOnSuccessListener( this, location -> {
+                if( location != null ) {
+                    EditText address = findViewById( R.id.editTextOrigin );
+                    address.setText( "Localização atual" );
+                    Toast.makeText( CreateItinerary.this, "Usando a sua localização", Toast.LENGTH_SHORT ).show( );
+                }
+            } );
         }
-        else {
-            mFusedLocationClient.getLastLocation()
-                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                        @Override
-                        public void onSuccess(Location location) {
-                            if (location != null) {
-                                address.setText("Localização atual");
-                                Toast.makeText(getApplication(), "Usando a sua localização", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
+    }
+
+    public void onSearchOriginPlace( View view ) {
+        Geocoder geocoder = new Geocoder( getApplicationContext( ) );
+        List< Address > addresses = null;
+        try {
+            EditText address = findViewById( R.id.editTextOrigin );
+            addresses = geocoder.getFromLocationName( address.getText( ).toString( ), 1 );
+        } catch( IOException e ) {
+            e.printStackTrace( );
+        }
+        if( addresses != null ) {
+            if( addresses.size( ) > 0 ) {
+                double latitude = addresses.get( 0 ).getLatitude( );
+                double longitude = addresses.get( 0 ).getLongitude( );
+                Toast.makeText( CreateItinerary.this, "Coordenada encontradas.", Toast.LENGTH_SHORT ).show( );
+            } else {
+                Toast.makeText( CreateItinerary.this, "Coordenada não encontradas. Tente novamente", Toast.LENGTH_SHORT ).show( );
+            }
         }
     }
 
@@ -162,9 +147,11 @@ public class CreateItinerary extends AppCompatActivity {
         if( isStartTime ) {
             this.startDay.set( Calendar.HOUR_OF_DAY, hourOfDay );
             this.startDay.set( Calendar.MINUTE, minute );
+            this.startDay.set( Calendar.SECOND, 0 );
         } else {
             this.endDay.set( Calendar.HOUR_OF_DAY, hourOfDay );
             this.endDay.set( Calendar.MINUTE, minute );
+            this.endDay.set( Calendar.SECOND, 0 );
         }
     }
 
@@ -175,34 +162,31 @@ public class CreateItinerary extends AppCompatActivity {
     public void onSelectPlacesToVisit( View view ) {
         switch( view.getId( ) ) {
             case R.id.imageViewParks:
-                parksSelected = !parksSelected;
-                changeImageViewResource( parksSelected, R.id.imageViewParks, R.drawable.parks_checked, R.drawable.parks_unchecked );
+                changeImageViewResource( PlaceGroup.PARKS, R.id.imageViewParks, R.drawable.parks_checked, R.drawable.parks_unchecked );
                 break;
             case R.id.imageViewLandmarks:
-                landmarksSelected = !landmarksSelected;
-                changeImageViewResource( landmarksSelected, R.id.imageViewLandmarks, R.drawable.landmarks_checked, R.drawable.landmarks_unchecked );
+                changeImageViewResource( PlaceGroup.LANDMARKS, R.id.imageViewLandmarks, R.drawable.landmarks_checked, R.drawable.landmarks_unchecked );
                 break;
             case R.id.imageViewMuseums:
-                museumsSelected = !museumsSelected;
-                changeImageViewResource( museumsSelected, R.id.imageViewMuseums, R.drawable.museums_checked, R.drawable.museums_unchecked );
+                changeImageViewResource( PlaceGroup.MUSEUMS, R.id.imageViewMuseums, R.drawable.museums_checked, R.drawable.museums_unchecked );
                 break;
             case R.id.imageViewShopping:
-                shoppingSelected = !shoppingSelected;
-                changeImageViewResource( shoppingSelected, R.id.imageViewShopping, R.drawable.shopping_checked, R.drawable.shopping_unchecked );
+                changeImageViewResource( PlaceGroup.SHOPPING, R.id.imageViewShopping, R.drawable.shopping_checked, R.drawable.shopping_unchecked );
                 break;
             case R.id.imageViewFood:
-                foodsSelected = !foodsSelected;
-                changeImageViewResource( foodsSelected, R.id.imageViewFood, R.drawable.food_checked, R.drawable.food_unchecked );
+                changeImageViewResource( PlaceGroup.FOOD, R.id.imageViewFood, R.drawable.food_checked, R.drawable.food_unchecked );
                 break;
         }
     }
 
-    private void changeImageViewResource( boolean placeSelected, int imageViewId, int checkedImageViewId, int uncheckedImageViewId ) {
+    private void changeImageViewResource( int placeGroupSelected, int imageViewId, int checkedImageViewId, int uncheckedImageViewId ) {
         ImageView imageView = findViewById( imageViewId );
-        if( placeSelected ) {
-            imageView.setImageResource( checkedImageViewId );
-        } else {
+        if( selectedPlaceGroups.contains( placeGroupSelected ) ) {
+            selectedPlaceGroups.remove( ( Integer ) placeGroupSelected );
             imageView.setImageResource( uncheckedImageViewId );
+        } else {
+            selectedPlaceGroups.add( placeGroupSelected );
+            imageView.setImageResource( checkedImageViewId );
         }
     }
 
@@ -213,42 +197,65 @@ public class CreateItinerary extends AppCompatActivity {
             final FirebaseDatabase database = FirebaseDatabase.getInstance( );
             DatabaseReference ref = database.getReference( "" );
 
-            // Attach a listener to read the data at our posts reference
             ref.addValueEventListener( new ValueEventListener( ) {
                 @Override
                 public void onDataChange( DataSnapshot dataSnapshot ) {
-                    ForecastConfiguration configuration = new ForecastConfiguration.Builder( "cc8d5c7bd7bd6815677077038773bb58" ).
-                        setDefaultLanguage( Language.PORTUGUESE ).
-                        setDefaultUnit( Unit.CA ).
-                        setCacheDirectory( getCacheDir( ) ).build( );
-                    ForecastClient.create( configuration );
+                    List< Place > selectedPlaces = getSelectedPlaces( dataSnapshot.child( "places" ) );
+                    String originCoordinates = "-25.434226,-49.2605431"; //Hotel Ibis budget centro
+                    int numberOfPlaces = selectedPlaces.size( ) >= 25 ? 25 : selectedPlaces.size( ); //Limite de destinos em uma única chamada da API é de 25
+                    String destinationCoordinates = getDestinationCoordinates( selectedPlaces, numberOfPlaces );
 
-                    double LATITUDE_CURITIBA = -25.4247427;
-                    double LONGITUDE_CURITIBA = -49.2763924;
-                    ForecastClient.getInstance( ).getForecast( LATITUDE_CURITIBA, LONGITUDE_CURITIBA, new Callback< Forecast >( ) {
+                    retrofit2.Call< DistanciaResponse > call = new DescubraCuritibaApi( ).distanciaApi( ).getDistancia( "pt-BR", "driving", originCoordinates, destinationCoordinates, "AIzaSyA2yt9xJV1gwgqJTpn-zUKnKIMK44iRCJA" );
+                    call.enqueue( new Callback< DistanciaResponse >( ) {
                         @Override
-                        public void onResponse( @NonNull Call< Forecast > call, @NonNull Response< Forecast > response ) {
-                            if( !response.isSuccessful( ) ) {
-                                Toast.makeText( CreateItinerary.this, "Houve uma falha ao obter as informações de previsão do tempo.", Toast.LENGTH_LONG ).show( );
-                            } else {
-                                Forecast forecast = response.body( );
-                                List< Place > selectedPlaces = getSelectedPlaces( dataSnapshot.child( "places" ) );
-                                DailyItineraryList itinerary = makeItinerary( selectedPlaces, forecast );
+                        public void onResponse( @NonNull Call< DistanciaResponse > call, @NonNull Response< DistanciaResponse > response ) {
+                            //TODO: verificar status de retorno se está ok
+                            DistanciaResponse distanciaResponse = response.body( );
+                            List< Element > elementList = distanciaResponse.getRows( ).get( 0 ).getElements( );
 
-                                saveItinerary( itinerary );
-
-                                Intent intent = new Intent( CreateItinerary.this, Itinerary.class );
-                                intent.putExtra( "itinerary", itinerary );
-
-                                progressDialog.dismiss( );
-
-                                CreateItinerary.this.startActivity( intent );
+                            for( int placeIndex = 0; placeIndex < numberOfPlaces; placeIndex++ ) {
+                                int travelTime = elementList.get( placeIndex ).getDuration( ).getValue( ) / 60; //convert to minutes
+                                selectedPlaces.get( placeIndex ).setTravelTimeFromOrigin( travelTime );
                             }
+
+                            ForecastConfiguration configuration = new ForecastConfiguration.Builder( "cc8d5c7bd7bd6815677077038773bb58" ).setDefaultLanguage( Language.PORTUGUESE ).setDefaultUnit( Unit.CA ).setCacheDirectory( getCacheDir( ) ).build( );
+                            ForecastClient.create( configuration );
+
+                            //Latitude e longitude do centro de Curitiba
+                            ForecastClient.getInstance( ).getForecast( -25.4247427, -49.2763924, new Callback< Forecast >( ) {
+                                @Override
+                                public void onResponse( @NonNull Call< Forecast > call, @NonNull Response< Forecast > response ) {
+                                    if( !response.isSuccessful( ) ) {
+                                        Toast.makeText( CreateItinerary.this, "Houve uma falha ao obter as informações de previsão do tempo.", Toast.LENGTH_LONG ).show( );
+                                        progressDialog.dismiss( );
+                                    } else {
+                                        Forecast forecast = response.body( );
+                                        List< List< Integer > > travelTimes = dataSnapshot.child( "travelTimes" ).getValue( new GenericTypeIndicator< List< List< Integer > > >( ) {
+                                        } );
+                                        DailyItineraryList itinerary = makeItinerary( selectedPlaces, travelTimes, forecast );
+
+                                        saveItinerary( itinerary );
+
+                                        Intent intent = new Intent( CreateItinerary.this, Itinerary.class );
+                                        intent.putExtra( "itinerary", itinerary );
+
+                                        progressDialog.dismiss( );
+
+                                        CreateItinerary.this.startActivity( intent );
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure( @NonNull Call< Forecast > call, @NonNull Throwable t ) {
+                                    Toast.makeText( CreateItinerary.this, "Houve uma falha ao obter as informações de previsão do tempo.", Toast.LENGTH_LONG ).show( );
+                                    progressDialog.dismiss( );
+                                }
+                            } );
                         }
 
                         @Override
-                        public void onFailure( @NonNull Call< Forecast > call, @NonNull Throwable t ) {
-                            Toast.makeText( CreateItinerary.this, "Houve uma falha ao obter as informações de previsão do tempo.", Toast.LENGTH_LONG ).show( );
+                        public void onFailure( @NonNull Call< DistanciaResponse > call, @NonNull Throwable t ) {
+                            Toast.makeText( CreateItinerary.this, "Houve uma falha ao calcular as distâncias a partir do ponto de origem do usuário.", Toast.LENGTH_LONG ).show( );
                             progressDialog.dismiss( );
                         }
                     } );
@@ -263,10 +270,22 @@ public class CreateItinerary extends AppCompatActivity {
         }
     }
 
+    private String getDestinationCoordinates( List< Place > selectedPlaces, int numberOfPlaces ) {
+        String coordinates = "";
+        for( int placeIndex = 0; placeIndex < numberOfPlaces; placeIndex++ ) {
+            coordinates += selectedPlaces.get( placeIndex ).getLatitude( ) + "," + selectedPlaces.get( placeIndex ).getLongitude( );
+
+            if( placeIndex < numberOfPlaces - 1 ) {
+                coordinates += "|";
+            }
+        }
+
+        return coordinates;
+    }
+
     private boolean checkConstraints( ) {
         //TODO: Fazer um limite de seleção de dias... se selecionar só gastronômicos por exemplo, não deixar mais de 1 dia
-
-        if( !parksSelected && !landmarksSelected && !museumsSelected && !shoppingSelected && !foodsSelected ) {
+        if( selectedPlaceGroups.isEmpty( ) ) {
             Toast.makeText( this, "Para gerar o itinerário, selecione ao menos um grupo de locais para visita!", Toast.LENGTH_SHORT ).show( );
         } else {
             long diff = endDay.getTimeInMillis( ) - startDay.getTimeInMillis( ); //result in millis
@@ -294,13 +313,7 @@ public class CreateItinerary extends AppCompatActivity {
 
         for( DataSnapshot placeDataSnapshot : dataSnapshot.getChildren( ) ) {
             Place place = placeDataSnapshot.getValue( Place.class );
-            boolean belongsToSelectedGroup = ( place.placeGroup.contains( PlaceGroup.PARKS ) && parksSelected ) ||
-                ( place.placeGroup.contains( PlaceGroup.LANDMARKS ) && landmarksSelected ) ||
-                ( place.placeGroup.contains( PlaceGroup.MUSEUMS ) && museumsSelected ) ||
-                ( place.placeGroup.contains( PlaceGroup.SHOPPING ) && shoppingSelected ) ||
-                ( place.placeGroup.contains( PlaceGroup.FOOD ) && foodsSelected );
-
-            if( belongsToSelectedGroup ) {
+            if( !Collections.disjoint( selectedPlaceGroups, place.getPlaceGroup( ) ) ) {
                 selectedPlaces.add( place );
             }
         }
@@ -311,8 +324,8 @@ public class CreateItinerary extends AppCompatActivity {
         return selectedPlaces;
     }
 
-    private DailyItineraryList makeItinerary( List< Place > selectedPlaces, Forecast forecast ) {
-        boolean considerForecast = ( ( CheckBox ) findViewById( R.id.checkBoxForecast ) ).isChecked();
+    private DailyItineraryList makeItinerary( List< Place > selectedPlaces, List< List< Integer > > travelTimes, Forecast forecast ) {
+        boolean considerForecast = ( ( CheckBox ) findViewById( R.id.checkBoxForecast ) ).isChecked( );
 
         Calendar todayAtMidnight = Calendar.getInstance( );
         todayAtMidnight.set( Calendar.HOUR_OF_DAY, 0 );
@@ -331,13 +344,19 @@ public class CreateItinerary extends AppCompatActivity {
             endTime.set( Calendar.HOUR_OF_DAY, endDay.get( Calendar.HOUR_OF_DAY ) );
             endTime.set( Calendar.MINUTE, endDay.get( Calendar.MINUTE ) );
 
-            DailyItinerary dailyItinerary = new DailyItinerary( );
             Calendar nextStartTime = ( Calendar ) startTime.clone( );
-
+            DailyItinerary dailyItinerary;
             if( considerForecast && forecastArrayPosition <= 7 && forecast.getDaily( ).getDataPoints( ).get( forecastArrayPosition ).getPrecipProbability( ) >= MIN_PRECIP_PROBABILITY ) {
-                getDailyItineraryWithForecast( selectedPlaces, dailyItinerary, nextStartTime, endTime );
+                dailyItinerary = getDailyItineraryWithForecast( selectedPlaces, travelTimes, nextStartTime, endTime );
             } else {
-                getDailyItineraryWithoutForecast( selectedPlaces, dailyItinerary, nextStartTime, endTime );
+                dailyItinerary = getDailyItineraryWithoutForecast( selectedPlaces, travelTimes, nextStartTime, endTime );
+            }
+
+            if( selectedPlaces.isEmpty( ) && dailyItinerary.getPlaces( ).isEmpty( ) ) {
+                Toast.makeText( this, "Número de locais insuficientes para construir um itinerário de acordo com os parâmetros fornecidos.", Toast.LENGTH_LONG ).show( );
+                break;
+            } else if( dailyItinerary.getPlaces( ).isEmpty( ) ) {
+                Toast.makeText( this, "Número de locais insuficientes para construir um itinerário de acordo com a previsão do tempo dos próximos 7 dias.", Toast.LENGTH_LONG ).show( );
             }
 
             itinerary.addDailyItinerary( dailyItinerary );
@@ -353,13 +372,87 @@ public class CreateItinerary extends AppCompatActivity {
         return ( int ) numberOfDays;
     }
 
-    private void getDailyItineraryWithForecast( List< Place > selectedPlaces, DailyItinerary dailyItinerary, Calendar nextStartTime, Calendar endTime ) {
-        int placeIndex = 0;
+    private DailyItinerary getDailyItineraryWithoutForecast( List< Place > selectedPlaces, List< List< Integer > > travelTimes, Calendar nextStartTime, Calendar endTime ) {
+        DailyItinerary dailyItinerary = new DailyItinerary( );
+        while( selectedPlaces.size( ) > 0 ) {
+            Place removedPlace;
+            if( dailyItinerary.getPlaces( ).isEmpty( ) ) {
+                //Sort selectedPlaces by descending relevance and then by ascending travelTimeFromOrigin
+                Collections.sort( selectedPlaces, ( place1, place2 ) -> {
+                    int relevanceDifference = place2.getRelevance( ) - place1.getRelevance( );
+                    if( relevanceDifference != 0 ) {
+                        return relevanceDifference;
+                    } else {
+                        return place1.getTravelTimeFromOrigin( ) - place2.getTravelTimeFromOrigin( );
+                    }
+                } );
+
+                //Set removedPlace startTime and add it to dailyItinerary
+                removedPlace = selectedPlaces.remove( 0 );
+                nextStartTime.add( Calendar.MINUTE, removedPlace.getTravelTimeFromOrigin( ) );
+            } else {
+                removedPlace = selectedPlaces.remove( 0 );
+            }
+
+            removedPlace.setStartTime( nextStartTime );
+            dailyItinerary.addPlace( removedPlace );
+
+            if( selectedPlaces.isEmpty( ) ) {
+                return dailyItinerary;
+            }
+
+            //Set the travel time from the removedPlace to other places
+            for( Place place : selectedPlaces ) {
+                int travelTimeToNextPlace = travelTimes.get( removedPlace.getId( ) ).get( place.getId( ) );
+                place.setTravelTimeFromPreviousPlace( travelTimeToNextPlace );
+            }
+
+            //Sort selectedPlaces by descending relevance and then by ascending travelTimeFromPreviousPlace
+            Collections.sort( selectedPlaces, ( place1, place2 ) -> {
+                int relevanceDifference = place2.getRelevance( ) - place1.getRelevance( );
+                if( relevanceDifference != 0 ) {
+                    return relevanceDifference;
+                } else {
+                    return place1.getTravelTimeFromPreviousPlace( ) - place2.getTravelTimeFromPreviousPlace( );
+                }
+            } );
+
+            nextStartTime.add( Calendar.MINUTE, removedPlace.getVisitTime( ) + selectedPlaces.get( 0 ).getTravelTimeFromPreviousPlace( ) );
+
+            Calendar nextFinishTime = ( Calendar ) nextStartTime.clone( );
+            nextFinishTime.add( Calendar.MINUTE, ( selectedPlaces.get( 0 ) ).getVisitTime( ) );
+            if( endTime.after( nextFinishTime ) == false ) {
+                break;
+            }
+        }
+
+        return dailyItinerary;
+    }
+
+    private DailyItinerary getDailyItineraryWithForecast( List< Place > selectedPlaces, List< List< Integer > > travelTimes, Calendar nextStartTime, Calendar endTime ) {
+        DailyItinerary dailyItinerary = new DailyItinerary( );
         while( selectedPlaces.size( ) > 0 ) {
             Place removedPlace = null;
-            for( ; placeIndex < selectedPlaces.size( ); placeIndex++ ) {
+            if( dailyItinerary.getPlaces( ).isEmpty( ) ) {
+                //Sort selectedPlaces by descending relevance and then by ascending travelTimeFromOrigin
+                Collections.sort( selectedPlaces, ( place1, place2 ) -> {
+                    int relevanceDifference = place2.getRelevance( ) - place1.getRelevance( );
+                    if( relevanceDifference != 0 ) {
+                        return relevanceDifference;
+                    } else {
+                        return place1.getTravelTimeFromOrigin( ) - place2.getTravelTimeFromOrigin( );
+                    }
+                } );
+            }
+
+            int placeIndex;
+            for( placeIndex = 0; placeIndex < selectedPlaces.size( ); placeIndex++ ) {
                 if( !selectedPlaces.get( placeIndex ).isWeatherDependent( ) ) {
                     removedPlace = selectedPlaces.remove( placeIndex );
+
+                    if( dailyItinerary.getPlaces( ).isEmpty( ) ) {
+                        nextStartTime.add( Calendar.MINUTE, removedPlace.getTravelTimeFromOrigin( ) );
+                    }
                     removedPlace.setStartTime( nextStartTime );
                     dailyItinerary.addPlace( removedPlace );
 
@@ -367,18 +460,32 @@ public class CreateItinerary extends AppCompatActivity {
                 }
             }
 
-            if( selectedPlaces.size( ) == 0 || placeIndex == selectedPlaces.size( ) ) {
-                //TODO: não há lugares suficientes para se fazer o itinerário
-                break;
+            if( placeIndex == selectedPlaces.size( ) || selectedPlaces.isEmpty( ) ) {
+                return dailyItinerary;
             }
 
-            int visitTime = removedPlace.getVisitTime( );
-            nextStartTime = ( Calendar ) nextStartTime.clone( );
-            nextStartTime.add( Calendar.MINUTE, visitTime + 10 ); //10 é o tempo de deslocamento padrão de um lugar para outro
+            //Set the travel time from the removedPlace to other places
+            for( Place place : selectedPlaces ) {
+                int travelTimeToNextPlace = travelTimes.get( removedPlace.getId( ) ).get( place.getId( ) );
+                place.setTravelTimeFromPreviousPlace( travelTimeToNextPlace );
+            }
 
-            Calendar nextFinishTime = ( Calendar ) nextStartTime.clone( );
-            for( ; placeIndex < selectedPlaces.size( ); placeIndex++ ) {
+            //Sort selectedPlaces by descending relevance and then by ascending travelTimeFromPreviousPlace
+            Collections.sort( selectedPlaces, ( place1, place2 ) -> {
+                int relevanceDifference = place2.getRelevance( ) - place1.getRelevance( );
+                if( relevanceDifference != 0 ) {
+                    return relevanceDifference;
+                } else {
+                    return place1.getTravelTimeFromPreviousPlace( ) - place2.getTravelTimeFromPreviousPlace( );
+                }
+            } );
+
+            Calendar nextFinishTime = null;
+            for( placeIndex = 0; placeIndex < selectedPlaces.size( ); placeIndex++ ) {
                 if( !selectedPlaces.get( placeIndex ).isWeatherDependent( ) ) {
+                    nextStartTime.add( Calendar.MINUTE, removedPlace.getVisitTime( ) + selectedPlaces.get( placeIndex ).getTravelTimeFromPreviousPlace( ) );
+
+                    nextFinishTime = ( Calendar ) nextStartTime.clone( );
                     nextFinishTime.add( Calendar.MINUTE, ( selectedPlaces.get( placeIndex ) ).getVisitTime( ) );
 
                     break;
@@ -389,29 +496,8 @@ public class CreateItinerary extends AppCompatActivity {
                 break;
             }
         }
-    }
 
-    private void getDailyItineraryWithoutForecast( List< Place > selectedPlaces, DailyItinerary dailyItinerary, Calendar nextStartTime, Calendar endTime ) {
-        while( selectedPlaces.size( ) > 0 ) {
-            Place nextPlace = selectedPlaces.remove( 0 );
-            nextPlace.setStartTime( nextStartTime );
-            dailyItinerary.addPlace( nextPlace );
-
-            if( selectedPlaces.size( ) == 0 ) {
-                break;
-            }
-
-            int visitTime = nextPlace.getVisitTime( );
-            nextStartTime = ( Calendar ) nextStartTime.clone( );
-            nextStartTime.add( Calendar.MINUTE, visitTime + 10 ); //10 é o tempo de deslocamento padrão de um lugar para outro
-
-            Calendar nextFinishTime = ( Calendar ) nextStartTime.clone( );
-            nextFinishTime.add( Calendar.MINUTE, ( selectedPlaces.get( 0 ) ).getVisitTime( ) );
-
-            if( endTime.after( nextFinishTime ) == false ) {
-                break;
-            }
-        }
+        return dailyItinerary;
     }
 
     private void saveItinerary( DailyItineraryList itinerary ) {
@@ -424,40 +510,4 @@ public class CreateItinerary extends AppCompatActivity {
         // Commit the edits!
         editor.apply( );
     }
-
-    public void getDistance( String latlonOrigem, String latlonDest ) {
-//        final distanciaApi distanciaEndpoint = new DescubraCuritibaApi( ).distanciaApi( );
-//        final Integer[] distanciaAux = new Integer[ 1 ];
-//
-//        retrofit2.Call< DistanciaResponse > call = distanciaEndpoint.getDistancia( latlonOrigem, latlonDest, "AIzaSyA2yt9xJV1gwgqJTpn-zUKnKIMK44iRCJA" );
-//        call.enqueue( new Callback< DistanciaResponse >( ) {
-//            @Override
-//            public void onResponse( @NonNull Call< DistanciaResponse > call, @NonNull Response< DistanciaResponse > response ) {
-//                DistanciaResponse distanciaResponse = response.body( );
-//
-//                List< Row > lista = distanciaResponse.getRows( );
-//                Row row = lista.get( 0 );
-//                List< Element > elementList = row.getElements( );
-//                Element element = elementList.get( 0 );
-//                Distance distance = element.getDistance( );
-//                distancia = distance.getValue( );
-//
-//                listaFinal.addAll(lista);
-//
-//                if(pesquisa == 2) { //total de pesquisas
-//                    pesquisa = 0;
-//
-//                    1. Faça o itinerário
-//                    2. Salve e passe para a próxima activity
-//                }
-//                pesquisa++;
-//            }
-//
-//            @Override
-//            public void onFailure( @NonNull Call< DistanciaResponse > call, @NonNull Throwable t ) {
-//
-//            }
-//        } );
-    }
-
 }

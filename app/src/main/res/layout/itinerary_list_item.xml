@@ -155,7 +155,6 @@
         android:gravity="center">
 
         <ImageView
-            android:id="@+id/imageVehicle"
             android:layout_width="wrap_content"
             android:layout_height="22dp"
             android:layout_marginEnd="5dp"
@@ -169,16 +168,31 @@
             android:gravity="start"
             android:text="10 minutos de carro"/>
 
-        <Button
-            android:id="@+id/changeMode"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:backgroundTint="@color/colorSecondary"
-            android:layout_marginStart="30dp"
-            android:layout_marginEnd="0dp"
-            android:layout_marginBottom="5dp"
-            android:layout_marginTop="5dp"
-            android:text="A pé" />
+        <!--<ImageView-->
+            <!--android:id="@+id/imageVehicle"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="22dp"-->
+            <!--android:layout_marginEnd="5dp"-->
+            <!--android:contentDescription="@string/vehicle_description"-->
+            <!--android:src="@drawable/car" />-->
+
+        <!--<TextView-->
+            <!--android:id="@+id/travelTime"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:gravity="start"-->
+            <!--android:text="10 minutos de carro"/>-->
+
+        <!--<Button-->
+            <!--android:id="@+id/changeMode"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="1"-->
+            <!--android:backgroundTint="@color/colorSecondary"-->
+            <!--android:layout_marginStart="30dp"-->
+            <!--android:layout_marginEnd="0dp"-->
+            <!--android:layout_marginBottom="5dp"-->
+            <!--android:layout_marginTop="5dp"-->
+            <!--android:text="A pé" />-->
     </LinearLayout>
 </LinearLayout>

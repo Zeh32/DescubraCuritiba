@@ -17,7 +17,9 @@ public class Place implements Serializable {
     public String description;
     public String image;
     public List< Integer > placeGroup;
-    @Exclude public Calendar startTime = null;
+    @Exclude public Calendar startTime;
+    @Exclude public int travelTimeFromOrigin;
+    @Exclude public int travelTimeFromPreviousPlace;
 
     //Firebase needs an empty constructor in order to map places back from database
     public Place( ) {
@@ -34,6 +36,9 @@ public class Place implements Serializable {
         this.visitTime = visitTime;
         this.placeGroup = placeGroup;
         this.description = description;
+        this.startTime = null;
+        this.travelTimeFromPreviousPlace = 0;
+        this.travelTimeFromOrigin = 0;
     }
 
     public int getId( ) {
@@ -64,6 +69,38 @@ public class Place implements Serializable {
         return visitTime;
     }
 
+    public List< Integer > getPlaceGroup( ) {
+        return placeGroup;
+    }
+
+    public int getRelevance( ) {
+        return relevance;
+    }
+
+    public boolean isWeatherDependent( ) {
+        return weatherDependent;
+    }
+
+    public void setStartTime( Calendar startTime ) {
+        this.startTime = ( Calendar ) startTime.clone( );
+    }
+
+    public int getTravelTimeFromPreviousPlace( ) {
+        return travelTimeFromPreviousPlace;
+    }
+
+    public void setTravelTimeFromPreviousPlace( int travelTimeFromPreviousPlace ) {
+        this.travelTimeFromPreviousPlace = travelTimeFromPreviousPlace;
+    }
+
+    public int getTravelTimeFromOrigin( ) {
+        return travelTimeFromOrigin;
+    }
+
+    public void setTravelTimeFromOrigin( int travelTimeFromOrigin ) {
+        this.travelTimeFromOrigin = travelTimeFromOrigin;
+    }
+
     @Exclude
     public String getVisitPeriod( ) {
         Calendar clonedStartTime = ( Calendar ) startTime.clone();
@@ -79,17 +116,5 @@ public class Place implements Serializable {
         visitPeriod += formattedHour + ":" + formattedMinute;
 
         return visitPeriod;
-    }
-
-    public int getRelevance( ) {
-        return relevance;
-    }
-
-    public boolean isWeatherDependent( ) {
-        return weatherDependent;
-    }
-
-    public void setStartTime( Calendar startTime ) {
-        this.startTime = startTime;
     }
 }
