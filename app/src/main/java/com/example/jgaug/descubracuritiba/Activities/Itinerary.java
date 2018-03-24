@@ -26,17 +26,17 @@ public class Itinerary extends AppCompatActivity {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_itinerary );
 
-        Toolbar toolbar = ( Toolbar ) findViewById( R.id.toolbar );
+        Toolbar toolbar = findViewById( R.id.toolbar );
         setSupportActionBar( toolbar );
 
         // Create the adapter that will return a fragment for each section of the activity.
         SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter( getSupportFragmentManager( ) );
 
         // Set up the ViewPager with the sections adapter.
-        ViewPager mViewPager = ( ViewPager ) findViewById( R.id.container );
+        ViewPager mViewPager = findViewById( R.id.container );
         mViewPager.setAdapter( mSectionsPagerAdapter );
 
-        TabLayout tabLayout = ( TabLayout ) findViewById( R.id.tabs );
+        TabLayout tabLayout = findViewById( R.id.tabs );
         tabLayout.setupWithViewPager( mViewPager );
     }
 

@@ -10,14 +10,21 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.jgaug.descubracuritiba.Activities.Itinerary;
+import com.example.jgaug.descubracuritiba.Api.DescubraCuritibaApi;
+import com.example.jgaug.descubracuritiba.Api.Response.DistanciaResponse;
 import com.example.jgaug.descubracuritiba.CustomAdapter;
 import com.example.jgaug.descubracuritiba.Helpers.DailyItinerary;
 import com.example.jgaug.descubracuritiba.R;
 
 import java.util.Locale;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ItineraryFragment extends Fragment {
     public ItineraryFragment( ) {
@@ -37,14 +44,8 @@ public class ItineraryFragment extends Fragment {
     public View onCreateView( @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
         View view = inflater.inflate( R.layout.fragment_itinerary, container, false );
 
-        final DailyItinerary placesToVisit = ( ( Itinerary ) getActivity( ) ).getDailyItinerary( getArguments( ).getInt( "sectionNumber" ) );
-
-//        int[][] modes = new int[ 7 ][ 20 ];
-//        for( int i = 0; i < 20; i++ ) {
-//            modes[ getArguments( ).getInt( "sectionNumber" ) ][ i ] = 0;
-//        }
-
-        CustomAdapter customAdapter = new CustomAdapter( getActivity( ), placesToVisit );
+        final DailyItinerary dailyItinerary = ( ( Itinerary ) getActivity( ) ).getDailyItinerary( getArguments( ).getInt( "sectionNumber" ) );
+        CustomAdapter customAdapter = new CustomAdapter( getActivity( ), dailyItinerary );
 
         RecyclerView recyclerView = view.findViewById( R.id.itinerary_recycler_view );
         recyclerView.setAdapter( customAdapter );
@@ -53,20 +54,20 @@ public class ItineraryFragment extends Fragment {
         customAdapter.setOnItemClickListener( new CustomAdapter.OnItemClickListener( ) {
             @Override
             public void onClickDetalhes( int position ) {
-                Toast.makeText( getActivity( ), "Position: " + position, Toast.LENGTH_SHORT ).show( );
+                Toast.makeText( getActivity( ), "Não implementado", Toast.LENGTH_SHORT ).show( );
             }
 
             @Override
             public void onClickClima( int position ) {
-                Toast.makeText( getActivity( ), "Position: " + position, Toast.LENGTH_SHORT ).show( );
+                Toast.makeText( getActivity( ), "Não implementado", Toast.LENGTH_SHORT ).show( );
             }
 
             @Override
             public void onClickNavegar( int position ) {
-                double latitude = placesToVisit.getPlaces( ).get( position ).getLatitude( );
-                double longitude = placesToVisit.getPlaces( ).get( position ).getLongitude( );
+                String latitude = Double.toString( dailyItinerary.getPlaces( ).get( position ).getLatitude( ) );
+                String longitude = Double.toString( dailyItinerary.getPlaces( ).get( position ).getLongitude( ) );
 
-                String uri = String.format( Locale.ENGLISH, "geo:0,0?q=" ) + android.net.Uri.encode( String.format( "%s,%s", Double.toString( latitude ), Double.toString( longitude ) ), "UTF-8" );
+                String uri = String.format( Locale.ENGLISH, "geo:0,0?q=" ) + android.net.Uri.encode( String.format( "%s,%s", latitude,  longitude ), "UTF-8" );
                 Intent mapIntent = new Intent( Intent.ACTION_VIEW, Uri.parse( uri ) );
 
                 if( mapIntent.resolveActivity( getActivity( ).getPackageManager( ) ) != null ) {
@@ -74,16 +75,35 @@ public class ItineraryFragment extends Fragment {
                 }
             }
 
-//            @Override
-//            public void onClickMode( int position ) {
-//                if( modes[ getArguments( ).getInt( "sectionNumber" ) ][ position ] == 0 ) {
-//                    modes[ getArguments( ).getInt( "sectionNumber" ) ][ position ] = 1;
-//                } else {
-//                    modes[ getArguments( ).getInt( "sectionNumber" ) ][ position ] = 0;
-//                }
-//
-//                customAdapter.notifyDataSetChanged( );
-//            }
+            @Override
+            public void onClickChangeTransport( int position, ImageView transportImage ) {
+                dailyItinerary.getPlaces( ).get( position ).changeTransportMode( );
+
+                //Only get travelTimeFromPreviousPlaceOnFoot in the first time
+                if( dailyItinerary.getPlaces( ).get( position ).isGoingOnFoot( ) && dailyItinerary.getPlaces( ).get( position ).getTravelTimeFromPreviousPlaceOnFoot() == 0 ) {
+                    String originCoordinates = Double.toString( dailyItinerary.getPlaces( ).get( position ).getLatitude( ) ) + "," + Double.toString( dailyItinerary.getPlaces( ).get( position ).getLongitude( ) );
+                    String destinationCoordinates = Double.toString( dailyItinerary.getPlaces( ).get( position + 1 ).getLatitude( ) ) + "," + Double.toString( dailyItinerary.getPlaces( ).get( position + 1 ).getLongitude( ) );
+
+                    retrofit2.Call< DistanciaResponse > call = new DescubraCuritibaApi( ).distanciaApi( ).getDistancia( "pt-BR", "walking", originCoordinates, destinationCoordinates, "AIzaSyA2yt9xJV1gwgqJTpn-zUKnKIMK44iRCJA" );
+                    call.enqueue( new Callback< DistanciaResponse >( ) {
+                        @Override
+                        public void onResponse( @NonNull Call< DistanciaResponse > call, @NonNull Response< DistanciaResponse > response ) {
+                            DistanciaResponse distanciaResponse = response.body( );
+                            int onFootTravelTime = distanciaResponse.getRows( ).get( 0 ).getElements( ).get( 0 ).getDuration( ).getValue( ) / 60;
+                            dailyItinerary.getPlaces( ).get( position + 1 ).setTravelTimeFromPreviousPlaceOnFoot( onFootTravelTime );
+
+                            customAdapter.notifyDataSetChanged( );
+                        }
+
+                        @Override
+                        public void onFailure( @NonNull Call< DistanciaResponse > call, @NonNull Throwable t ) {
+                            Toast.makeText( getActivity( ), "Houve uma falha ao obter o tempo de deslocamento a pé.", Toast.LENGTH_LONG ).show( );
+                        }
+                    } );
+                } else {
+                    customAdapter.notifyDataSetChanged( );
+                }
+            }
         } );
 
         return view;

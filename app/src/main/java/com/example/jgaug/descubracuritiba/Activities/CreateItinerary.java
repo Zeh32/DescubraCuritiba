@@ -404,20 +404,20 @@ public class CreateItinerary extends AppCompatActivity {
             //Set the travel time from the removedPlace to other places
             for( Place place : selectedPlaces ) {
                 int travelTimeToNextPlace = travelTimes.get( removedPlace.getId( ) ).get( place.getId( ) );
-                place.setTravelTimeFromPreviousPlace( travelTimeToNextPlace );
+                place.setTravelTimeFromPreviousPlaceByCar( travelTimeToNextPlace );
             }
 
-            //Sort selectedPlaces by descending relevance and then by ascending travelTimeFromPreviousPlace
+            //Sort selectedPlaces by descending relevance and then by ascending travelTimeFromPreviousPlaceByCar
             Collections.sort( selectedPlaces, ( place1, place2 ) -> {
                 int relevanceDifference = place2.getRelevance( ) - place1.getRelevance( );
                 if( relevanceDifference != 0 ) {
                     return relevanceDifference;
                 } else {
-                    return place1.getTravelTimeFromPreviousPlace( ) - place2.getTravelTimeFromPreviousPlace( );
+                    return place1.getTravelTimeFromPreviousPlaceByCar( ) - place2.getTravelTimeFromPreviousPlaceByCar( );
                 }
             } );
 
-            nextStartTime.add( Calendar.MINUTE, removedPlace.getVisitTime( ) + selectedPlaces.get( 0 ).getTravelTimeFromPreviousPlace( ) );
+            nextStartTime.add( Calendar.MINUTE, removedPlace.getVisitTime( ) + selectedPlaces.get( 0 ).getTravelTimeFromPreviousPlaceByCar( ) );
 
             Calendar nextFinishTime = ( Calendar ) nextStartTime.clone( );
             nextFinishTime.add( Calendar.MINUTE, ( selectedPlaces.get( 0 ) ).getVisitTime( ) );
@@ -467,23 +467,23 @@ public class CreateItinerary extends AppCompatActivity {
             //Set the travel time from the removedPlace to other places
             for( Place place : selectedPlaces ) {
                 int travelTimeToNextPlace = travelTimes.get( removedPlace.getId( ) ).get( place.getId( ) );
-                place.setTravelTimeFromPreviousPlace( travelTimeToNextPlace );
+                place.setTravelTimeFromPreviousPlaceByCar( travelTimeToNextPlace );
             }
 
-            //Sort selectedPlaces by descending relevance and then by ascending travelTimeFromPreviousPlace
+            //Sort selectedPlaces by descending relevance and then by ascending travelTimeFromPreviousPlaceByCar
             Collections.sort( selectedPlaces, ( place1, place2 ) -> {
                 int relevanceDifference = place2.getRelevance( ) - place1.getRelevance( );
                 if( relevanceDifference != 0 ) {
                     return relevanceDifference;
                 } else {
-                    return place1.getTravelTimeFromPreviousPlace( ) - place2.getTravelTimeFromPreviousPlace( );
+                    return place1.getTravelTimeFromPreviousPlaceByCar( ) - place2.getTravelTimeFromPreviousPlaceByCar( );
                 }
             } );
 
             Calendar nextFinishTime = null;
             for( placeIndex = 0; placeIndex < selectedPlaces.size( ); placeIndex++ ) {
                 if( !selectedPlaces.get( placeIndex ).isWeatherDependent( ) ) {
-                    nextStartTime.add( Calendar.MINUTE, removedPlace.getVisitTime( ) + selectedPlaces.get( placeIndex ).getTravelTimeFromPreviousPlace( ) );
+                    nextStartTime.add( Calendar.MINUTE, removedPlace.getVisitTime( ) + selectedPlaces.get( placeIndex ).getTravelTimeFromPreviousPlaceByCar( ) );
 
                     nextFinishTime = ( Calendar ) nextStartTime.clone( );
                     nextFinishTime.add( Calendar.MINUTE, ( selectedPlaces.get( placeIndex ) ).getVisitTime( ) );

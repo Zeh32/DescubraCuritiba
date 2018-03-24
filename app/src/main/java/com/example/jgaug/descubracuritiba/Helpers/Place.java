@@ -18,8 +18,10 @@ public class Place implements Serializable {
     public String image;
     public List< Integer > placeGroup;
     @Exclude public Calendar startTime;
-    @Exclude public int travelTimeFromOrigin;
-    @Exclude public int travelTimeFromPreviousPlace;
+    @Exclude public int travelTimeFromOrigin; //in minutes
+    @Exclude public int travelTimeFromPreviousPlaceByCar; //in minutes
+    @Exclude public int travelTimeFromPreviousPlaceOnFoot; //in minutes
+    @Exclude public boolean goingOnFoot;
 
     //Firebase needs an empty constructor in order to map places back from database
     public Place( ) {
@@ -37,8 +39,9 @@ public class Place implements Serializable {
         this.placeGroup = placeGroup;
         this.description = description;
         this.startTime = null;
-        this.travelTimeFromPreviousPlace = 0;
+        this.travelTimeFromPreviousPlaceByCar = 0;
         this.travelTimeFromOrigin = 0;
+        this.goingOnFoot = false;
     }
 
     public int getId( ) {
@@ -85,12 +88,12 @@ public class Place implements Serializable {
         this.startTime = ( Calendar ) startTime.clone( );
     }
 
-    public int getTravelTimeFromPreviousPlace( ) {
-        return travelTimeFromPreviousPlace;
+    public int getTravelTimeFromPreviousPlaceByCar( ) {
+        return travelTimeFromPreviousPlaceByCar;
     }
 
-    public void setTravelTimeFromPreviousPlace( int travelTimeFromPreviousPlace ) {
-        this.travelTimeFromPreviousPlace = travelTimeFromPreviousPlace;
+    public void setTravelTimeFromPreviousPlaceByCar( int travelTimeFromPreviousPlaceByCar ) {
+        this.travelTimeFromPreviousPlaceByCar = travelTimeFromPreviousPlaceByCar;
     }
 
     public int getTravelTimeFromOrigin( ) {
@@ -99,6 +102,23 @@ public class Place implements Serializable {
 
     public void setTravelTimeFromOrigin( int travelTimeFromOrigin ) {
         this.travelTimeFromOrigin = travelTimeFromOrigin;
+    }
+
+    public int getTravelTimeFromPreviousPlaceOnFoot( ) {
+        return travelTimeFromPreviousPlaceOnFoot;
+    }
+
+    public void setTravelTimeFromPreviousPlaceOnFoot( int travelTimeFromPreviousPlaceOnFoot ) {
+        this.travelTimeFromPreviousPlaceOnFoot = travelTimeFromPreviousPlaceOnFoot;
+    }
+
+    public boolean isGoingOnFoot( ) {
+        return goingOnFoot;
+    }
+
+    @Exclude
+    public void changeTransportMode( ) {
+        this.goingOnFoot = !this.goingOnFoot;
     }
 
     @Exclude

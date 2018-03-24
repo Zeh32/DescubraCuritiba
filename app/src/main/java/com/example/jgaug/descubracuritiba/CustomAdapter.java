@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.jgaug.descubracuritiba.Helpers.DailyItinerary;
@@ -20,16 +21,11 @@ public class CustomAdapter extends RecyclerView.Adapter {
     private DailyItinerary listStorage;
     private Context context;
     private OnItemClickListener itemClickListener;
-//    private int travelMode = 0;
-//    private String[] times = new String[ 20 ];
-//    private int[] modes = new int[ 20 ];
-//    private String mode = "driving";
 
     public CustomAdapter( Context context, DailyItinerary dailyItinerary ) {
         this.context = context;
         this.layoutinflater = ( LayoutInflater ) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
         this.listStorage = dailyItinerary;
-        //this.modes = modes;
     }
 
     public void setOnItemClickListener( final CustomAdapter.OnItemClickListener itemClickListener ) {
@@ -38,12 +34,9 @@ public class CustomAdapter extends RecyclerView.Adapter {
 
     public interface OnItemClickListener {
         void onClickDetalhes( int position );
-
         void onClickClima( int position );
-
         void onClickNavegar( int position );
-
-        //void onClickMode( int position );
+        void onClickChangeTransport( int position, ImageView transportImage );
     }
 
     @Override
@@ -66,52 +59,29 @@ public class CustomAdapter extends RecyclerView.Adapter {
             }
         } );
 
-        listViewHolder.placeDetalhes.setOnClickListener( new View.OnClickListener( ) {
-            @Override
-            public void onClick( View view ) {
-                itemClickListener.onClickDetalhes( listViewHolder.getAdapterPosition( ) );
-            }
-        } );
-        listViewHolder.placeClima.setOnClickListener( new View.OnClickListener( ) {
-            @Override
-            public void onClick( View view ) {
-                itemClickListener.onClickClima( listViewHolder.getAdapterPosition( ) );
-            }
-        } );
-        listViewHolder.placeNavegar.setOnClickListener( new View.OnClickListener( ) {
-            @Override
-            public void onClick( View view ) {
-                itemClickListener.onClickNavegar( listViewHolder.getAdapterPosition( ) );
-            }
-        } );
-//        listViewHolder.changeMode.setOnClickListener( new View.OnClickListener( ) {
-//            @Override
-//            public void onClick( View v ) {
-//                itemClickListener.onClickMode( listViewHolder.getAdapterPosition( ) );
-//            }
-//        } );
-
-//        if( modes[ position ] == 1 ) {
-//            mode = "walking";
-//        } else {
-//            mode = "driving";
-//        }
+        listViewHolder.placeDetalhes.setOnClickListener( view -> itemClickListener.onClickDetalhes( listViewHolder.getAdapterPosition( ) ) );
+        listViewHolder.placeClima.setOnClickListener( view -> itemClickListener.onClickClima( listViewHolder.getAdapterPosition( ) ) );
+        listViewHolder.placeNavegar.setOnClickListener( view -> itemClickListener.onClickNavegar( listViewHolder.getAdapterPosition( ) ) );
+        listViewHolder.changeTransportImage.setOnClickListener( view -> itemClickListener.onClickChangeTransport( listViewHolder.getAdapterPosition( ) ,listViewHolder.transportImage ) );
 
         listViewHolder.placeName.setText( listStorage.getPlaces( ).get( position ).getName( ) );
         listViewHolder.placeDescription.setText( listStorage.getPlaces( ).get( position ).getDescription( ) );
         listViewHolder.placeVisitTime.setText( listStorage.getPlaces( ).get( position ).getVisitPeriod( ) );
 
-        if( position < ( listStorage.getPlaces( ).size( ) - 1 ) ) {
-            String travelTime = listStorage.getPlaces( ).get( position + 1 ).getTravelTimeFromPreviousPlace( ) + " minutos de carro";
-            listViewHolder.travelTime.setText( travelTime );
-        } else if( position == ( listStorage.getPlaces( ).size( ) - 1 ) ) {
+        if( position == ( listStorage.getPlaces( ).size( ) - 1 ) ) {
             listViewHolder.travelTimeLayout.setVisibility( View.GONE );
+        } else {
+            String travelTime = "";
+            if( listStorage.getPlaces( ).get( position ).isGoingOnFoot( ) ) {
+                listViewHolder.transportImage.setImageResource( R.drawable.shoes );
+                travelTime = listStorage.getPlaces( ).get( position + 1 ).getTravelTimeFromPreviousPlaceOnFoot( ) + " minuto(s) a pé";
+            } else {
+                listViewHolder.transportImage.setImageResource( R.drawable.car );
+                travelTime = listStorage.getPlaces( ).get( position + 1 ).getTravelTimeFromPreviousPlaceByCar( ) + " minuto(s) de carro";
+            }
+
+            listViewHolder.travelTime.setText( travelTime );
         }
-//        if( position < ( listStorage.getPlaces( ).size( ) - 1 ) ) {
-//            populateTimeTravel( listStorage.getPlaces( ).get( position ).getLatitude( ) + "," + listStorage.getPlaces( ).get( position ).getLongitude( ), listStorage.getPlaces( ).get( position + 1 ).getLatitude( ) + "," + listStorage.getPlaces( ).get( position + 1 ).getLongitude( ), listViewHolder, position );
-//        } else if( position == ( listStorage.getPlaces( ).size( ) - 1 ) ) {
-//            listViewHolder.travelTimeLayout.setVisibility( View.GONE );
-//        }
     }
 
     @Override
@@ -128,9 +98,9 @@ public class CustomAdapter extends RecyclerView.Adapter {
         LinearLayout placeClima;
         LinearLayout placeNavegar;
         TextView travelTime;
-        LinearLayout travelTimeLayout;
-        //ImageView imageVehicle;
-        //Button changeMode;
+        RelativeLayout travelTimeLayout;
+        ImageView transportImage;
+        ImageView changeTransportImage;
 
         public ViewHolder( View itemView ) {
             super( itemView );
@@ -144,41 +114,8 @@ public class CustomAdapter extends RecyclerView.Adapter {
             placeNavegar = itemView.findViewById( R.id.btn_navegar );
             travelTime = itemView.findViewById( R.id.travelTime );
             travelTimeLayout = itemView.findViewById( R.id.travelTimeLayout );
-            //imageVehicle = itemView.findViewById( R.id.imageVehicle );
-            //changeMode = itemView.findViewById( R.id.changeMode );
+            transportImage = itemView.findViewById( R.id.transport );
+            changeTransportImage = itemView.findViewById( R.id.changeTransport );
         }
     }
-
-//    private void populateTimeTravel( String latlonOrigem, String latlonDest, ViewHolder listviewholder, int position ) {
-//        final distanciaApi distanciaEndpoint = new DescubraCuritibaApi( ).distanciaApi( );
-//
-//        retrofit2.Call< DistanciaResponse > call = distanciaEndpoint.getDistancia( "pt-BR", mode, latlonOrigem, latlonDest, "AIzaSyA2yt9xJV1gwgqJTpn-zUKnKIMK44iRCJA" );
-//        call.enqueue( new Callback< DistanciaResponse >( ) {
-//            @Override
-//            public void onResponse( @NonNull Call< DistanciaResponse > call, @NonNull Response< DistanciaResponse > response ) {
-//                DistanciaResponse distanciaResponse = response.body( );
-//
-//                List< Row > lista = distanciaResponse.getRows( );
-//                Row row = lista.get( 0 );
-//                List< Element > elementList = row.getElements( );
-//                Element element = elementList.get( 0 );
-//                Duration duration = element.getDuration( );
-//                if( modes[ position ] == 0 ) {
-//                    listviewholder.travelTime.setText( duration.getText( ) + " " + "de carro" );
-//                    listviewholder.imageVehicle.setImageResource( R.drawable.car );
-//                    listviewholder.changeMode.setText( "A pé" );
-//                } else {
-//                    listviewholder.travelTime.setText( duration.getText( ) + " " + "a pé" );
-//                    listviewholder.imageVehicle.setImageResource( R.drawable.footprints );
-//                    listviewholder.changeMode.setText( "Carro" );
-//                }
-//                times[ position ] = duration.getText( );
-//            }
-//
-//            @Override
-//            public void onFailure( @NonNull Call< DistanciaResponse > call, @NonNull Throwable t ) {
-//
-//            }
-//        } );
-//    }
 }
