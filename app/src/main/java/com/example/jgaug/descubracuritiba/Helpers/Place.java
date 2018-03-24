@@ -8,15 +8,14 @@ import java.util.List;
 
 public class Place implements Serializable {
     public int id;
+    public String name;
+    public String image;
+    public String coordinates;
+    public boolean weatherDependent;
     public int relevance;
     public int visitTime;
-    public double latitude;
-    public double longitude;
-    public boolean weatherDependent;
-    public String name;
-    public String description;
-    public String image;
     public List< Integer > placeGroup;
+    public String description;
     @Exclude public Calendar startTime;
     @Exclude public int travelTimeFromOrigin; //in minutes
     @Exclude public int travelTimeFromPreviousPlaceByCar; //in minutes
@@ -27,21 +26,16 @@ public class Place implements Serializable {
     public Place( ) {
     }
 
-    public Place( int id, String name, String image, double latitude, double longitude, boolean weatherDependent, int relevance, int visitTime, List< Integer > placeGroup, String description ) {
+    public Place( int id, String name, String image, String coordinates, boolean weatherDependent, int relevance, int visitTime, List< Integer > placeGroup, String description ) {
         this.id = id;
         this.name = name;
         this.image = image;
-        this.latitude = latitude;
-        this.longitude = longitude;
+        this.coordinates = coordinates;
         this.weatherDependent = weatherDependent;
         this.relevance = relevance;
         this.visitTime = visitTime;
         this.placeGroup = placeGroup;
         this.description = description;
-        this.startTime = null;
-        this.travelTimeFromPreviousPlaceByCar = 0;
-        this.travelTimeFromOrigin = 0;
-        this.goingOnFoot = false;
     }
 
     public int getId( ) {
@@ -60,12 +54,8 @@ public class Place implements Serializable {
         return description;
     }
 
-    public double getLatitude( ) {
-        return latitude;
-    }
-
-    public double getLongitude( ) {
-        return longitude;
+    public String getCoordinates( ) {
+        return coordinates;
     }
 
     public int getVisitTime( ) {
@@ -84,34 +74,42 @@ public class Place implements Serializable {
         return weatherDependent;
     }
 
+    @Exclude
     public void setStartTime( Calendar startTime ) {
         this.startTime = ( Calendar ) startTime.clone( );
     }
 
+    @Exclude
     public int getTravelTimeFromPreviousPlaceByCar( ) {
         return travelTimeFromPreviousPlaceByCar;
     }
 
+    @Exclude
     public void setTravelTimeFromPreviousPlaceByCar( int travelTimeFromPreviousPlaceByCar ) {
         this.travelTimeFromPreviousPlaceByCar = travelTimeFromPreviousPlaceByCar;
     }
 
+    @Exclude
     public int getTravelTimeFromOrigin( ) {
         return travelTimeFromOrigin;
     }
 
+    @Exclude
     public void setTravelTimeFromOrigin( int travelTimeFromOrigin ) {
         this.travelTimeFromOrigin = travelTimeFromOrigin;
     }
 
+    @Exclude
     public int getTravelTimeFromPreviousPlaceOnFoot( ) {
         return travelTimeFromPreviousPlaceOnFoot;
     }
 
+    @Exclude
     public void setTravelTimeFromPreviousPlaceOnFoot( int travelTimeFromPreviousPlaceOnFoot ) {
         this.travelTimeFromPreviousPlaceOnFoot = travelTimeFromPreviousPlaceOnFoot;
     }
 
+    @Exclude
     public boolean isGoingOnFoot( ) {
         return goingOnFoot;
     }

@@ -271,16 +271,16 @@ public class CreateItinerary extends AppCompatActivity {
     }
 
     private String getDestinationCoordinates( List< Place > selectedPlaces, int numberOfPlaces ) {
-        String coordinates = "";
+        String destinationCoordinates = "";
         for( int placeIndex = 0; placeIndex < numberOfPlaces; placeIndex++ ) {
-            coordinates += selectedPlaces.get( placeIndex ).getLatitude( ) + "," + selectedPlaces.get( placeIndex ).getLongitude( );
+            destinationCoordinates += selectedPlaces.get( placeIndex ).getCoordinates( );
 
             if( placeIndex < numberOfPlaces - 1 ) {
-                coordinates += "|";
+                destinationCoordinates += "|";
             }
         }
 
-        return coordinates;
+        return destinationCoordinates;
     }
 
     private boolean checkConstraints( ) {

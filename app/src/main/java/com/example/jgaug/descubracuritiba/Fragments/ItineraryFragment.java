@@ -64,10 +64,8 @@ public class ItineraryFragment extends Fragment {
 
             @Override
             public void onClickNavegar( int position ) {
-                String latitude = Double.toString( dailyItinerary.getPlaces( ).get( position ).getLatitude( ) );
-                String longitude = Double.toString( dailyItinerary.getPlaces( ).get( position ).getLongitude( ) );
-
-                String uri = String.format( Locale.ENGLISH, "geo:0,0?q=" ) + android.net.Uri.encode( String.format( "%s,%s", latitude,  longitude ), "UTF-8" );
+                String coordinates = dailyItinerary.getPlaces( ).get( position ).getCoordinates( );
+                String uri = String.format( Locale.ENGLISH, "geo:0,0?q=" ) + android.net.Uri.encode( coordinates, "UTF-8" );
                 Intent mapIntent = new Intent( Intent.ACTION_VIEW, Uri.parse( uri ) );
 
                 if( mapIntent.resolveActivity( getActivity( ).getPackageManager( ) ) != null ) {
@@ -80,9 +78,9 @@ public class ItineraryFragment extends Fragment {
                 dailyItinerary.getPlaces( ).get( position ).changeTransportMode( );
 
                 //Only get travelTimeFromPreviousPlaceOnFoot in the first time
-                if( dailyItinerary.getPlaces( ).get( position ).isGoingOnFoot( ) && dailyItinerary.getPlaces( ).get( position ).getTravelTimeFromPreviousPlaceOnFoot() == 0 ) {
-                    String originCoordinates = Double.toString( dailyItinerary.getPlaces( ).get( position ).getLatitude( ) ) + "," + Double.toString( dailyItinerary.getPlaces( ).get( position ).getLongitude( ) );
-                    String destinationCoordinates = Double.toString( dailyItinerary.getPlaces( ).get( position + 1 ).getLatitude( ) ) + "," + Double.toString( dailyItinerary.getPlaces( ).get( position + 1 ).getLongitude( ) );
+                if( dailyItinerary.getPlaces( ).get( position ).isGoingOnFoot( ) && dailyItinerary.getPlaces( ).get( position + 1 ).getTravelTimeFromPreviousPlaceOnFoot() == 0 ) {
+                    String originCoordinates = dailyItinerary.getPlaces( ).get( position ).getCoordinates( );
+                    String destinationCoordinates = dailyItinerary.getPlaces( ).get( position + 1 ).getCoordinates( );
 
                     retrofit2.Call< DistanciaResponse > call = new DescubraCuritibaApi( ).distanciaApi( ).getDistancia( "pt-BR", "walking", originCoordinates, destinationCoordinates, "AIzaSyA2yt9xJV1gwgqJTpn-zUKnKIMK44iRCJA" );
                     call.enqueue( new Callback< DistanciaResponse >( ) {
