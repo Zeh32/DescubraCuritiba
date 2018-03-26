@@ -75,6 +75,11 @@ public class Place implements Serializable {
     }
 
     @Exclude
+    public Calendar getStartTime( ) {
+        return startTime;
+    }
+
+    @Exclude
     public void setStartTime( Calendar startTime ) {
         this.startTime = ( Calendar ) startTime.clone( );
     }
