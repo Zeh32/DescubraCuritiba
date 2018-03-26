@@ -36,7 +36,7 @@ public class CustomAdapter extends RecyclerView.Adapter {
         void onClickDetalhes( int position );
         void onClickClima( int position );
         void onClickNavegar( int position );
-        void onClickChangeTransport( int position, ImageView transportImage );
+        void onClickChangeTransportMode( int position );
     }
 
     @Override
@@ -62,7 +62,7 @@ public class CustomAdapter extends RecyclerView.Adapter {
         listViewHolder.placeDetalhes.setOnClickListener( view -> itemClickListener.onClickDetalhes( listViewHolder.getAdapterPosition( ) ) );
         listViewHolder.placeClima.setOnClickListener( view -> itemClickListener.onClickClima( listViewHolder.getAdapterPosition( ) ) );
         listViewHolder.placeNavegar.setOnClickListener( view -> itemClickListener.onClickNavegar( listViewHolder.getAdapterPosition( ) ) );
-        listViewHolder.changeTransportImage.setOnClickListener( view -> itemClickListener.onClickChangeTransport( listViewHolder.getAdapterPosition( ) ,listViewHolder.transportImage ) );
+        listViewHolder.changeTransportImage.setOnClickListener( view -> itemClickListener.onClickChangeTransportMode( listViewHolder.getAdapterPosition( ) ) );
 
         listViewHolder.placeName.setText( listStorage.getPlaces( ).get( position ).getName( ) );
         listViewHolder.placeDescription.setText( listStorage.getPlaces( ).get( position ).getDescription( ) );
@@ -103,7 +103,7 @@ public class CustomAdapter extends RecyclerView.Adapter {
         ImageView transportImage;
         ImageView changeTransportImage;
 
-        public ViewHolder( View itemView ) {
+        private ViewHolder( View itemView ) {
             super( itemView );
 
             placeImage = itemView.findViewById( R.id.place_image );

@@ -10,7 +10,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.jgaug.descubracuritiba.Activities.Itinerary;
@@ -18,8 +17,10 @@ import com.example.jgaug.descubracuritiba.Api.DescubraCuritibaApi;
 import com.example.jgaug.descubracuritiba.Api.Response.DistanciaResponse;
 import com.example.jgaug.descubracuritiba.CustomAdapter;
 import com.example.jgaug.descubracuritiba.Helpers.DailyItinerary;
+import com.example.jgaug.descubracuritiba.Helpers.Place;
 import com.example.jgaug.descubracuritiba.R;
 
+import java.util.Calendar;
 import java.util.Locale;
 
 import retrofit2.Call;
@@ -74,21 +75,22 @@ public class ItineraryFragment extends Fragment {
             }
 
             @Override
-            public void onClickChangeTransport( int position, ImageView transportImage ) {
-                dailyItinerary.getPlaces( ).get( position ).changeTransportMode( );
+            public void onClickChangeTransportMode( int position ) {
+                Place currentPlace = dailyItinerary.getPlaces( ).get( position );
+                Place nextPlace = dailyItinerary.getPlaces( ).get( position + 1 );
+                currentPlace.changeTransportMode( );
 
-                //Only get travelTimeFromPreviousPlaceOnFoot in the first time
-                if( dailyItinerary.getPlaces( ).get( position ).isGoingOnFoot( ) && dailyItinerary.getPlaces( ).get( position + 1 ).getTravelTimeFromPreviousPlaceOnFoot() == 0 ) {
-                    String originCoordinates = dailyItinerary.getPlaces( ).get( position ).getCoordinates( );
-                    String destinationCoordinates = dailyItinerary.getPlaces( ).get( position + 1 ).getCoordinates( );
-
-                    retrofit2.Call< DistanciaResponse > call = new DescubraCuritibaApi( ).distanciaApi( ).getDistancia( "pt-BR", "walking", originCoordinates, destinationCoordinates, "AIzaSyA2yt9xJV1gwgqJTpn-zUKnKIMK44iRCJA" );
+                if( currentPlace.isGoingOnFoot( ) ) {
+                    retrofit2.Call< DistanciaResponse > call = new DescubraCuritibaApi( ).distanciaApi( ).getDistancia( "pt-BR", "walking", currentPlace.getCoordinates( ), nextPlace.getCoordinates( ), "AIzaSyA2yt9xJV1gwgqJTpn-zUKnKIMK44iRCJA" );
                     call.enqueue( new Callback< DistanciaResponse >( ) {
                         @Override
                         public void onResponse( @NonNull Call< DistanciaResponse > call, @NonNull Response< DistanciaResponse > response ) {
                             DistanciaResponse distanciaResponse = response.body( );
-                            int onFootTravelTime = distanciaResponse.getRows( ).get( 0 ).getElements( ).get( 0 ).getDuration( ).getValue( ) / 60;
-                            dailyItinerary.getPlaces( ).get( position + 1 ).setTravelTimeFromPreviousPlaceOnFoot( onFootTravelTime );
+                            int travelTimeOnFoot = distanciaResponse.getRows( ).get( 0 ).getElements( ).get( 0 ).getDuration( ).getValue( ) / 60;
+                            nextPlace.setTravelTimeFromPreviousPlaceOnFoot( travelTimeOnFoot );
+
+                            int travelTimeOffset = nextPlace.getTravelTimeFromPreviousPlaceOnFoot( ) - nextPlace.getTravelTimeFromPreviousPlaceByCar( );
+                            updateStartTimes( position, travelTimeOffset, dailyItinerary );
 
                             customAdapter.notifyDataSetChanged( );
                         }
@@ -99,11 +101,20 @@ public class ItineraryFragment extends Fragment {
                         }
                     } );
                 } else {
+                    int travelTimeOffset = nextPlace.getTravelTimeFromPreviousPlaceByCar( ) - nextPlace.getTravelTimeFromPreviousPlaceOnFoot( );
+                    updateStartTimes( position, travelTimeOffset, dailyItinerary );
+
                     customAdapter.notifyDataSetChanged( );
                 }
             }
         } );
 
         return view;
+    }
+
+    private void updateStartTimes( int position, int travelTimeOffset, DailyItinerary dailyItinerary ) {
+        for( int placeIndex = position + 1; placeIndex < dailyItinerary.getPlaces( ).size( ); placeIndex++ ) {
+            dailyItinerary.getPlaces( ).get( placeIndex ).getStartTime( ).add( Calendar.MINUTE, travelTimeOffset );
+        }
     }
 }
