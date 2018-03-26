@@ -55,7 +55,7 @@ public class CustomAdapter extends RecyclerView.Adapter {
         mStorageRef.child( listStorage.getPlaces( ).get( position ).getImage( ) ).getDownloadUrl( ).addOnSuccessListener( new OnSuccessListener< Uri >( ) {
             @Override
             public void onSuccess( Uri uri ) {
-                GlideUtil.loadImageFinal( context, uri.toString( ), ( ( ViewHolder ) holder ).placeImage );
+                GlideUtil.loadImageFinal( context, uri.toString( ),  listViewHolder.placeImage );
             }
         } );
 
@@ -68,7 +68,7 @@ public class CustomAdapter extends RecyclerView.Adapter {
         listViewHolder.placeDescription.setText( listStorage.getPlaces( ).get( position ).getDescription( ) );
         listViewHolder.placeVisitTime.setText( listStorage.getPlaces( ).get( position ).getVisitPeriod( ) );
 
-        if( position == ( listStorage.getPlaces( ).size( ) - 1 ) ) {
+        if( listViewHolder.getAdapterPosition() == ( listStorage.getPlaces( ).size( ) - 1 ) ) {
             listViewHolder.travelTimeLayout.setVisibility( View.GONE );
         } else {
             String travelTime = "";
@@ -80,6 +80,7 @@ public class CustomAdapter extends RecyclerView.Adapter {
                 travelTime = listStorage.getPlaces( ).get( position + 1 ).getTravelTimeFromPreviousPlaceByCar( ) + " minuto(s) de carro";
             }
 
+            listViewHolder.travelTimeLayout.setVisibility( View.VISIBLE );
             listViewHolder.travelTime.setText( travelTime );
         }
     }

@@ -97,9 +97,9 @@ public class CreateItinerary extends AppCompatActivity {
             if( addresses.size( ) > 0 ) {
                 double latitude = addresses.get( 0 ).getLatitude( );
                 double longitude = addresses.get( 0 ).getLongitude( );
-                Toast.makeText( CreateItinerary.this, "Coordenada encontradas.", Toast.LENGTH_SHORT ).show( );
+                Toast.makeText( CreateItinerary.this, "Coordenadas encontradas.", Toast.LENGTH_SHORT ).show( );
             } else {
-                Toast.makeText( CreateItinerary.this, "Coordenada não encontradas. Tente novamente", Toast.LENGTH_SHORT ).show( );
+                Toast.makeText( CreateItinerary.this, "Coordenadas não encontradas. Tente novamente", Toast.LENGTH_SHORT ).show( );
             }
         }
     }
