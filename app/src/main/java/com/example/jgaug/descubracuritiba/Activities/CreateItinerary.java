@@ -13,6 +13,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -60,47 +61,53 @@ public class CreateItinerary extends AppCompatActivity {
     private List< Integer > selectedPlaceGroups = new ArrayList<>( );
     private final double MIN_PRECIP_PROBABILITY = 0.50;
     private int ACCESS_FINE_LOCATION = 199;
-    private FusedLocationProviderClient mFusedLocationClient;
 
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_create_itinerary );
 
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient( this );
+        EditText editText = findViewById( R.id.editTextOrigin );
+        editText.setOnEditorActionListener( ( textView, actionId, event ) -> {
+            if( actionId == EditorInfo.IME_ACTION_SEARCH ) {
+                onSearchOriginPlace( textView.getText( ).toString( ) );
+            }
+
+            return false; //return false to close the keyboard
+        } );
+    }
+
+    public void onSearchOriginPlace( String originAddress ) {
+        Geocoder geocoder = new Geocoder( getApplicationContext( ) );
+        try {
+            List< Address > addresses = geocoder.getFromLocationName( originAddress, 1 );
+            if( addresses.size( ) > 0 ) {
+                double latitude = addresses.get( 0 ).getLatitude( );
+                double longitude = addresses.get( 0 ).getLongitude( );
+
+                Toast.makeText( this, "Coordenadas encontradas.", Toast.LENGTH_SHORT ).show( );
+            } else {
+                Toast.makeText( this, "Não foi possível localizar o endereço fornecido.", Toast.LENGTH_SHORT ).show( );
+            }
+        } catch( IOException e ) {
+            Toast.makeText( this, "Não foi possível localizar o endereço fornecido.", Toast.LENGTH_SHORT ).show( );
+            e.printStackTrace( );
+        }
     }
 
     public void btnUseCurrentLocation( View view ) {
         if( ActivityCompat.checkSelfPermission( this, Manifest.permission.ACCESS_FINE_LOCATION ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission( this, Manifest.permission.ACCESS_COARSE_LOCATION ) != PackageManager.PERMISSION_GRANTED ) {
             ActivityCompat.requestPermissions( this, new String[] { Manifest.permission.ACCESS_FINE_LOCATION }, ACCESS_FINE_LOCATION );
         } else {
+            FusedLocationProviderClient mFusedLocationClient = LocationServices.getFusedLocationProviderClient( this );
             mFusedLocationClient.getLastLocation( ).addOnSuccessListener( this, location -> {
-                if( location != null ) {
-                    EditText address = findViewById( R.id.editTextOrigin );
-                    address.setText( "Localização atual" );
-                    Toast.makeText( CreateItinerary.this, "Usando a sua localização", Toast.LENGTH_SHORT ).show( );
+                if( location == null ) {
+                    Toast.makeText( CreateItinerary.this, "Não foi possível determinar sua localização atual.", Toast.LENGTH_SHORT ).show( );
+                } else {
+                    EditText editTextOrigin = findViewById( R.id.editTextOrigin );
+                    editTextOrigin.setText( "Localização atual" );
                 }
             } );
-        }
-    }
-
-    public void onSearchOriginPlace( View view ) {
-        Geocoder geocoder = new Geocoder( getApplicationContext( ) );
-        List< Address > addresses = null;
-        try {
-            EditText address = findViewById( R.id.editTextOrigin );
-            addresses = geocoder.getFromLocationName( address.getText( ).toString( ), 1 );
-        } catch( IOException e ) {
-            e.printStackTrace( );
-        }
-        if( addresses != null ) {
-            if( addresses.size( ) > 0 ) {
-                double latitude = addresses.get( 0 ).getLatitude( );
-                double longitude = addresses.get( 0 ).getLongitude( );
-                Toast.makeText( CreateItinerary.this, "Coordenadas encontradas.", Toast.LENGTH_SHORT ).show( );
-            } else {
-                Toast.makeText( CreateItinerary.this, "Coordenadas não encontradas. Tente novamente", Toast.LENGTH_SHORT ).show( );
-            }
         }
     }
 
@@ -230,7 +237,7 @@ public class CreateItinerary extends AppCompatActivity {
                                         progressDialog.dismiss( );
                                     } else {
                                         Forecast forecast = response.body( );
-                                        List< List< Integer > > travelTimes = dataSnapshot.child( "travelTimes" ).getValue( new GenericTypeIndicator< List< List< Integer > > >( ) {
+                                        List< List< Integer > > travelTimes = dataSnapshot.child( "travelTimesByCar" ).getValue( new GenericTypeIndicator< List< List< Integer > > >( ) {
                                         } );
                                         DailyItineraryList itinerary = makeItinerary( selectedPlaces, travelTimes, forecast );
 
