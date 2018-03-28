@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          xmlns:tools="http://schemas.android.com/tools"
-          package="com.example.jgaug.descubracuritiba">
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.example.jgaug.descubracuritiba">
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 
     <application
-        android:label="Descubra Curitiba"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
+        android:label="Descubra Curitiba"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:label">
         <activity
             android:name=".Activities.FirstScreen"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-            android:screenOrientation="sensorPortrait">
+            android:screenOrientation="sensorPortrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -25,12 +26,18 @@
         <activity
             android:name=".Activities.CreateItinerary"
             android:label="@string/create_itinerary"
+            android:parentActivityName=".Activities.FirstScreen"
             android:screenOrientation="sensorPortrait">
         </activity>
         <activity
             android:name=".Activities.Itinerary"
             android:label="@string/title_activity_itinerary"
-            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="sensorPortrait"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity
+            android:name=".Activities.PlaceDetails"
+            android:label="@string/title_activity_details"
             android:screenOrientation="sensorPortrait">
         </activity>
     </application>

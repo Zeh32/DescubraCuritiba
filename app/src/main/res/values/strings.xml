@@ -44,4 +44,7 @@
     <string name="mean_of_transportation">Imagem meio de deslocamento</string>
     <string name="change_mean_of_transportation">Imagem trocar meio de deslocamento</string>
     <string name="action_settings">Não implementado</string>
+
+    <!--Place details-->
+    <string name="title_activity_details">Detalhes</string>
 </resources>

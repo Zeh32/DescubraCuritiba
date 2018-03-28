@@ -2,6 +2,7 @@ package com.example.jgaug.descubracuritiba;
 
 import android.content.Context;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,8 +40,9 @@ public class CustomAdapter extends RecyclerView.Adapter {
         void onClickChangeTransportMode( int position );
     }
 
+    @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder( ViewGroup parent, int viewType ) {
+    public RecyclerView.ViewHolder onCreateViewHolder( @NonNull ViewGroup parent, int viewType ) {
         final LayoutInflater inflater = LayoutInflater.from( parent.getContext( ) );
         final View view = inflater.inflate( R.layout.itinerary_list_item, parent, false );
 
@@ -48,14 +50,14 @@ public class CustomAdapter extends RecyclerView.Adapter {
     }
 
     @Override
-    public void onBindViewHolder( final RecyclerView.ViewHolder holder, int position ) {
+    public void onBindViewHolder( @NonNull final RecyclerView.ViewHolder holder, int position ) {
         final ViewHolder listViewHolder = ( ViewHolder ) holder;
 
         StorageReference mStorageRef = FirebaseStorage.getInstance( ).getReference( );
         mStorageRef.child( dailyItinerary.getPlaces( ).get( position ).getImage( ) ).getDownloadUrl( ).addOnSuccessListener( new OnSuccessListener< Uri >( ) {
             @Override
             public void onSuccess( Uri uri ) {
-                GlideUtil.loadImageFinal( context, uri.toString( ),  listViewHolder.placeImage );
+                GlideUtil.loadImageFinal( context, uri.toString( ), listViewHolder.placeImage );
             }
         } );
 
