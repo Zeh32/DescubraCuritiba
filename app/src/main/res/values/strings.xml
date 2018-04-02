@@ -10,8 +10,7 @@
 
     <!--Create Itinerary-->
     <string name="select_origin">Local de partida</string>
-    <string name="map_description">Imagem mapa</string>
-    <string name="use_current_location">Usar localização atual</string>
+    <string name="use_current_location">Utilizar localização atual</string>
 
     <string name="select_start_day">Primeiro dia de passeio</string>
     <string name="select_end_day">Último dia de passeio</string>
@@ -38,10 +37,14 @@
 
     <!--Itinerary-->
     <string name="title_activity_itinerary">Itinerário</string>
+    <string name="place_thumbnail_description">Imagem local de visita</string>
     <string name="magnifier_description">Imagem lupa</string>
     <string name="weather_description">Imagem clima</string>
     <string name="navigate_description">Imagem navegar</string>
     <string name="mean_of_transportation">Imagem meio de deslocamento</string>
     <string name="change_mean_of_transportation">Imagem trocar meio de deslocamento</string>
     <string name="action_settings">Não implementado</string>
+
+    <!--Place details-->
+    <string name="title_activity_details">Detalhes</string>
 </resources>

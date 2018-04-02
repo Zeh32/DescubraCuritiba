@@ -2,6 +2,7 @@ package com.example.jgaug.descubracuritiba;
 
 import android.content.Context;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,14 +19,14 @@ import com.google.firebase.storage.StorageReference;
 
 public class CustomAdapter extends RecyclerView.Adapter {
     private LayoutInflater layoutinflater;
-    private DailyItinerary listStorage;
+    private DailyItinerary dailyItinerary;
     private Context context;
     private OnItemClickListener itemClickListener;
 
     public CustomAdapter( Context context, DailyItinerary dailyItinerary ) {
         this.context = context;
         this.layoutinflater = ( LayoutInflater ) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-        this.listStorage = dailyItinerary;
+        this.dailyItinerary = dailyItinerary;
     }
 
     public void setOnItemClickListener( final CustomAdapter.OnItemClickListener itemClickListener ) {
@@ -39,8 +40,9 @@ public class CustomAdapter extends RecyclerView.Adapter {
         void onClickChangeTransportMode( int position );
     }
 
+    @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder( ViewGroup parent, int viewType ) {
+    public RecyclerView.ViewHolder onCreateViewHolder( @NonNull ViewGroup parent, int viewType ) {
         final LayoutInflater inflater = LayoutInflater.from( parent.getContext( ) );
         final View view = inflater.inflate( R.layout.itinerary_list_item, parent, false );
 
@@ -48,14 +50,14 @@ public class CustomAdapter extends RecyclerView.Adapter {
     }
 
     @Override
-    public void onBindViewHolder( final RecyclerView.ViewHolder holder, int position ) {
+    public void onBindViewHolder( @NonNull final RecyclerView.ViewHolder holder, int position ) {
         final ViewHolder listViewHolder = ( ViewHolder ) holder;
 
         StorageReference mStorageRef = FirebaseStorage.getInstance( ).getReference( );
-        mStorageRef.child( listStorage.getPlaces( ).get( position ).getImage( ) ).getDownloadUrl( ).addOnSuccessListener( new OnSuccessListener< Uri >( ) {
+        mStorageRef.child( dailyItinerary.getPlaces( ).get( position ).getImage( ) ).getDownloadUrl( ).addOnSuccessListener( new OnSuccessListener< Uri >( ) {
             @Override
             public void onSuccess( Uri uri ) {
-                GlideUtil.loadImageFinal( context, uri.toString( ),  listViewHolder.placeImage );
+                GlideUtil.loadImageFinal( context, uri.toString( ), listViewHolder.placeImage );
             }
         } );
 
@@ -64,20 +66,20 @@ public class CustomAdapter extends RecyclerView.Adapter {
         listViewHolder.placeNavegar.setOnClickListener( view -> itemClickListener.onClickNavegar( listViewHolder.getAdapterPosition( ) ) );
         listViewHolder.changeTransportImage.setOnClickListener( view -> itemClickListener.onClickChangeTransportMode( listViewHolder.getAdapterPosition( ) ) );
 
-        listViewHolder.placeName.setText( listStorage.getPlaces( ).get( position ).getName( ) );
-        listViewHolder.placeDescription.setText( listStorage.getPlaces( ).get( position ).getDescription( ) );
-        listViewHolder.placeVisitTime.setText( listStorage.getPlaces( ).get( position ).getVisitPeriod( ) );
+        listViewHolder.placeName.setText( position + 1 + ". " + dailyItinerary.getPlaces( ).get( position ).getName( ) );
+        listViewHolder.placeDescription.setText( dailyItinerary.getPlaces( ).get( position ).getDescription( ) );
+        listViewHolder.placeVisitTime.setText( dailyItinerary.getPlaces( ).get( position ).getVisitPeriod( ) );
 
-        if( listViewHolder.getAdapterPosition() == ( listStorage.getPlaces( ).size( ) - 1 ) ) {
+        if( listViewHolder.getAdapterPosition() == ( dailyItinerary.getPlaces( ).size( ) - 1 ) ) {
             listViewHolder.travelTimeLayout.setVisibility( View.GONE );
         } else {
             String travelTime = "";
-            if( listStorage.getPlaces( ).get( position ).isGoingOnFoot( ) ) {
+            if( dailyItinerary.getPlaces( ).get( position ).isGoingOnFoot( ) ) {
                 listViewHolder.transportImage.setImageResource( R.drawable.shoes );
-                travelTime = listStorage.getPlaces( ).get( position + 1 ).getTravelTimeFromPreviousPlaceOnFoot( ) + " minuto(s) a pé";
+                travelTime = dailyItinerary.getPlaces( ).get( position + 1 ).getTravelTimeFromPreviousPlaceOnFoot( ) + " minuto(s) a pé";
             } else {
                 listViewHolder.transportImage.setImageResource( R.drawable.car );
-                travelTime = listStorage.getPlaces( ).get( position + 1 ).getTravelTimeFromPreviousPlaceByCar( ) + " minuto(s) de carro";
+                travelTime = dailyItinerary.getPlaces( ).get( position + 1 ).getTravelTimeFromPreviousPlaceByCar( ) + " minuto(s) de carro";
             }
 
             listViewHolder.travelTimeLayout.setVisibility( View.VISIBLE );
@@ -87,7 +89,7 @@ public class CustomAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemCount( ) {
-        return listStorage.getPlaces( ).size( );
+        return dailyItinerary.getPlaces( ).size( );
     }
 
     private static class ViewHolder extends RecyclerView.ViewHolder {

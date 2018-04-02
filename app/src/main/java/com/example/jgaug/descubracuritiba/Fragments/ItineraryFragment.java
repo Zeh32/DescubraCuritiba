@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.jgaug.descubracuritiba.Activities.Itinerary;
+import com.example.jgaug.descubracuritiba.Activities.PlaceDetails;
 import com.example.jgaug.descubracuritiba.Api.DescubraCuritibaApi;
 import com.example.jgaug.descubracuritiba.Api.Response.DistanciaResponse;
 import com.example.jgaug.descubracuritiba.CustomAdapter;
@@ -21,7 +22,6 @@ import com.example.jgaug.descubracuritiba.Helpers.Place;
 import com.example.jgaug.descubracuritiba.R;
 
 import java.util.Calendar;
-import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -55,7 +55,9 @@ public class ItineraryFragment extends Fragment {
         customAdapter.setOnItemClickListener( new CustomAdapter.OnItemClickListener( ) {
             @Override
             public void onClickDetalhes( int position ) {
-                Toast.makeText( getActivity( ), "Não implementado", Toast.LENGTH_SHORT ).show( );
+                Intent intent = new Intent( getActivity( ), PlaceDetails.class );
+                intent.putExtra( "place", dailyItinerary.getPlaces( ).get( position ) );
+                startActivity( intent );
             }
 
             @Override
@@ -66,7 +68,7 @@ public class ItineraryFragment extends Fragment {
             @Override
             public void onClickNavegar( int position ) {
                 String coordinates = dailyItinerary.getPlaces( ).get( position ).getCoordinates( );
-                String uri = String.format( Locale.ENGLISH, "geo:0,0?q=" ) + android.net.Uri.encode( coordinates, "UTF-8" );
+                String uri = "geo:0,0?q=" + android.net.Uri.encode( coordinates, "UTF-8" );
                 Intent mapIntent = new Intent( Intent.ACTION_VIEW, Uri.parse( uri ) );
 
                 if( mapIntent.resolveActivity( getActivity( ).getPackageManager( ) ) != null ) {

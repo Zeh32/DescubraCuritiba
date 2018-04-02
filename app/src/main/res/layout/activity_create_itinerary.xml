@@ -18,68 +18,50 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/fab_margin"
-            android:padding="10dp"
+            android:background="@drawable/layout_background"
             android:focusable="true"
             android:focusableInTouchMode="true"
-            android:orientation="horizontal"
-            android:background="@drawable/layout_background">
+            android:orientation="vertical"
+            android:padding="10dp">
 
-            <ImageView
-                android:id="@+id/imageView1"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:layout_gravity="center_vertical"
-                android:adjustViewBounds="false"
-                android:contentDescription="@string/map_description"
-                android:cropToPadding="false"
-                app:srcCompat="@drawable/map"/>
-
-            <LinearLayout
+            <TextView
+                android:id="@+id/textView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:labelFor="@+id/editTextOrigin"
+                android:text="@string/select_origin"
+                android:layout_marginBottom="5dp"
+                android:textColor="@color/colorSecondaryDark"
+                android:textSize="15sp"/>
 
-                <TextView
-                    android:id="@+id/textView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="15dp"
-                    android:labelFor="@+id/editTextOrigin"
-                    android:text="@string/select_origin"
-                    android:textColor="@color/colorSecondaryDark"
-                    android:textSize="15sp"/>
+            <EditText
+                android:id="@+id/editTextOrigin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionSearch"
+                android:inputType="text"
+                android:textColor="@android:color/black"
+                android:textSize="20sp"/>
 
-                <EditText
-                    android:id="@+id/editTextOrigin"
-                    android:layout_width="match_parent"
-                    android:layout_height="45dp"
-                    android:layout_marginStart="15dp"
-                    android:inputType="text"
-                    android:textColor="@android:color/black"
-                    android:textSize="20sp"/>
-
-                <Button
-                    android:id="@+id/btnSelectPlaceOnMap"
-                    android:layout_marginStart="15dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="35dp"
-                    android:onClick="btnUseCurrentLocation"
-                    android:background="@color/colorSecondaryLight"
-                    android:text="@string/use_current_location"/>
-            </LinearLayout>
-
+            <Button
+                android:id="@+id/btnSelectPlaceOnMap"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:background="@color/colorSecondaryLight"
+                android:onClick="btnUseCurrentLocation"
+                android:text="@string/use_current_location"/>
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="10dp"
             android:layout_marginBottom="@dimen/fab_margin"
             android:layout_marginEnd="@dimen/fab_margin"
             android:layout_marginStart="@dimen/fab_margin"
+            android:background="@drawable/layout_background"
             android:orientation="horizontal"
-            android:background="@drawable/layout_background">
+            android:padding="10dp">
 
             <ImageView
                 android:id="@+id/imageView2"
@@ -110,11 +92,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
                     android:layout_marginBottom="2dp"
-                    android:paddingBottom="2dp"
                     android:layout_marginStart="15dp"
                     android:background="@drawable/border_bottom"
                     android:gravity="bottom"
                     android:onClick="setDate"
+                    android:paddingBottom="2dp"
                     android:textColor="@android:color/black"
                     android:textSize="20sp"/>
 
@@ -133,11 +115,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
                     android:layout_marginBottom="2dp"
-                    android:paddingBottom="2dp"
                     android:layout_marginStart="15dp"
-                    android:gravity="bottom"
                     android:background="@drawable/border_bottom"
+                    android:gravity="bottom"
                     android:onClick="setDate"
+                    android:paddingBottom="2dp"
                     android:textColor="@android:color/black"
                     android:textSize="20sp"/>
             </LinearLayout>
@@ -147,12 +129,12 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="10dp"
             android:layout_marginBottom="@dimen/fab_margin"
             android:layout_marginEnd="@dimen/fab_margin"
             android:layout_marginStart="@dimen/fab_margin"
+            android:background="@drawable/layout_background"
             android:orientation="horizontal"
-            android:background="@drawable/layout_background">
+            android:padding="10dp">
 
             <ImageView
                 android:id="@+id/imageView3"
@@ -183,11 +165,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
                     android:layout_marginBottom="2dp"
-                    android:paddingBottom="2dp"
                     android:layout_marginStart="15dp"
-                    android:gravity="bottom"
                     android:background="@drawable/border_bottom"
+                    android:gravity="bottom"
                     android:onClick="setTime"
+                    android:paddingBottom="2dp"
                     android:textColor="@android:color/black"
                     android:textSize="20sp"/>
 
@@ -206,25 +188,25 @@
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
                     android:layout_marginBottom="2dp"
-                    android:paddingBottom="2dp"
                     android:layout_marginStart="15dp"
-                    android:gravity="bottom"
                     android:background="@drawable/border_bottom"
+                    android:gravity="bottom"
                     android:onClick="setTime"
+                    android:paddingBottom="2dp"
                     android:textColor="@android:color/black"
                     android:textSize="20sp"/>
             </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
-            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="10dp"
             android:layout_marginBottom="@dimen/fab_margin"
             android:layout_marginEnd="@dimen/fab_margin"
             android:layout_marginStart="@dimen/fab_margin"
-            android:background="@drawable/layout_background">
+            android:background="@drawable/layout_background"
+            android:orientation="vertical"
+            android:padding="10dp">
 
             <TextView
                 android:id="@+id/textView12"
@@ -313,12 +295,12 @@
 
         <CheckBox
             android:id="@+id/checkBoxForecast"
-            android:checked="true"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginBottom="@dimen/fab_margin"
             android:layout_marginEnd="@dimen/fab_margin"
             android:layout_marginStart="@dimen/fab_margin"
+            android:checked="true"
             android:text="@string/forecast_checkBox"/>
 
         <Button
