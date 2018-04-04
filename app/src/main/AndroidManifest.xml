@@ -40,5 +40,10 @@
             android:label="@string/title_activity_details"
             android:screenOrientation="sensorPortrait">
         </activity>
+        <activity
+            android:name=".Activities.DailyForecast"
+            android:label="@string/title_activity_daily_forecast"
+            android:screenOrientation="sensorPortrait">
+        </activity>
     </application>
 </manifest>

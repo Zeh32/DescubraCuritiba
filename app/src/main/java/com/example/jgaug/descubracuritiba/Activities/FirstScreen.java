@@ -85,8 +85,17 @@ public class FirstScreen extends AppCompatActivity {
     private String getDialogMessage( DailyItineraryList itinerary ) {
         Calendar firstPlaceStartTime = itinerary.getFirstPlaceStartTime( );
         String date = firstPlaceStartTime.get( Calendar.DAY_OF_MONTH ) + " de " + firstPlaceStartTime.getDisplayName( Calendar.MONTH, Calendar.LONG, Locale.getDefault( ) ) + " de " + firstPlaceStartTime.get( Calendar.YEAR ) + ", às " + String.format( "%02d", firstPlaceStartTime.get( Calendar.HOUR_OF_DAY ) ) + ":" + String.format( "%02d", firstPlaceStartTime.get( Calendar.MINUTE ) );
+        String message = "O último itinerário salvo teve inicío no dia " + date + ", com extensão de " + itinerary.getItinerary( ).size( ) + " dia(s). Deseja restaurá-lo?";
 
-        return "O último itinerário salvo teve inicío no dia " + date + ", com extensão de " + itinerary.getItinerary( ).size( ) + " dia(s). Deseja restaurá-lo?";
+        Calendar todayAtMidnight = Calendar.getInstance( );
+        todayAtMidnight.set( Calendar.HOUR_OF_DAY, 0 );
+        todayAtMidnight.set( Calendar.MINUTE, 0 );
+
+        if ( todayAtMidnight.after( firstPlaceStartTime ) ) {
+            message += "\n\nNão será possível visualizar a previsão do tempo de dias passados.";
+        }
+
+        return message;
     }
 
     private void getPlaces( ) {

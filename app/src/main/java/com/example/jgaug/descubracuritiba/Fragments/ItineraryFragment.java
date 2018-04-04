@@ -11,7 +11,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+import android.zetterstrom.com.forecast.ForecastClient;
+import android.zetterstrom.com.forecast.ForecastConfiguration;
+import android.zetterstrom.com.forecast.models.Forecast;
+import android.zetterstrom.com.forecast.models.Language;
+import android.zetterstrom.com.forecast.models.Unit;
 
+import com.example.jgaug.descubracuritiba.Activities.CreateItinerary;
+import com.example.jgaug.descubracuritiba.Activities.DailyForecast;
 import com.example.jgaug.descubracuritiba.Activities.Itinerary;
 import com.example.jgaug.descubracuritiba.Activities.PlaceDetails;
 import com.example.jgaug.descubracuritiba.Api.DescubraCuritibaApi;
@@ -62,7 +69,43 @@ public class ItineraryFragment extends Fragment {
 
             @Override
             public void onClickClima( int position ) {
-                Toast.makeText( getActivity( ), "Não implementado", Toast.LENGTH_SHORT ).show( );
+                Calendar todayAtMidnight = Calendar.getInstance( );
+                todayAtMidnight.set( Calendar.HOUR_OF_DAY, 0 );
+                todayAtMidnight.set( Calendar.MINUTE, 0 );
+                Calendar firstPlaceStartTime = dailyItinerary.getPlaces( ).get( 0 ).getStartTime( );
+
+                if( todayAtMidnight.after( firstPlaceStartTime ) ) {
+                    Toast.makeText( getActivity( ), "Não é possível visualizar a previsão do tempo de um dia passado.", Toast.LENGTH_LONG ).show( );
+                } else {
+                    int forecastArrayPosition = CreateItinerary.getNumberOfDays( firstPlaceStartTime, todayAtMidnight );
+                    if( forecastArrayPosition > 7 ) {
+                        Toast.makeText( getActivity( ), "A previsão do tempo está disponível apenas para os próximos 7 dias.", Toast.LENGTH_LONG ).show( );
+                    } else {
+                        ForecastConfiguration configuration = new ForecastConfiguration.Builder( "cc8d5c7bd7bd6815677077038773bb58" ).setDefaultLanguage( Language.PORTUGUESE ).setDefaultUnit( Unit.CA ).setCacheDirectory( getActivity( ).getCacheDir( ) ).build( );
+                        ForecastClient.create( configuration );
+
+                        //Latitude e longitude do centro de Curitiba
+                        ForecastClient.getInstance( ).getForecast( -25.4247427, -49.2763924, new Callback< Forecast >( ) {
+                            @Override
+                            public void onResponse( @NonNull Call< Forecast > call, @NonNull Response< Forecast > response ) {
+                                if( !response.isSuccessful( ) ) {
+                                    Toast.makeText( getActivity( ), "Houve uma falha ao obter as informações de previsão do tempo.", Toast.LENGTH_SHORT ).show( );
+                                } else {
+                                    Forecast forecast = response.body( );
+
+                                    Intent intent = new Intent( getActivity( ), DailyForecast.class );
+                                    intent.putExtra( "dailyForecast", forecast.getDaily( ).getDataPoints( ).get( forecastArrayPosition ) );
+                                    startActivity( intent );
+                                }
+                            }
+
+                            @Override
+                            public void onFailure( @NonNull Call< Forecast > call, @NonNull Throwable t ) {
+                                Toast.makeText( getActivity( ), "Houve uma falha ao obter as informações de previsão do tempo.", Toast.LENGTH_LONG ).show( );
+                            }
+                        } );
+                    }
+                }
             }
 
             @Override

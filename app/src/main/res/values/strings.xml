@@ -47,4 +47,7 @@
 
     <!--Place details-->
     <string name="title_activity_details">Detalhes</string>
+
+    <!--Daily forecast-->
+    <string name="title_activity_daily_forecast">Previsão do dia</string>
 </resources>

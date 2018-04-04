@@ -370,9 +370,11 @@ public class CreateItinerary extends AppCompatActivity {
 
         int numberOfDays = getNumberOfDays( endDay, startDay ) + 1;
         for( int day = 0; day < numberOfDays; day++, forecastArrayPosition++ ) {
-            startTime.add( Calendar.DAY_OF_YEAR, day );
+            if( day > 0 ) {
+                startTime.roll( Calendar.DAY_OF_YEAR, true );
+                endTime.roll( Calendar.DAY_OF_YEAR, true );
+            }
 
-            endTime.add( Calendar.DAY_OF_YEAR, day );
             endTime.set( Calendar.HOUR_OF_DAY, endDay.get( Calendar.HOUR_OF_DAY ) );
             endTime.set( Calendar.MINUTE, endDay.get( Calendar.MINUTE ) );
 
@@ -397,7 +399,7 @@ public class CreateItinerary extends AppCompatActivity {
         return itinerary;
     }
 
-    private int getNumberOfDays( Calendar lastDay, Calendar firstDay ) {
+    public static int getNumberOfDays( Calendar lastDay, Calendar firstDay ) {
         long diff = lastDay.getTimeInMillis( ) - firstDay.getTimeInMillis( ); //result in millis
         long numberOfDays = ( diff / ( 24 * 60 * 60 * 1000 ) );
 

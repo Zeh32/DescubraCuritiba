@@ -28,8 +28,7 @@
             android:text="Jardim Botânico"
             android:textColor="@color/colorSecondaryDark"
             android:textSize="20sp"
-            android:textStyle="bold"
-            />
+            android:textStyle="bold"/>
 
         <TextView
             android:id="@+id/place_description_details"
