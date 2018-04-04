@@ -8,12 +8,11 @@
     tools:context="com.example.jgaug.descubracuritiba.Activities.FirstScreen">
 
     <ImageView
-        android:id="@+id/imageView"
         android:layout_width="match_parent"
-        android:contentDescription="@string/background_image_description"
         android:layout_height="match_parent"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
+        android:contentDescription="@string/background_image_description"
         android:scaleType="fitXY"
         app:srcCompat="@drawable/background"/>
 
@@ -47,11 +46,11 @@
         android:id="@+id/btnPlacesToVisit"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
         android:layout_marginBottom="75dp"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:background="@color/colorPrimary"
         android:onClick="btnPlacesToVisit"
         android:text="@string/places_to_visit"/>

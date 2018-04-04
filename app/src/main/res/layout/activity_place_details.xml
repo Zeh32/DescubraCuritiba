@@ -38,7 +38,8 @@
             android:layout_marginEnd="@dimen/fab_margin"
             android:layout_marginStart="@dimen/fab_margin"
             android:lineSpacingExtra="5sp"
-            android:text="O Jardim Botânico de Curitiba foi inaugurado em 1991, com uma área de 245 mil m². Seus jardins geométricos e a estufa de três abóbadas tornaram-se um dos principais cartões postais de Curitiba."/>
+            android:text="O Jardim Botânico de Curitiba foi inaugurado em 1991, com uma área de 245 mil m². Seus jardins geométricos e a estufa de três abóbadas tornaram-se um dos principais cartões postais de Curitiba."
+            android:textSize="16sp"/>
 
         <TextView
             android:layout_width="match_parent"
@@ -48,7 +49,7 @@
             android:layout_marginStart="@dimen/fab_margin"
             android:text="Detalhes"
             android:textColor="@color/colorSecondaryDark"
-            android:textSize="16sp"/>
+            android:textSize="20sp"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -62,6 +63,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="• Grupo(s): "
+                android:textSize="16sp"
                 android:textStyle="bold"/>
 
             <TextView
@@ -69,7 +71,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:lineSpacingExtra="5sp"
-                android:text="parques, bosques e praças e pontos turísticos"/>
+                android:text="parques, bosques e praças e pontos turísticos"
+                android:textSize="16sp"/>
         </LinearLayout>
 
         <LinearLayout
@@ -84,13 +87,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="• Relevância: "
+                android:textSize="16sp"
                 android:textStyle="bold"/>
 
             <TextView
                 android:id="@+id/place_relevance_details"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="5"/>
+                android:text="5"
+                android:textSize="16sp"/>
         </LinearLayout>
 
         <LinearLayout
@@ -105,13 +110,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="• Tempo sugerido: "
+                android:textSize="16sp"
                 android:textStyle="bold"/>
 
             <TextView
                 android:id="@+id/place_visit_time_details"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="120 minutos"/>
+                android:text="120 minutos"
+                android:textSize="16sp"/>
         </LinearLayout>
 
         <LinearLayout
@@ -126,13 +133,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="• Dependente do clima: "
+                android:textSize="16sp"
                 android:textStyle="bold"/>
 
             <TextView
                 android:id="@+id/place_weather_dependent_details"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="sim"/>
+                android:text="sim"
+                android:textSize="16sp"/>
         </LinearLayout>
     </LinearLayout>
 </ScrollView>
