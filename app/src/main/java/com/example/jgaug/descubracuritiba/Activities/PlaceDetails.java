@@ -74,7 +74,7 @@ public class PlaceDetails extends AppCompatActivity {
                     break;
             }
 
-            if( placeIndex == 0 ) {
+            if( placeIndex == 0 && placeGroup.size( ) > 1 ) {
                 text.append( " e " );
             }
         }

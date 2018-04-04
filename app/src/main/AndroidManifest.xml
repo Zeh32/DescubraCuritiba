@@ -43,7 +43,11 @@
         <activity
             android:name=".Activities.PlacesList"
             android:label="Locais"
-            android:parentActivityName=".Activities.FirstScreen"
+            android:parentActivityName=".Activities.FirstScreen">
+        </activity>
+        <activity
+            android:name=".Activities.DailyForecast"
+            android:label="@string/title_activity_daily_forecast"
             android:screenOrientation="sensorPortrait">
         </activity>
     </application>

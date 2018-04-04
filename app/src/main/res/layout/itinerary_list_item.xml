@@ -19,9 +19,9 @@
             android:id="@+id/place_image"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="45"
-            android:layout_marginTop="25dp"
             android:layout_marginBottom="25dp"
+            android:layout_marginTop="25dp"
+            android:layout_weight="45"
             android:adjustViewBounds="false"
             android:contentDescription="@string/place_thumbnail_description"
             android:cropToPadding="false"
@@ -177,8 +177,8 @@
             android:layout_height="35dp"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:contentDescription="@string/change_mean_of_transportation"
             android:background="@drawable/image_border"
+            android:contentDescription="@string/change_mean_of_transportation"
             android:src="@drawable/change_transport"/>
     </RelativeLayout>
 </LinearLayout>
