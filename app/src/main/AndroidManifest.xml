@@ -40,5 +40,11 @@
             android:label="@string/title_activity_details"
             android:screenOrientation="sensorPortrait">
         </activity>
+        <activity
+            android:name=".Activities.PlacesList"
+            android:label="Locais"
+            android:parentActivityName=".Activities.FirstScreen"
+            android:screenOrientation="sensorPortrait">
+        </activity>
     </application>
 </manifest>

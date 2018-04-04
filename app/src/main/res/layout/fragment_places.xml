@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+android:id="@+id/fragment_places"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:orientation="vertical">
+
+<android.support.v7.widget.RecyclerView
+    android:id="@+id/places_recycler_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:visibility="gone" />
+
+<include
+    android:id="@+id/loading"
+    layout="@layout/view_loading"
+    android:visibility="gone" />
+
+</LinearLayout>

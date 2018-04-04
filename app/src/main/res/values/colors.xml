@@ -6,4 +6,6 @@
     <color name="colorSecondary">#7cb342</color>
     <color name="colorSecondaryDark">#4b830d</color>
     <color name="colorSecondaryLight">#aee571</color>
+    <color name="colorBackground">#77000000</color>
+    <color name="whiteTransp">#acffffff</color>
 </resources>

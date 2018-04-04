@@ -47,4 +47,5 @@
 
     <!--Place details-->
     <string name="title_activity_details">Detalhes</string>
+    <string name="imagem_local">Imagem local</string>
 </resources>

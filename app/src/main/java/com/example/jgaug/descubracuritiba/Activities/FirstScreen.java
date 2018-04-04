@@ -11,6 +11,8 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import com.example.jgaug.descubracuritiba.Fragments.PlacesFragment;
+import com.example.jgaug.descubracuritiba.Helpers.DailyItinerary;
 import com.example.jgaug.descubracuritiba.Helpers.DailyItineraryList;
 import com.example.jgaug.descubracuritiba.Helpers.Place;
 import com.example.jgaug.descubracuritiba.Helpers.PlaceGroup;
@@ -23,6 +25,7 @@ import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -32,6 +35,9 @@ import java.util.Locale;
 
 
 public class FirstScreen extends AppCompatActivity {
+
+    private List< Integer > selectedPlaceGroups = new ArrayList<>( );
+    public List< Place > selectedPlaces = new ArrayList<>();
 
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
@@ -79,8 +85,11 @@ public class FirstScreen extends AppCompatActivity {
     }
 
     public void btnPlacesToVisit( View view ) {
-        Toast.makeText( this, "Não implementado", Toast.LENGTH_SHORT ).show( );
+        Intent intent = new Intent(this, PlacesList.class);
+        startActivity(intent);
     }
+
+
 
     private String getDialogMessage( DailyItineraryList itinerary ) {
         Calendar firstPlaceStartTime = itinerary.getFirstPlaceStartTime( );
