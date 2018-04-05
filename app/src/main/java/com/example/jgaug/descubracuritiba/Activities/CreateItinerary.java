@@ -81,20 +81,25 @@ public class CreateItinerary extends AppCompatActivity {
     }
 
     public void onSearchOriginPlace( String originAddress ) {
-        //TODO: não deixar o usuário selecionar como local de início um lugar muito longe de Curitiba
         Geocoder geocoder = new Geocoder( getApplicationContext( ) );
         try {
             List< Address > addresses = geocoder.getFromLocationName( originAddress, 1 );
             if( addresses.size( ) > 0 ) {
-                originCoordinates = addresses.get( 0 ).getLatitude( ) + "," + addresses.get( 0 ).getLongitude( );
-
                 AlertDialog.Builder builder = new AlertDialog.Builder( CreateItinerary.this );
                 builder.setTitle( "Pesquisa de endereço" );
                 builder.setMessage( "Endereço definido para:\n\n" + addresses.get( 0 ).getAddressLine( 0 ) );
                 builder.setPositiveButton( "Confirmar", ( dialog, id ) -> {
-                    Toast.makeText( CreateItinerary.this, "Local de partida definido com sucesso.", Toast.LENGTH_SHORT ).show( );
-
                     EditText editText = findViewById( R.id.editTextOrigin );
+
+                    boolean coordinatesBetweenRange = addresses.get( 0 ).getLatitude( ) > -25.68 && addresses.get( 0 ).getLatitude( ) < -25.27 && addresses.get( 0 ).getLongitude( ) > -49.56 && addresses.get( 0 ).getLongitude( ) < -49.03;
+                    if( coordinatesBetweenRange ) {
+                        originCoordinates = addresses.get( 0 ).getLatitude( ) + "," + addresses.get( 0 ).getLongitude( );
+                        editText.setText( addresses.get( 0 ).getAddressLine( 0 ) );
+                        Toast.makeText( CreateItinerary.this, "Local de partida definido com sucesso.", Toast.LENGTH_SHORT ).show( );
+                    } else {
+                        Toast.makeText( CreateItinerary.this, "Não é possível definir como local de partida um ponto muito longe de Curitiba.", Toast.LENGTH_LONG ).show( );
+                    }
+
                     editText.clearFocus( );
                 } );
                 builder.setNegativeButton( "Tentar novamente", ( dialogInterface, i ) -> {

@@ -1,6 +1,5 @@
 package com.example.jgaug.descubracuritiba.Activities;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -11,8 +10,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-import com.example.jgaug.descubracuritiba.Fragments.PlacesFragment;
-import com.example.jgaug.descubracuritiba.Helpers.DailyItinerary;
 import com.example.jgaug.descubracuritiba.Helpers.DailyItineraryList;
 import com.example.jgaug.descubracuritiba.Helpers.Place;
 import com.example.jgaug.descubracuritiba.Helpers.PlaceGroup;
@@ -25,7 +22,6 @@ import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -33,11 +29,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
-
 public class FirstScreen extends AppCompatActivity {
-
-    private List< Integer > selectedPlaceGroups = new ArrayList<>( );
-    public List< Place > selectedPlaces = new ArrayList<>();
 
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
@@ -66,16 +58,12 @@ public class FirstScreen extends AppCompatActivity {
             String dialogMessage = getDialogMessage( itinerary );
 
             AlertDialog.Builder builder = new AlertDialog.Builder( this );
-            builder.setTitle( "Restaurar itinerário" ).setMessage( dialogMessage ).setPositiveButton( "Sim", new DialogInterface.OnClickListener( ) {
-                public void onClick( DialogInterface dialog, int id ) {
-                    Intent intent = new Intent( FirstScreen.this, Itinerary.class );
-                    intent.putExtra( "itinerary", itinerary );
-                    startActivity( intent );
-                }
-            } ).setNegativeButton( "Não", new DialogInterface.OnClickListener( ) {
-                public void onClick( DialogInterface dialog, int id ) {
-                    //Do nothing
-                }
+            builder.setTitle( "Restaurar itinerário" ).setMessage( dialogMessage ).setPositiveButton( "Sim", ( dialog, id ) -> {
+                Intent intent = new Intent( FirstScreen.this, Itinerary.class );
+                intent.putExtra( "itinerary", itinerary );
+                startActivity( intent );
+            } ).setNegativeButton( "Não", ( dialog, id ) -> {
+                //Do nothing
             } );
 
             AlertDialog dialog = builder.create( );
@@ -84,11 +72,9 @@ public class FirstScreen extends AppCompatActivity {
     }
 
     public void btnPlacesToVisit( View view ) {
-        Intent intent = new Intent(this, PlacesList.class);
-        startActivity(intent);
+        Intent intent = new Intent( this, PlacesList.class );
+        startActivity( intent );
     }
-
-
 
     private String getDialogMessage( DailyItineraryList itinerary ) {
         Calendar firstPlaceStartTime = itinerary.getFirstPlaceStartTime( );
@@ -99,7 +85,7 @@ public class FirstScreen extends AppCompatActivity {
         todayAtMidnight.set( Calendar.HOUR_OF_DAY, 0 );
         todayAtMidnight.set( Calendar.MINUTE, 0 );
 
-        if ( todayAtMidnight.after( firstPlaceStartTime ) ) {
+        if( todayAtMidnight.after( firstPlaceStartTime ) ) {
             message += "\n\nNão será possível visualizar a previsão do tempo de dias passados.";
         }
 
@@ -114,7 +100,8 @@ public class FirstScreen extends AppCompatActivity {
         ref.addValueEventListener( new ValueEventListener( ) {
             @Override
             public void onDataChange( DataSnapshot dataSnapshot ) {
-                List< Place > children = dataSnapshot.child( "places" ).getValue( new GenericTypeIndicator< List< Place > >( ) { } );
+                List< Place > children = dataSnapshot.child( "places" ).getValue( new GenericTypeIndicator< List< Place > >( ) {
+                } );
             }
 
             @Override
