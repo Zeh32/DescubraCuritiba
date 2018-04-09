@@ -40,7 +40,7 @@ public class TimePickerFragment extends DialogFragment implements TimePickerDial
             } else {
                 ( ( CreateItinerary ) getActivity( ) ).setTime( true, hourOfDay, minute );
 
-                TextView textViewStartTime = ( TextView ) getActivity( ).findViewById( R.id.textViewStartTime );
+                TextView textViewStartTime = getActivity( ).findViewById( R.id.textViewStartTime );
                 textViewStartTime.setText( formattedHour + " : " + formattedMinute );
             }
         } else {
@@ -49,7 +49,7 @@ public class TimePickerFragment extends DialogFragment implements TimePickerDial
             } else {
                 ( ( CreateItinerary ) getActivity( ) ).setTime( false, hourOfDay, minute );
 
-                TextView textViewEndTime = ( TextView ) getActivity( ).findViewById( R.id.textViewEndTime );
+                TextView textViewEndTime = getActivity( ).findViewById( R.id.textViewEndTime );
                 textViewEndTime.setText( formattedHour + " : " + formattedMinute );
             }
         }

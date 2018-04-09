@@ -59,8 +59,10 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class CreateItinerary extends AppCompatActivity {
-    private Calendar startDay = Calendar.getInstance( );
-    private Calendar endDay = Calendar.getInstance( );
+    private Calendar startDay = null;
+    private Calendar endDay = null;
+    private Calendar startTime = null;
+    private Calendar endTime = null;
     private List< Integer > selectedPlaceGroups = new ArrayList<>( );
     private String originCoordinates = "";
     private final double MIN_PRECIP_PROBABILITY = 0.50;
@@ -141,12 +143,15 @@ public class CreateItinerary extends AppCompatActivity {
     }
 
     public void setDate( View view ) {
-        //TODO: não deixar setar a data de término, se a inicial ainda não foi definida
         //TODO: não deixar setar para o dia de hoje se já passaram das xx horas
 
         Bundle bundle = new Bundle( );
         if( view.getId( ) == R.id.textViewStartDay ) {
             bundle.putBoolean( "isStartDay", true );
+        } else if( view.getId( ) == R.id.textViewEndDay && startDay == null ) {
+            Toast.makeText( this, "Não é possível definir o dia de término do passeio sem antes definir o dia de início.", Toast.LENGTH_LONG ).show( );
+
+            return;
         } else {
             bundle.putBoolean( "isStartDay", false );
         }
@@ -157,37 +162,52 @@ public class CreateItinerary extends AppCompatActivity {
     }
 
     public void setTime( View view ) {
-        //TODO: não deixar setar o tempo de término, se o inicial ainda não foi definido
-
-        Bundle bundle = new Bundle( );
         if( view.getId( ) == R.id.textViewStartTime ) {
-            bundle.putBoolean( "isStartTime", true );
-        } else {
-            bundle.putBoolean( "isStartTime", false );
-        }
+            if( ( startDay == null || endDay == null ) ) {
+                Toast.makeText( this, "Para definir o horário de início do passeio, primeiro defina os dias de início e término.", Toast.LENGTH_LONG ).show( );
+            } else {
+                Bundle bundle = new Bundle( );
+                bundle.putBoolean( "isStartTime", true );
 
-        DialogFragment timePickerFragment = new TimePickerFragment( );
-        timePickerFragment.setArguments( bundle );
-        timePickerFragment.show( getSupportFragmentManager( ), "timePicker" );
+                DialogFragment timePickerFragment = new TimePickerFragment( );
+                timePickerFragment.setArguments( bundle );
+                timePickerFragment.show( getSupportFragmentManager( ), "timePicker" );
+            }
+        } else {
+            if( startTime == null ) {
+                Toast.makeText( this, "Para definir o horário de término do passeio, primeiro defina o horário de início.", Toast.LENGTH_LONG ).show( );
+            } else {
+                Bundle bundle = new Bundle( );
+                bundle.putBoolean( "isStartTime", false );
+
+                DialogFragment timePickerFragment = new TimePickerFragment( );
+                timePickerFragment.setArguments( bundle );
+                timePickerFragment.show( getSupportFragmentManager( ), "timePicker" );
+            }
+        }
     }
 
     public void setDate( boolean isStartDay, int year, int month, int day ) {
         if( isStartDay ) {
+            this.startDay = Calendar.getInstance( );
             this.startDay.set( year, month, day );
         } else {
+            this.endDay = Calendar.getInstance( );
             this.endDay.set( year, month, day );
         }
     }
 
     public void setTime( boolean isStartTime, int hourOfDay, int minute ) {
         if( isStartTime ) {
-            this.startDay.set( Calendar.HOUR_OF_DAY, hourOfDay );
-            this.startDay.set( Calendar.MINUTE, minute );
-            this.startDay.set( Calendar.SECOND, 0 );
+            this.startTime = Calendar.getInstance( );
+            this.startTime.set( Calendar.HOUR_OF_DAY, hourOfDay );
+            this.startTime.set( Calendar.MINUTE, minute );
+            this.startTime.set( Calendar.SECOND, 0 );
         } else {
-            this.endDay.set( Calendar.HOUR_OF_DAY, hourOfDay );
-            this.endDay.set( Calendar.MINUTE, minute );
-            this.endDay.set( Calendar.SECOND, 0 );
+            this.endTime = Calendar.getInstance( );
+            this.endTime.set( Calendar.HOUR_OF_DAY, hourOfDay );
+            this.endTime.set( Calendar.MINUTE, minute );
+            this.endTime.set( Calendar.SECOND, 0 );
         }
     }
 
@@ -244,7 +264,6 @@ public class CreateItinerary extends AppCompatActivity {
                     call.enqueue( new Callback< DistanciaResponse >( ) {
                         @Override
                         public void onResponse( @NonNull Call< DistanciaResponse > call, @NonNull Response< DistanciaResponse > response ) {
-                            //TODO: verificar status de retorno se está ok
                             DistanciaResponse distanciaResponse = response.body( );
                             List< Element > elementList = distanciaResponse.getRows( ).get( 0 ).getElements( );
 
@@ -319,7 +338,6 @@ public class CreateItinerary extends AppCompatActivity {
     }
 
     private boolean checkConstraints( ) {
-        //TODO: Fazer um limite de seleção de dias... se selecionar só gastronômicos por exemplo, não deixar mais de 1 dia
         if( originCoordinates.equals( "" ) ) {
             Toast.makeText( this, "Para gerar um itinerário, é necessário selecionar um local de partida", Toast.LENGTH_LONG ).show( );
         } else if( selectedPlaceGroups.isEmpty( ) ) {
@@ -369,26 +387,31 @@ public class CreateItinerary extends AppCompatActivity {
         todayAtMidnight.set( Calendar.MINUTE, 0 );
         int forecastArrayPosition = getNumberOfDays( startDay, todayAtMidnight );
 
+        Calendar calendar = ( Calendar ) startDay.clone( );
+        calendar.set( Calendar.HOUR_OF_DAY, startTime.get( Calendar.HOUR_OF_DAY ) );
+        calendar.set( Calendar.MINUTE, startTime.get( Calendar.MINUTE ) );
+        calendar.set( Calendar.SECOND, 0 );
+        Calendar startDayAndTime = ( Calendar ) calendar.clone( );
+        Calendar endDayAndTime = ( Calendar ) calendar.clone( );
+
         DailyItineraryList itinerary = new DailyItineraryList( );
-        Calendar startTime = ( Calendar ) startDay.clone( );
-        Calendar endTime = ( Calendar ) startDay.clone( );
 
         int numberOfDays = getNumberOfDays( endDay, startDay ) + 1;
         for( int day = 0; day < numberOfDays; day++, forecastArrayPosition++ ) {
             if( day > 0 ) {
-                startTime.roll( Calendar.DAY_OF_YEAR, true );
-                endTime.roll( Calendar.DAY_OF_YEAR, true );
+                startDayAndTime.roll( Calendar.DAY_OF_YEAR, true );
+                endDayAndTime.roll( Calendar.DAY_OF_YEAR, true );
             }
 
-            endTime.set( Calendar.HOUR_OF_DAY, endDay.get( Calendar.HOUR_OF_DAY ) );
-            endTime.set( Calendar.MINUTE, endDay.get( Calendar.MINUTE ) );
+            endDayAndTime.set( Calendar.HOUR_OF_DAY, endTime.get( Calendar.HOUR_OF_DAY ) );
+            endDayAndTime.set( Calendar.MINUTE, endTime.get( Calendar.MINUTE ) );
 
-            Calendar nextStartTime = ( Calendar ) startTime.clone( );
+            Calendar nextStartTime = ( Calendar ) startDayAndTime.clone( );
             DailyItinerary dailyItinerary;
             if( considerForecast && forecastArrayPosition <= 7 && forecast.getDaily( ).getDataPoints( ).get( forecastArrayPosition ).getPrecipProbability( ) >= MIN_PRECIP_PROBABILITY ) {
-                dailyItinerary = getDailyItineraryWithForecast( selectedPlaces, travelTimes, nextStartTime, endTime );
+                dailyItinerary = getDailyItineraryWithForecast( selectedPlaces, travelTimes, nextStartTime, endDayAndTime );
             } else {
-                dailyItinerary = getDailyItineraryWithoutForecast( selectedPlaces, travelTimes, nextStartTime, endTime );
+                dailyItinerary = getDailyItineraryWithoutForecast( selectedPlaces, travelTimes, nextStartTime, endDayAndTime );
             }
 
             if( selectedPlaces.isEmpty( ) && dailyItinerary.getPlaces( ).isEmpty( ) ) {

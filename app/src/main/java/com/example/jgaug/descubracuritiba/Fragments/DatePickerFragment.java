@@ -14,13 +14,14 @@ import com.example.jgaug.descubracuritiba.R;
 import java.util.Calendar;
 
 public class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
+    private boolean isStartDay;
 
     @NonNull
     public Dialog onCreateDialog( Bundle savedInstanceState ) {
         Calendar calendar = Calendar.getInstance( );
 
         Bundle args = getArguments( );
-        boolean isStartDay = args.getBoolean( "isStartDay" );
+        isStartDay = args.getBoolean( "isStartDay" );
         if( isStartDay ) {
             DatePickerDialog pickerDialog = new DatePickerDialog( getActivity( ), this, calendar.get( Calendar.YEAR ), calendar.get( Calendar.MONTH ), calendar.get( Calendar.DAY_OF_MONTH ) );
 
@@ -52,17 +53,15 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
         String formattedMonth = String.format( "%02d", month + 1 ); //Android starts counting months from 0
         String formattedDay = String.format( "%02d", day );
 
-        Bundle args = getArguments( );
-        boolean isStartDay = args.getBoolean( "isStartDay" );
         if( isStartDay == true ) {
             ( ( CreateItinerary ) getActivity( ) ).setDate( true, year, month, day );
 
-            TextView textViewStartDay = ( TextView ) getActivity( ).findViewById( R.id.textViewStartDay );
+            TextView textViewStartDay = getActivity( ).findViewById( R.id.textViewStartDay );
             textViewStartDay.setText( formattedDay + " / " + formattedMonth + " / " + formattedYear );
         } else {
             ( ( CreateItinerary ) getActivity( ) ).setDate( false, year, month, day );
 
-            TextView textViewEndDay = ( TextView ) getActivity( ).findViewById( R.id.textViewEndDay );
+            TextView textViewEndDay = getActivity( ).findViewById( R.id.textViewEndDay );
             textViewEndDay.setText( formattedDay + " / " + formattedMonth + " / " + formattedYear );
         }
     }
