@@ -20,7 +20,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 import android.zetterstrom.com.forecast.ForecastClient;
 import android.zetterstrom.com.forecast.ForecastConfiguration;
@@ -143,8 +142,6 @@ public class CreateItinerary extends AppCompatActivity {
     }
 
     public void setDate( View view ) {
-        //TODO: não deixar setar para o dia de hoje se já passaram das xx horas
-
         Bundle bundle = new Bundle( );
         if( view.getId( ) == R.id.textViewStartDay ) {
             bundle.putBoolean( "isStartDay", true );
@@ -213,6 +210,10 @@ public class CreateItinerary extends AppCompatActivity {
 
     public Calendar getStartDay( ) {
         return startDay;
+    }
+
+    public Calendar getStartTime( ) {
+        return startTime;
     }
 
     public void onSelectPlacesToVisit( View view ) {
@@ -339,22 +340,25 @@ public class CreateItinerary extends AppCompatActivity {
 
     private boolean checkConstraints( ) {
         if( originCoordinates.equals( "" ) ) {
-            Toast.makeText( this, "Para gerar um itinerário, é necessário selecionar um local de partida", Toast.LENGTH_LONG ).show( );
+            Toast.makeText( this, "Para gerar um itinerário, é necessário selecionar um local de partida.", Toast.LENGTH_LONG ).show( );
         } else if( selectedPlaceGroups.isEmpty( ) ) {
-            Toast.makeText( this, "Para gerar um itinerário, é necessário selecionar ao menos um grupo de locais para visita!", Toast.LENGTH_LONG ).show( );
+            Toast.makeText( this, "Para gerar um itinerário, é necessário selecionar ao menos um grupo de locais para visita.", Toast.LENGTH_LONG ).show( );
+        } else if( startDay == null ) {
+            Toast.makeText( this, "Preencha o primeiro dia.", Toast.LENGTH_SHORT ).show( );
+        } else if( endDay == null ) {
+            Toast.makeText( this, "Preencha o último dia.", Toast.LENGTH_SHORT ).show( );
+        } else if( startTime == null ) {
+            Toast.makeText( this, "Preencha o horário de início.", Toast.LENGTH_SHORT ).show( );
+        } else if( endTime == null ) {
+            Toast.makeText( this, "Preencha o horário de término.", Toast.LENGTH_SHORT ).show( );
         } else {
-            long diff = endDay.getTimeInMillis( ) - startDay.getTimeInMillis( ); //result in millis
+            long dateDifference = endDay.getTimeInMillis( ) - startDay.getTimeInMillis( );
+            long timeDifference = endTime.getTimeInMillis( ) - startTime.getTimeInMillis( );
 
-            if( diff < 0 ) {
-                Toast.makeText( this, "O último dia tem que vir depois do primeiro!", Toast.LENGTH_SHORT ).show( );
-            } else if( ( ( TextView ) findViewById( R.id.textViewStartDay ) ).getText( ) == "" ) {
-                Toast.makeText( this, "Preencha o primeiro dia!", Toast.LENGTH_SHORT ).show( );
-            } else if( ( ( TextView ) findViewById( R.id.textViewEndDay ) ).getText( ) == "" ) {
-                Toast.makeText( this, "Preencha o último dia!", Toast.LENGTH_SHORT ).show( );
-            } else if( ( ( TextView ) findViewById( R.id.textViewStartTime ) ).getText( ) == "" ) {
-                Toast.makeText( this, "Preencha o horário de início!", Toast.LENGTH_SHORT ).show( );
-            } else if( ( ( TextView ) findViewById( R.id.textViewEndTime ) ).getText( ) == "" ) {
-                Toast.makeText( this, "Preencha o horário de fim!", Toast.LENGTH_SHORT ).show( );
+            if( dateDifference < 0 ) {
+                Toast.makeText( this, "O último dia de passeio deve ser após o primeiro.", Toast.LENGTH_SHORT ).show( );
+            } else if( timeDifference < 0 ) {
+                Toast.makeText( this, "O horário de término deve ser após o horário de início.", Toast.LENGTH_SHORT ).show( );
             } else {
                 return true;
             }
@@ -434,7 +438,7 @@ public class CreateItinerary extends AppCompatActivity {
         return ( int ) numberOfDays;
     }
 
-    private DailyItinerary getDailyItineraryWithoutForecast( List< Place > selectedPlaces, List< List< Integer > > travelTimes, Calendar nextStartTime, Calendar endTime ) {
+    private DailyItinerary getDailyItineraryWithoutForecast( List< Place > selectedPlaces, List< List< Integer > > travelTimes, Calendar nextStartTime, Calendar endDayAndTime ) {
         DailyItinerary dailyItinerary = new DailyItinerary( );
         while( selectedPlaces.size( ) > 0 ) {
             Place removedPlace;
@@ -483,7 +487,7 @@ public class CreateItinerary extends AppCompatActivity {
 
             Calendar nextFinishTime = ( Calendar ) nextStartTime.clone( );
             nextFinishTime.add( Calendar.MINUTE, ( selectedPlaces.get( 0 ) ).getVisitTime( ) );
-            if( endTime.after( nextFinishTime ) == false ) {
+            if( endDayAndTime.after( nextFinishTime ) == false ) {
                 break;
             }
         }
@@ -491,7 +495,7 @@ public class CreateItinerary extends AppCompatActivity {
         return dailyItinerary;
     }
 
-    private DailyItinerary getDailyItineraryWithForecast( List< Place > selectedPlaces, List< List< Integer > > travelTimes, Calendar nextStartTime, Calendar endTime ) {
+    private DailyItinerary getDailyItineraryWithForecast( List< Place > selectedPlaces, List< List< Integer > > travelTimes, Calendar nextStartTime, Calendar endDayAndTime ) {
         DailyItinerary dailyItinerary = new DailyItinerary( );
         while( selectedPlaces.size( ) > 0 ) {
             Place removedPlace = null;
@@ -554,7 +558,7 @@ public class CreateItinerary extends AppCompatActivity {
                 }
             }
 
-            if( !endTime.after( nextFinishTime ) ) {
+            if( !endDayAndTime.after( nextFinishTime ) ) {
                 break;
             }
         }

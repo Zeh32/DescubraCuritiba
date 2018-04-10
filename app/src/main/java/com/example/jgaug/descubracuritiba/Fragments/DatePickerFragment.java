@@ -23,12 +23,16 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
         Bundle args = getArguments( );
         isStartDay = args.getBoolean( "isStartDay" );
         if( isStartDay ) {
+            if( calendar.get( Calendar.HOUR_OF_DAY ) >= 16 ) {
+                calendar.roll( Calendar.DATE, true );
+            }
+
             DatePickerDialog pickerDialog = new DatePickerDialog( getActivity( ), this, calendar.get( Calendar.YEAR ), calendar.get( Calendar.MONTH ), calendar.get( Calendar.DAY_OF_MONTH ) );
 
-            long minDate = calendar.getTime( ).getTime( ); //Set de minimum date to today
+            long minDate = calendar.getTime( ).getTime( );
             pickerDialog.getDatePicker( ).setMinDate( minDate );
 
-            calendar.add( Calendar.DAY_OF_YEAR, 14 ); //Add a limit for 14 days to the pickerDialog
+            calendar.add( Calendar.DAY_OF_YEAR, 7 );
             long maxDate = calendar.getTime( ).getTime( );
             pickerDialog.getDatePicker( ).setMaxDate( maxDate );
 
