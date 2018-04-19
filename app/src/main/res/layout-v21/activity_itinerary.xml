@@ -22,7 +22,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             app:tabMode="scrollable"
-            android:foregroundTint="#000000"/>
+            app:tabTextColor="#000000"/>
 
     </android.support.design.widget.AppBarLayout>
 

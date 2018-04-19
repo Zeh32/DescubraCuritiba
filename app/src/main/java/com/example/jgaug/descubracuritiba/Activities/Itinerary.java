@@ -26,8 +26,8 @@ public class Itinerary extends AppCompatActivity {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_itinerary );
 
-        Toolbar toolbar = findViewById( R.id.toolbar );
-        setSupportActionBar( toolbar );
+//        Toolbar toolbar = findViewById( R.id.toolbar );
+//        setSupportActionBar( toolbar );
 
         // Create the adapter that will return a fragment for each section of the activity.
         SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter( getSupportFragmentManager( ) );
@@ -40,26 +40,26 @@ public class Itinerary extends AppCompatActivity {
         tabLayout.setupWithViewPager( mViewPager );
     }
 
-    @Override
-    public boolean onCreateOptionsMenu( Menu menu ) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater( ).inflate( R.menu.menu_itinerary, menu );
-        return true;
-    }
+//    @Override
+//    public boolean onCreateOptionsMenu( Menu menu ) {
+//        // Inflate the menu; this adds items to the action bar if it is present.
+//        getMenuInflater( ).inflate( R.menu.menu_itinerary, menu );
+//        return true;
+//    }
 
-    @Override
-    public boolean onOptionsItemSelected( MenuItem item ) {
-        // Handle action bar item clicks here. The action bar will automatically handle clicks
-        // on the Home/Up button, so long as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId( );
-
-        //noinspection SimplifiableIfStatement
-        if( id == R.id.action_settings ) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected( item );
-    }
+//    @Override
+//    public boolean onOptionsItemSelected( MenuItem item ) {
+//        // Handle action bar item clicks here. The action bar will automatically handle clicks
+//        // on the Home/Up button, so long as you specify a parent activity in AndroidManifest.xml.
+//        int id = item.getItemId( );
+//
+//        //noinspection SimplifiableIfStatement
+//        if( id == R.id.action_settings ) {
+//            return true;
+//        }
+//
+//        return super.onOptionsItemSelected( item );
+//    }
 
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
