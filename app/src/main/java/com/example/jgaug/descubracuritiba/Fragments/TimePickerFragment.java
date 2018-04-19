@@ -13,6 +13,8 @@ import android.widget.Toast;
 import com.example.jgaug.descubracuritiba.Activities.CreateItinerary;
 import com.example.jgaug.descubracuritiba.R;
 
+import java.util.Calendar;
+
 public class TimePickerFragment extends DialogFragment implements TimePickerDialog.OnTimeSetListener {
     private boolean isStartTime;
 
@@ -33,10 +35,10 @@ public class TimePickerFragment extends DialogFragment implements TimePickerDial
         String formattedMinute = String.format( "%02d", minute );
 
         if( isStartTime ) {
-            if( hourOfDay >= 19 ) {
-                Toast.makeText( getActivity( ), "Não é possível definir um horário de início após às 19 horas!", Toast.LENGTH_LONG ).show( );
+            if( hourOfDay >= 16 ) {
+                Toast.makeText( getActivity( ), "Não é possível definir um horário de início após às 16 horas.", Toast.LENGTH_LONG ).show( );
             } else if( hourOfDay < 5 ) {
-                Toast.makeText( getActivity( ), "Não é possível definir um horário de início inferior às 5 horas!", Toast.LENGTH_LONG ).show( );
+                Toast.makeText( getActivity( ), "Não é possível definir um horário de início inferior às 5 horas.", Toast.LENGTH_LONG ).show( );
             } else {
                 ( ( CreateItinerary ) getActivity( ) ).setTime( true, hourOfDay, minute );
 
@@ -45,15 +47,25 @@ public class TimePickerFragment extends DialogFragment implements TimePickerDial
             }
         } else {
             if( hourOfDay >= 20 ) {
-                Toast.makeText( getActivity( ), "Não é possível definir um horário de término após às 20 horas!", Toast.LENGTH_SHORT ).show( );
+                Toast.makeText( getActivity( ), "Não é possível definir um horário de término após às 20 horas.", Toast.LENGTH_LONG ).show( );
             } else {
-                ( ( CreateItinerary ) getActivity( ) ).setTime( false, hourOfDay, minute );
+                Calendar endTime = ( Calendar ) ( ( CreateItinerary ) getActivity( ) ).getStartTime( ).clone( );
+                endTime.set( Calendar.HOUR_OF_DAY, hourOfDay );
+                endTime.set( Calendar.MINUTE, minute );
+                endTime.set( Calendar.SECOND, 0 );
 
-                TextView textViewEndTime = getActivity( ).findViewById( R.id.textViewEndTime );
-                textViewEndTime.setText( formattedHour + " : " + formattedMinute );
+                long diff = endTime.getTimeInMillis( ) - ( ( CreateItinerary ) getActivity( ) ).getStartTime( ).getTimeInMillis();
+                long minutes = ( diff / ( 60 * 1000 ) );
+
+                if( minutes >= 180 ) {
+                    ( ( CreateItinerary ) getActivity( ) ).setTime( false, hourOfDay, minute );
+
+                    TextView textViewEndTime = getActivity( ).findViewById( R.id.textViewEndTime );
+                    textViewEndTime.setText( formattedHour + " : " + formattedMinute );
+                } else {
+                    Toast.makeText( getActivity( ), "Deve haver uma diferença de pelo menos 3 horas entre o horário de início e término", Toast.LENGTH_LONG ).show( );
+                }
             }
         }
-
-        //TODO: verificar se a hora de término é maior que a de início
     }
 }
