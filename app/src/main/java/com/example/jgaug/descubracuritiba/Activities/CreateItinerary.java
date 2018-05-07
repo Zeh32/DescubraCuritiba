@@ -58,12 +58,12 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class CreateItinerary extends AppCompatActivity {
+    private String originCoordinates = "";
     private Calendar startDay = null;
     private Calendar endDay = null;
     private Calendar startTime = null;
     private Calendar endTime = null;
     private List< Integer > selectedPlaceGroups = new ArrayList<>( );
-    private String originCoordinates = "";
     private final double MIN_PRECIP_PROBABILITY = 0.50;
 
     @Override
